@@ -1,0 +1,37 @@
+
+builtin execve
+
+----------------------------
+
+implement : with no options or arguments except specified
+		echo -n
+		cd	(relative or absolute)
+		pwd
+		export
+		unset
+		env
+		exit
+
+----------------------------
+
+<, >, <<, >>
+
+|
+
+----------------------------
+
+'$VAR' = $VAR
+"$VAR" = valeur
+
+----------------------------
+
+env variables
+
+----------------------------
+
+$?
+
+----------------------------
+
+CTRL + C D \
+
