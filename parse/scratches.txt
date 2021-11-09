@@ -1,0 +1,66 @@
+'some command' < 'another command
+
+
+pwd | ls -ls
+
+> a ls 1 2 3> b > echo | pwd > 1
+
+
+struct
+	line
+	cmd = ls
+	**argumen 1 2 3
+	struct redir
+		filename
+		type <
+
+struct
+	line
+	cmd = ls
+	**argumen 1 2 3
+	filename
+	type <
+
+
+ls		-l		>		a		-a
+				>		a		ls
+				>		a		ls		-l
+				>		a		ls				>		b
+				>		a		ls		-l		>		b
+				>		a		ls				>		b		-l
+				>		a		ls		-l		>		b		-a
+				>		a						>		b		ls
+				>		a						>		b		ls		-l
+
+[cmd]	[arg]	[>		file]	[cmd]	[arg]	[>]		[file]	[cmd]	[arg]
+
+
+:
+	// skip spaces
+	if cmd
+	// skip it
+	// skip spaces
+	if arg
+	// skip it
+	// skip spaces
+	// skip it
+	if >
+
+<
+
+
+
+echo "string |"
+echo "string ||"
+echo string | cat
+echo string '|' cat
+
+ls -l > a -a
+> a ls
+> a ls -l
+> a ls > b
+> a ls -l > b
+> a ls > b -l
+> a ls -l > b -a
+> a	> b ls
+> a	> b ls -l

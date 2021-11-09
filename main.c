@@ -1,9 +1,14 @@
 #include "minishell.h"
 
-int	main(void)
+int	main(int ac, char **argv, char **envp)
 {
 	char	*line;
+	struct imp *imp;
+	//struct tmp tmp;
 
+
+	imp = gere_exp(envp);
+	
 	while (1)
 	{
 		line = readline("minishell% ");
@@ -13,7 +18,7 @@ int	main(void)
 		if (*line) {
 			add_history(line);
 			handle_line(line);
-			execute();
+			execute(&imp);
 		}
 
 		if (!ft_strncmp(line, "exit", 4))

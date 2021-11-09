@@ -20,6 +20,6 @@
 # include <dirent.h>
 
 // Global Variable
-t_lst_cmd		g_lst_cmds;
+t_cmd		*g_cmds;
 
 #endif

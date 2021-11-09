@@ -1,69 +1,127 @@
 #include "../minishell.h"
 
-// typedef struct s_mini_cmd {
-// 	char				*filename;
-// 	int					redir; // '<'. '<<'
-// 	struct s_mini_cmd	*next_mini;
-// } t_mini_cmd;
 
-// typedef struct s_cmd {
-// 	char				*text;
-// 	char				*cmd;
-// 	char				**options;
-// 	char				is_builtin;
-// 	struct s_mini_cmd	*mini_cmd;
-// 	struct s_cmd		*next_cmd;
-// }				t_cmd;
+struct imp	*gere_exp(char **envp)
+{	struct imp *imp;
+	struct imp *tmp;
+	int i;
+	int len;
 
-t_cmd	*cas_one()
-{
-	t_cmd *cmd = malloc(sizeof(t_cmd));
-	// ls -la > a
-	cmd->text = "ls -la > a";
-	cmd->cmd = "ls";
+	i = 0;
+	len = 0;
+	imp = malloc(sizeof(struct imp));
+	tmp = imp;
+	while (envp[i])
+	{
 
-	cmd->options = malloc(sizeof(char *) * 2);
-	cmd->options[0] = "-la";
-	cmd->options[1] = NULL;
-
-	cmd->is_builtin = 1;
-
-	cmd->mini_cmd = malloc(sizeof(t_mini_cmd));
-	cmd->mini_cmd->filename = "a";
-	cmd->mini_cmd->redir = ">";
-	cmd->mini_cmd->next_mini = NULL;
-
-	cmd->next_cmd = NULL;
-	return (cmd);
+		tmp->next = malloc(sizeof(struct imp));
+		if (ft_strchr(envp[i], '='))
+		{
+			len = ft_strchr(envp[i], '=') - envp[i];
+			tmp->key = ft_substr(envp[i], 0, len);
+			tmp->value = ft_substr(envp[i], len + 1, ft_strlen(envp[i]));
+			tmp->egale = 1;
+		}
+		else 
+		{
+			tmp->key = envp[i];
+			tmp->value = NULL;
+			tmp->egale = 0;
+		}
+		tmp = tmp->next;
+		i++;
+	}
+	tmp->next = NULL;
+	return (imp);
 }
 
-t_cmd	*cas_two()
+void print_export(struct imp **imp)
 {
-	t_cmd *cmd = malloc(sizeof(t_cmd));
-	// ls -la > a
-	cmd->text = "echo -n string | cat -e";
-	cmd->cmd = "echo";
-	cmd->options = malloc(sizeof(char *) * 3);
-	cmd->options[0] = "-n";
-	cmd->options[1] = "string";
-	cmd->options[2] = NULL;
-	cmd->is_builtin = 0;
-	cmd->mini_cmd = NULL;
+	struct imp *tmp;
 
-	t_cmd *cmd2 = malloc(sizeof(t_cmd));
-	cmd2->cmd = "echo";
-	cmd2->options = malloc(sizeof(char *) * 2);
-	cmd2->options[0] = "-n";
-	cmd2->options[1] = NULL;
-	cmd2->is_builtin = 1;
-	cmd2->mini_cmd = NULL;
-
-	cmd->next_cmd = cmd2;
-	return (cmd);
+	tmp = *imp;
+	while (tmp->next != NULL)
+	{
+		if(tmp->value != NULL)
+		{
+			printf ("declare -x ");
+			printf("%s", tmp->key);
+			printf ("=\"");
+			printf("%s", tmp->value);
+			printf("\"\n");
+		}
+		else
+		{
+			printf ("declare -x ");
+			printf("%s", tmp->key);
+		}
+		tmp = tmp->next;
+	}
 }
 
-void	execute(void)
+struct imp *init_options()
 {
-	t_cmd *cmd = cas_one();
-	// t_cmd *cmd = cas_two();
+	struct imp *init;
+	struct imp *tmp;
+	int len;
+	int i;
+
+	i = 0;
+	init = malloc(sizeof(struct imp));
+	tmp = init;
+	while (g_cmds->options[i])
+	{
+
+		tmp->next = malloc(sizeof(struct imp));
+		if (ft_strchr(g_cmds->options[i], '='))
+		{
+			len = ft_strchr(g_cmds->options[i], '=') - g_cmds->options[i];
+			tmp->key = ft_substr(g_cmds->options[i], 0, len);
+			tmp->value = ft_substr(g_cmds->options[i], len + 1, ft_strlen(g_cmds->options[i]));
+			tmp->egale = 1;
+		}
+		else
+		{
+			tmp->key = g_cmds->options[i];
+			tmp->value = NULL;
+			tmp->egale = 0;
+		}
+		tmp = tmp->next;
+		i++;
+	}
+	tmp->next = NULL;
+	return (init);
+}
+
+struct imp *manages_options(struct imp **imp)
+{
+	struct imp *tmp;
+	struct imp	*init;
+	struct imp	*tmp1;
+	int i;
+
+	init = init_options();
+	tmp1 = init;
+	tmp = imp;
+	i = 0;
+	while (tmp1->next != NULL)
+	{
+		while (tmp->next != NULL)
+		{
+			if (!ft_strcmp(tmp->key, tmp1->key))
+			{
+				
+			}
+		}
+	}
+}
+
+void	execute(struct imp **imp)
+{
+
+	if (!ft_strcmp(g_cmds->cmd, "export"))
+	{
+		manages_options(imp);
+		print_export(imp);
+	}
 }

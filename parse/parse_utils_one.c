@@ -21,7 +21,7 @@ int	is_quoted(char *qs)
 	return (quote);
 }
 
-static size_t	count_splitted_wq(char *s)
+static size_t	count_splitted_wq(char *s, char c)
 {
 	size_t	i;
 	size_t	pipes;
@@ -40,7 +40,7 @@ static size_t	count_splitted_wq(char *s)
 			quote = 0;
 		else if (s[i] == '"' && quote == 2)
 			quote = 0;
-		if (s[i] == '|' && !is_quoted(s + i))
+		if (s[i] == c && quote == 0)
 			pipes++;
 	}
 	return (pipes);
@@ -63,7 +63,7 @@ char	**ft_split_wq(char *s, char c)
 	j = 0;
 	start = 0;
 	quote = 0;
-	len = count_splitted_wq(s) + 1;
+	len = count_splitted_wq(s, c) + 1;
 	result = (char **)malloc(sizeof(char *) * (len + 1));
 	if (!result)
 		return (NULL);
@@ -78,7 +78,7 @@ char	**ft_split_wq(char *s, char c)
 		else if (s[i] == '"' && quote == 2)
 			quote = 0;
 
-		if (quote == 0 && s[i] == '|')
+		if (quote == 0 && s[i] == c)
 		{
 			end = i;
 			result[j] = ft_substr(s, start, i - start);
@@ -89,7 +89,7 @@ char	**ft_split_wq(char *s, char c)
 	if (len == 1)
 		result[j] = ft_substr(s, 0, i);
 	else
-		result[j] = ft_substr(s, end + 1, i - end);
+		result[j] = ft_substr(s, end + 1, i - end - 1);
 	result[len] = NULL;
 	return (result);
 }

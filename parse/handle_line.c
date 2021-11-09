@@ -169,17 +169,11 @@ int	check_redirections(char *s)
 			quote = 0;
 		else if (s[i] == '"' && quote == 2)
 			quote = 0;
-	// check some errors
-	/*
-		||
-		<>
-		><
-		<<>
-		>><
-		<<<
-		>>>
-		$ [a-zA-Z][?]
-	*/
+
+		// check some errors
+		// ||, <>, ><, <<>, >><, <<<, >>>
+		// $ [a-zA-Z][?]
+
 		if (quote == 0)
 		{
 			if (s[i] == '>')
@@ -200,36 +194,155 @@ int	check_redirections(char *s)
 			}
 			else if (s[i] == '$')
 			{
-				j = i;
-				while (s[j] && s[j] != ' ')
-				{
-					j++;
-				}
-				// if (s[i + 1] == '?')
-				// else if (ft_isalpha(s[i + 1])
+				if (s[i + 1] != '?' || ft_isalpha(s[i + 1]))
+					return (0);
 			}
 		}
 	}
 	return (1);
 }
 
+int		check_empty_pipes(char **cmds)
+{
+	size_t	i;
+	size_t	j;
+	int		flag;
+
+	i = -1;
+	while (cmds[++i])
+	{
+		j = -1;
+		flag = 0;
+		while (cmds[i][++j])
+		{
+			if (ft_isalnum(cmds[i][j]))
+				flag = 1;
+		}
+		if (!flag)
+			return (0);
+	}
+	return (1);
+}
+
+/*
+ * redirection at the end
+ */
+int		check_in_redirections(char **cmds)
+{
+	size_t	i;
+	size_t	j;
+	char	*trimmd;
+	size_t	len;
+
+	i = -1;
+	while (cmds[++i])
+	{
+		j = 0;
+		trimmd = ft_strtrim(cmds[i], " ");
+		len = ft_strlen(cmds[i]);
+
+		if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
+			return (0);
+	}
+	return (1);
+}
+
+// char	*ft_fill_cmdname(char *s)
+// {
+// 	size_t	i;
+// 	char	*trimmd;
+
+// 	i = 0;
+// 	trimmd = ft_strtrim(s, " ");
+// 	// 
+// 	return (trimmd);
+// }
+
+void	ft_append(char ***opt, char *newopt)
+{
+	size_t	i;
+	size_t	len;
+	char	**tmp;
+
+	if (*opt == NULL)
+	{
+		*opt = malloc(sizeof(char *) * 2);
+		(*opt)[0] = newopt;
+		(*opt)[1] = NULL;
+	}
+	else
+	{
+		len = 0;
+		while ((*opt)[len])
+		{
+			len++;
+		}
+
+		tmp = *opt;
+		*opt = malloc(sizeof(char *) * (len + 1 + 1));
+		i = 0;
+		while (i < len)
+		{
+			(*opt)[i] = tmp[i];
+			i++;
+		}
+		(*opt)[i] = newopt;
+		(*opt)[i + 1] = NULL;
+	}
+}
+
+void	ft_fill_it(t_cmd **head, char *line)
+{
+	t_cmd	*cmd;
+	t_cmd	*tmp;
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+
+	tmp = malloc(sizeof(t_cmd));
+
+	tmp->text = ft_strdup(line);
+	tmp->options = NULL;
+
+	char **opts = ft_split_wq(line, ' ');
+	while (opts[i])
+	{
+		if (i == 0)
+			tmp->cmd = opts[i];
+		else
+			ft_append(&tmp->options, opts[i]);
+		i++;
+	}
+	tmp->next_cmd = NULL;
+
+	if (*head == NULL)
+		*head = tmp;
+	else
+	{
+		cmd = *head;
+		while (cmd->next_cmd)
+		{
+			cmd = cmd->next_cmd;
+		}
+		cmd->next_cmd = tmp;
+	}
+}
+
 // TODO :
 	// new list n new cmd in while
-t_lst_cmd	handle_line(char *line)
+void	handle_line(char *line)
 {
 	size_t		i;
 	size_t		j;
-	size_t		quote;
 	t_cmd		*cmd;
-	t_lst_cmd	*lst_cmd;
-	t_lst_cmd	*lst_tmp;
-	t_lst_cmd	*head_cmd;
+	char		**cmds;
 
-	char	**cmds;
-
+	g_cmds = NULL;
+	cmd = NULL;
 	i = -1;
 	j = -1;
-	quote = 0;
 	if (!check_quotes(line))
 	{
 		// ||
@@ -238,17 +351,29 @@ t_lst_cmd	handle_line(char *line)
 			if (check_redirections(line))
 			{
 				cmds = ft_split_wq(line, '|');
-				while (cmds[++i])
+
+				// check empty splits
+				if (check_empty_pipes(cmds))
 				{
-					;
+					// check wrong redirections
+					if (check_in_redirections(cmds))
+					{
+						while (cmds[++i])
+						{
+							// get data and fill head
+							ft_fill_it(&g_cmds, cmds[i]);
+						}
+					}
 				}
+				else
+					printf("minishell: syntax error\n");
 			}
 			else
-				printf("minishell: syntax error");
+				printf("minishell: syntax error\n");
 		}
 		else
-			printf("minishell: syntax error");
+			printf("minishell: syntax error\n");
 	}
 	else
-		printf("minishell: forbidden error");
+		printf("minishell: forbidden error\n");
 }
