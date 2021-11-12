@@ -7,6 +7,7 @@ int	main(int ac, char **argv, char **envp)
 	//struct tmp tmp;
 
 
+
 	imp = gere_exp(envp);
 	
 	while (1)

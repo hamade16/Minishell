@@ -3,7 +3,7 @@
 # define MINISHELL_EXECUTE_H
 
 struct imp {
-	char *data;
+	//char *data;
 	char *key;
 	char *value;
     int egale;
@@ -13,7 +13,7 @@ struct imp {
 void		execute(struct imp **imp);
 struct imp	*gere_exp(char **envp);
 void        print_export(struct imp **tmp2);
-void    ft_cd();
-void    ft_pwd();
+void    	impecho();
+struct imp  		**ft_unset(struct imp **imp);
 
 #endif
