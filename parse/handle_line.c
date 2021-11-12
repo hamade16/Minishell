@@ -309,8 +309,10 @@ void	ft_fill_it(t_cmd **head, char *line)
 	char **opts = ft_split_wq(line, ' ');
 	while (opts[i])
 	{
-		if (i == 0)
+		if (i == 0) {
 			tmp->cmd = opts[i];
+			ft_append(&tmp->options, NULL);
+		}
 		else
 			ft_append(&tmp->options, opts[i]);
 		i++;
