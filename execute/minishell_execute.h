@@ -14,6 +14,6 @@ void		execute(struct imp **imp);
 struct imp	*gere_exp(char **envp);
 void        print_export(struct imp **tmp2);
 void    	impecho();
-void  		ft_unset(struct imp **imp);
+struct imp  		**ft_unset(struct imp **imp);
 
 #endif

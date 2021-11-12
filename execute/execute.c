@@ -1,5 +1,5 @@
 #include "../minishell.h"
-
+#include <stdio.h>
 struct imp *init_options()
 {
 	struct imp *init;
@@ -50,25 +50,22 @@ struct imp **manages_options(struct imp **imp)
 	i = 0;
 
 	while (tmp1->next != NULL)
-	{
-		tmp = *imp;
-		while (tmp->next != NULL && ft_strcmp(tmp1->key, tmp->key))
+	{ 
+		tmp = *imp; 
+		while (tmp != NULL && ft_strcmp(tmp1->key, tmp->key)){
 			tmp = tmp->next;
-		if (tmp->next == NULL)
+			// printf("|%p| * |%s * %p|\n", tmp1->key, tmp->key, tmp->key);
+		}
+		if (tmp == NULL)
 		{
+			struct imp *t = *imp;
+			while (t->next)
+				t = t->next;
 			new = malloc(sizeof(struct imp));
 			new->key = tmp1->key;
 			new->value = tmp1->value;
 			new->next = NULL;
-			tmp = new;
-			//tmp = tmp->next;
-			printf("tmp->key = %s\n", tmp->key);
-			/*tmp->next = malloc(sizeof(struct imp));
-			//printf ("hamade\n");
-			tmp = tmp->next;
-			tmp->key = tmp1->key;
-			tmp->value = tmp1->value;
-			tmp->next = NULL;*/
+			t->next = new;
 		}
 		else
 		{
@@ -80,13 +77,6 @@ struct imp **manages_options(struct imp **imp)
 		}
 		tmp1 = tmp1->next;
 	}
-	//print_export(imp);
-	 tmp2 = *imp;
-	 while (tmp2->next != NULL)
-	 {
-	 	printf("%s\n", tmp2->key);
-	 	tmp2 = tmp2->next;
-	 }
 	return (imp);
 }
 
@@ -99,7 +89,8 @@ void	execute(struct imp **imp)
 	{
 		if (g_cmds->options != NULL)
 			imp = manages_options(imp);
-		// print_export(imp);
+		else
+			print_export(imp);
 	}
 	if (!ft_strcmp(g_cmds->cmd, "cd"))
 	{
@@ -108,4 +99,6 @@ void	execute(struct imp **imp)
 	}
 	if (!ft_strcmp(g_cmds->cmd, "echo"))
 		impecho();
+	if (!ft_strcmp(g_cmds->cmd, "unset"))
+		ft_unset(imp);
 }

@@ -19,19 +19,23 @@ struct imp	*gere_exp(char **envp)
 		{
 			len = ft_strchr(envp[i], '=') - envp[i];
 			tmp->key = ft_substr(envp[i], 0, len);
+			// printf("==> %s\n", tmp->key);
 			tmp->value = ft_substr(envp[i], len + 1, ft_strlen(envp[i]));
 			tmp->egale = 1;
 		}
 		else 
 		{
 			tmp->key = envp[i];
+			// printf("==> %s\n", tmp->key);
 			tmp->value = NULL;
 			tmp->egale = 0;
 		}
-		tmp = tmp->next;
+		if (envp[i + 1])
+			tmp = tmp->next;
 		i++;
 	}
 	tmp->next = NULL;
+
 	return (imp);
 }
 
@@ -40,7 +44,7 @@ void print_export(struct imp **imp)
 	struct imp *tmp;
 
 	tmp = *imp;
-	while (tmp->next != NULL)
+	while (tmp != NULL)
 	{
 		if(tmp->value != NULL)
 		{
@@ -54,6 +58,7 @@ void print_export(struct imp **imp)
 		{
 			printf ("declare -x ");
 			printf("%s", tmp->key);
+			printf("\n");
 		}
 		tmp = tmp->next;
 	}

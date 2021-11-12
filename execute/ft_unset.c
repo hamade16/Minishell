@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/12 20:40:20 by houbeid           #+#    #+#             */
+/*   Updated: 2021/11/12 20:51:51 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "../minishell.h"
 
-void  ft_unset(struct imp **imp)
+struct imp **ft_unset(struct imp **imp)
 {
     struct imp *tmp;
     int i;
@@ -8,6 +21,8 @@ void  ft_unset(struct imp **imp)
     struct imp *prev;
 
     i = 0;
+    if(g_cmds->options == NULL)
+        return (imp);
     while (g_cmds->options[i])
     {
         //tmp = *imp;
@@ -20,17 +35,18 @@ void  ft_unset(struct imp **imp)
         else 
         {
             tmp = *imp;
-            while (tmp->next != NULL && ft_strcmp(tmp->key, g_cmds->options[i]))
+            while (tmp != NULL && ft_strcmp(tmp->key, g_cmds->options[i]))
             {
                 prev = tmp;
                 tmp = tmp->next;
             }
-            if (tmp->next != NULL)
+            if (tmp != NULL)
             {
                 prev->next = tmp->next;
                 free(tmp);
             }
         }
+        i++;
     }
-
+    return (imp);
 }
