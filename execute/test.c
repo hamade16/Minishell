@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #include <readline/history.h>
 
 
-/*
+
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	size_t			i;
@@ -317,8 +317,8 @@ void	imp_export(char **line, struct imp *imp, int nb)
 		i++;
 	}
 	print_export(tmp);
-}*/
-/*
+}
+
 int main(int ac, char **av, char **envp)
 {
 	struct imp *imp;
@@ -343,16 +343,19 @@ int main(int ac, char **av, char **envp)
 	while (line[i])
 		i++;
 	
-	imp_export(line, imp, i);*/
-	  /*  if (chdir(av[1]) == 0){
-       		perror("cd ");
-       //perror("cd: ");
-    }
-    else 
-     {
-  		chdir(av[1]);
-		printf("%s\n", getcwd(av[1], 100));
-    }
-    printf("%s\n", getcwd(av[1], 100));
+	imp_export(line, imp, i);
+	//}
+    // if (chdir(av[1]) == 0){
+    //     // perror("cd: ");
+    //     perror("cd ");
+    // }
+    // else 
+    // {
+	
+        //chdir(av[1]);
+
+        //printf("%s\n", getcwd(av[1], 100));
+    //}
     
+    //printf("%s\n", getcwd(av[1], 100));
 }*/

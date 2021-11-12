@@ -3,7 +3,7 @@ NAME	= minishell
 SRCS	= main.c \
 		shared_utils/minishell_utils_one.c shared_utils/minishell_utils_two.c \
 		parse/*.c \
-		execute/*.c \
+		execute/*.c
 
 
 OBJS	= $(SRCS:.c=.o)

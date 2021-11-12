@@ -5,7 +5,6 @@
 # include "libft/libft.h"
 # include "parse/minishell_parse.h"
 # include "execute/minishell_execute.h"
-#include <stdio.h>
 // malloc, ...
 # include <stdlib.h>
 // write, execve, ...
