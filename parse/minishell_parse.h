@@ -37,9 +37,9 @@ echo string
 */
 
 typedef struct s_mini_cmd {
-	char				*filename;
-	int					redir;
-	struct s_mini_cmd	*next_mini;
+	char				*filename; // nom dfichier
+	int					redir;		// 1:>	2:<		3:>>	4:<<
+	struct s_mini_cmd	*next_mini; // 
 } t_mini_cmd;
 
 typedef struct s_cmd {
@@ -47,8 +47,9 @@ typedef struct s_cmd {
 	char				*cmd;
 	char				**options;
 	char				is_builtin;
-	struct s_mini_cmd	*mini_cmd;
+	struct s_mini_cmd	*mini_cmd; // null
 	struct s_cmd		*next_cmd;
+	char				error;
 }				t_cmd;
 
 typedef struct s_lst_cmd {

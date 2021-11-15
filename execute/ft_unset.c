@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 20:40:20 by houbeid           #+#    #+#             */
-/*   Updated: 2021/11/12 20:51:51 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/11/14 15:34:35 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ struct imp **ft_unset(struct imp **imp)
     struct imp *tmp1;
     struct imp *prev;
 
-    i = 0;
-    if(g_cmds->options == NULL)
+    i = 1;
+    if(g_cmds->options[1] == NULL)
         return (imp);
     while (g_cmds->options[i])
     {

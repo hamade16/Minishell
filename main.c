@@ -4,12 +4,9 @@ int	main(int ac, char **argv, char **envp)
 {
 	char	*line;
 	struct imp *imp;
-	//struct tmp tmp;
-
-
+	struct imp *imp_env;
 
 	imp = gere_exp(envp);
-	
 	while (1)
 	{
 		line = readline("minishell% ");
@@ -19,7 +16,7 @@ int	main(int ac, char **argv, char **envp)
 		if (*line) {
 			add_history(line);
 			handle_line(line);
-			execute(&imp);
+			execute(&imp, envp);
 		}
 
 		if (!ft_strncmp(line, "exit", 4))

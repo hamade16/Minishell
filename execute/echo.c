@@ -3,8 +3,10 @@
 void    impecho()
 {
     int i;
+    int j;
 
-    i = 0;
+    i = 1;
+    j = 1;
     if (!ft_strcmp(g_cmds->options[i], "-n"))
     {
         while (!ft_strcmp(g_cmds->options[i], "-n"))

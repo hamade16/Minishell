@@ -1,0 +1,39 @@
+ETAPE 1
+-------
+command
+redirection     1:>     2:<
+fichier
+
+
+ETAPE 2
+-------
+ls -l > a
+commande
+options
+redirection
+fihcier
+
+
+ETAPE 3
+-------
+ls > a -l 
+commande
+redirection
+options
+fihcier
+
+
+ETAPE 4
+-------
+ls -a > -l a > b
+
+
+ETAPE 5
+-------
+...
+
+
+
+
+---
+<<

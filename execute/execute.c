@@ -1,5 +1,5 @@
 #include "../minishell.h"
-#include <stdio.h>
+
 struct imp *init_options()
 {
 	struct imp *init;
@@ -7,7 +7,7 @@ struct imp *init_options()
 	int len;
 	int i;
 
-	i = 0;
+	i = 1;
 	len = 0;
 	init = malloc(sizeof(struct imp));
 	tmp = init;
@@ -64,6 +64,10 @@ struct imp **manages_options(struct imp **imp)
 			new = malloc(sizeof(struct imp));
 			new->key = tmp1->key;
 			new->value = tmp1->value;
+			if (tmp1->egale == 1)
+				new->egale = 1;
+			else
+				new->egale = 0;
 			new->next = NULL;
 			t->next = new;
 		}
@@ -73,6 +77,7 @@ struct imp **manages_options(struct imp **imp)
 			{
 				tmp->key = tmp1->key;
 				tmp->value = tmp1->value;
+				tmp->egale = 1;
 			}
 		}
 		tmp1 = tmp1->next;
@@ -80,25 +85,31 @@ struct imp **manages_options(struct imp **imp)
 	return (imp);
 }
 
-void	execute(struct imp **imp)
+void	execute(struct imp **imp, char **envp)
 {
-
-	char *buff;
-
-	if (!ft_strcmp(g_cmds->cmd, "export"))
+	//printf("%d", g_cmds->is_builtin);
+	if (g_cmds->is_builtin)
 	{
-		if (g_cmds->options != NULL)
-			imp = manages_options(imp);
-		else
-			print_export(imp);
+		if (!ft_strcmp(g_cmds->cmd, "export"))
+		{
+			if (g_cmds->options[1] != NULL)
+				imp = manages_options(imp);
+			else
+				print_export(imp);
+		}
+		if (!ft_strcmp(g_cmds->cmd, "echo"))
+			impecho();
+		if (!ft_strcmp(g_cmds->cmd, "unset"))
+			ft_unset(imp);
+		if (!ft_strcmp(g_cmds->cmd, "cd"))
+			ft_cd(imp);
+		if (!ft_strcmp(g_cmds->cmd, "pwd"))
+			ft_pwd();
+		if(!ft_strcmp(g_cmds->cmd, "exit"))
+			ft_exit();
+		if(!ft_strcmp(g_cmds->cmd, "env"))
+			print_env(imp);
 	}
-	if (!ft_strcmp(g_cmds->cmd, "cd"))
-	{
-		chdir(g_cmds->options[0]);
-		printf("%s\n", getcwd(buff, 100));
-	}
-	if (!ft_strcmp(g_cmds->cmd, "echo"))
-		impecho();
-	if (!ft_strcmp(g_cmds->cmd, "unset"))
-		ft_unset(imp);
+	else
+		ft_execve(envp);
 }

@@ -22,5 +22,6 @@
 
 // Global Variable
 t_cmd		*g_cmds;
+int         error;
 
 #endif
