@@ -1,104 +1,6 @@
 #include "../minishell.h"
 #include <stdio.h>
 
-void	test_execve(char *line)
-{
-	int		fork_id;
-	char	*args1[] = {"-l", NULL};
-	char	*args2[] = {"-l", "-a", NULL};
-	char	*args3[] = {"-l", "-A", NULL};
-	char	*args4[] = {"-la", NULL};
-	char	*args5[] = {"-la", "/bin", NULL};
-	char	*args6[] = {"", "/bin", NULL};
-    char	*env[] = {"PATH=/bin", "USER=me", NULL};
-
-	if (!ft_strcmp(line, "1"))
-	{
-		printf("here 1\n");
-		// new process for command
-		fork_id = fork();
-		if (fork_id == 0) {
-			if (execve("/bin/ls", args1, env) == -1)
-			{
-				// printf("failed\n");
-				perror(NULL);
-				// discard new process
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-	if (!ft_strcmp(line, "2"))
-	{
-		printf("here 2\n");
-		fork_id = fork();
-		if (fork_id == 0) {
-			if (execve("/bin/ls", args2, env) == -1)
-			{
-				// printf("failed\n");
-				perror(NULL);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-	if (!ft_strcmp(line, "3"))
-	{
-		printf("here 3\n");
-		fork_id = fork();
-		if (fork_id == 0) {
-			if (execve("/bin/ls", args3, env) == -1)
-			{
-				printf("failed\n");
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-	if (!ft_strcmp(line, "4"))
-	{
-		printf("here 4\n");
-		fork_id = fork();
-		if (fork_id == 0) {
-			if (execve("/bin/ls", args4, env) == -1)
-			{
-				// printf("failed\n");
-				perror(NULL);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-	if (!ft_strcmp(line, "5"))
-	{
-		printf("here 5\n");
-		fork_id = fork();
-		if (fork_id == 0)
-		{
-			if (execve("/bin/ls", args5, NULL) == -1)
-			{
-				// printf("failed\n");
-				perror(NULL);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-	if (!ft_strcmp(line, "6"))
-	{
-		printf("here 5\n");
-		fork_id = fork();
-		if (fork_id == 0)
-		{
-			if (execve("/bin/ls", args6, NULL) == -1)
-			{
-				// printf("failed\n");
-				perror(NULL);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-
-	// wait for child process to finish
-	if (fork_id != 0)
-		wait(NULL);
-}
-
 /*
  * 0	: Quotes are enclosed
  * else	: Quotes are not enclosed
@@ -239,24 +141,12 @@ int		check_in_redirections(char **cmds)
 	{
 		j = 0;
 		trimmd = ft_strtrim(cmds[i], " ");
-		len = ft_strlen(cmds[i]);
-
+		len = ft_strlen(trimmd);
 		if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
 			return (0);
 	}
 	return (1);
 }
-
-// char	*ft_fill_cmdname(char *s)
-// {
-// 	size_t	i;
-// 	char	*trimmd;
-
-// 	i = 0;
-// 	trimmd = ft_strtrim(s, " ");
-// 	// 
-// 	return (trimmd);
-// }
 
 void	ft_append(char ***opt, char *newopt)
 {
@@ -291,26 +181,54 @@ void	ft_append(char ***opt, char *newopt)
 	}
 }
 
+t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst)
+{
+	if (lst)
+		while (lst->next_mini)
+			lst = lst->next_mini;
+	return (lst);
+}
+
+void	ft_mini_addback(t_mini_cmd **head, t_mini_cmd *new)
+{
+	t_mini_cmd	*last;
+
+	if (head && new)
+	{
+		if (*head)
+		{
+			last = ft_mini_lstlast(*head);
+			last->next_mini = new;
+		}
+		else
+			*head = new;
+	}
+}
+
 void	ft_fill_it(t_cmd **head, char *line)
 {
-	t_cmd	*cmd;
-	t_cmd	*tmp;
-	size_t	i;
-	size_t	j;
+	size_t		i;
+	char		**parts;
+	t_cmd		*cmd;
+	t_cmd		*tmp;
+	t_mini_cmd	*mini;
 
 	i = 0;
-	j = 0;
 
 	tmp = malloc(sizeof(t_cmd));
 
 	tmp->text = ft_strdup(line);
 	tmp->options = NULL;
+	tmp->mini_cmd = NULL;
 
-	char **opts = ft_split_wq(line, ' ');
-	while (opts[i])
+	mini = NULL;
+
+	parts = ft_split_wq(line, ' ');
+	while (parts[i])
 	{
 		if (i == 0) {
-			tmp->cmd = opts[i];
+			tmp->cmd = parts[i];
+			// ft_append(&tmp->options, parts[i]);
 			if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
 				!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
 				!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
@@ -319,7 +237,54 @@ void	ft_fill_it(t_cmd **head, char *line)
 			else
 				tmp->is_builtin = 0;
 		}
-		ft_append(&tmp->options, opts[i]);
+		else {
+			// is option
+			if (parts[i][0] == '-')
+				ft_append(&tmp->options, parts[i]);
+			// is redirection
+			else if (parts[i][0] == '>')
+			{
+
+				mini = malloc(sizeof(t_mini_cmd));
+				mini->filename = NULL;
+				mini->redir = 0;
+				mini->next_mini = NULL;
+
+				if (!ft_strcmp(parts[i], ">>")) {
+					mini->redir = 3;
+				}
+				else
+					mini->redir = 1;
+			}
+			// is redirection
+			else if (parts[i][0] == '<')
+			{
+				mini = malloc(sizeof(t_mini_cmd));
+				mini->filename = NULL;
+				mini->redir = 0;
+				mini->next_mini = NULL;
+
+				if (!ft_strcmp(parts[i], "<<")) {
+					mini->redir = 4;
+				}
+				else
+					mini->redir = 2;
+			}
+			// is filename
+			else
+			{
+				if (mini)
+				{
+					mini->filename = ft_strdup(parts[i]);
+
+					ft_mini_addback(&tmp->mini_cmd, mini);
+				}
+				else
+				{
+					ft_append(&tmp->options, parts[i]);
+				}
+			}
+		}
 		i++;
 	}
 	tmp->next_cmd = NULL;
@@ -338,7 +303,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 }
 
 // TODO :
-	// new list n new cmd in while
+	// ls a
 void	handle_line(char *line)
 {
 	size_t		i;
@@ -350,33 +315,20 @@ void	handle_line(char *line)
 	cmd = NULL;
 	i = -1;
 	j = -1;
-	if (!check_quotes(line))
+	// ||
+	if (!check_quotes(line) || check_pipes(line) || check_redirections(line))
 	{
-		// ||
-		if (check_pipes(line))
-		{
-			if (check_redirections(line))
-			{
-				cmds = ft_split_wq(line, '|');
+		cmds = ft_split_wq(line, '|');
 
-				// check empty splits
-				if (check_empty_pipes(cmds))
-				{
-					// check wrong redirections
-					if (check_in_redirections(cmds))
-					{
-						while (cmds[++i])
-						{
-							// get data and fill head
-							ft_fill_it(&g_cmds, cmds[i]);
-						}
-					}
-				}
-				else
-					printf("minishell: syntax error\n");
+		// check empty splits
+		// check wrong redirections
+		if (check_empty_pipes(cmds) || check_in_redirections(cmds))
+		{
+			while (cmds[++i])
+			{
+				// get data and fill head
+				ft_fill_it(&g_cmds, cmds[i]);
 			}
-			else
-				printf("minishell: syntax error\n");
 		}
 		else
 			printf("minishell: syntax error\n");

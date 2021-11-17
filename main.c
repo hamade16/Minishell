@@ -2,10 +2,11 @@
 
 int	main(int ac, char **argv, char **envp)
 {
-	char	*line;
-	struct imp *imp;
-	struct imp *imp_env;
+	char		*line;
+	struct imp	*imp;
+	struct imp	*imp_env;
 
+	g_cmds = NULL;
 	imp = gere_exp(envp);
 	while (1)
 	{
@@ -13,7 +14,7 @@ int	main(int ac, char **argv, char **envp)
 
 		// if line is not empty
 		// add it to history
-		if (*line) {
+		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
 			handle_line(line);
 			execute(&imp, envp);

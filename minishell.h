@@ -5,7 +5,7 @@
 # include "libft/libft.h"
 # include "parse/minishell_parse.h"
 # include "execute/minishell_execute.h"
-#include <stdio.h>
+# include <stdio.h>
 // malloc, ...
 # include <stdlib.h>
 // write, execve, ...
@@ -22,6 +22,5 @@
 
 // Global Variable
 t_cmd		*g_cmds;
-int         error;
 
 #endif

@@ -1,12 +1,12 @@
 #include "../minishell.h"
 
-char	ft_free_first(char *first, char *str)
+/*char	ft_free_first(char *first, char *str)
 {
 	if (first == 0)
 		return (str);
 	free(first);
 	return (str);
-}
+}*/
 
 void	ft_free_split(char **tab)
 {
@@ -57,12 +57,14 @@ char    *research_path(char **envp)
 	int		i;
 
 	i = 0;
-	/*if (!g_cmds->cmd)
-		error_command(NULL);*/
+	if (!g_cmds->cmd)
+		error_command(NULL);
 	if (access(g_cmds->cmd, F_OK) == 0 && g_cmds->cmd[0] == '/')
 		return (ft_strdup(g_cmds->cmd));
 	path = ft_split(path_env(envp), ':');
 	path[0] = ft_strdup(ft_strrchr(path[0], '=') + 1);
+    //printf("%s\n", path[0]);
+  //printf("hamade\n");
 	while (path[i])
 	{
 		pathname = ft_strjoin_char(path[i], g_cmds->cmd, '/');
@@ -70,8 +72,8 @@ char    *research_path(char **envp)
 			break ;
 		i++;
 		free(pathname);
-		/*if (path[i] == 0)
-			error_command(g_cmds->cmd);*/
+		if (path[i] == 0)
+			error_command(g_cmds->cmd);
 	}
 	ft_free_split(path);
 	return (pathname);
@@ -87,7 +89,7 @@ void    ft_execve(char **envp)
     // printf("%s\n", pathname);
     pid = fork();
     wait(0);
-   //int i = 0;
+   int i = 0;
     //    if child
     if (pid == 0)
         execve(pathname, g_cmds->options, envp);
