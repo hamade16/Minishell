@@ -228,7 +228,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 	{
 		if (i == 0) {
 			tmp->cmd = parts[i];
-			// ft_append(&tmp->options, parts[i]);
+			ft_append(&tmp->options, parts[i]);
 			if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
 				!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
 				!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
