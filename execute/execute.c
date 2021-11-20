@@ -89,7 +89,8 @@ void	execute(struct imp **imp, char **envp)
 {
 	int fd;
 	int pid;
-	int tmp_fd;
+	int tmp_fd_out;
+	int tmp_fd_in;
 	if (g_cmds->mini_cmd != NULL)
 	{
 		// pid = fork();
@@ -106,21 +107,20 @@ void	execute(struct imp **imp, char **envp)
 				dup2(fd, 0);
 
 			}*/
+        			tmp_fd_out = dup(1);
+    				tmp_fd_in  = dup(0);
 			while (g_cmds->mini_cmd != NULL)
 			{
 				if (g_cmds->mini_cmd->redir == 1)
     			{
 					fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        			tmp_fd = dup(1);
         			dup2(fd, STDOUT_FILENO);
        				close(fd);
     			}
    				if (g_cmds->mini_cmd->redir == 2)
     			{
 					 fd = open(g_cmds->mini_cmd->filename, O_RDONLY, 0);
-    				tmp_fd  = dup(0);
    					 dup2(fd, STDIN_FILENO);
-					printf ("\nhamade\n");
     				//in = 0;
     			}
 				if (g_cmds->mini_cmd->next_mini != NULL)
@@ -154,7 +154,8 @@ void	execute(struct imp **imp, char **envp)
 		else
 			ft_execve(envp);*/
 		//close(fd);
-		dup2(tmp_fd, 1);
+		dup2(tmp_fd_out, STDOUT_FILENO);
+		dup2(tmp_fd_in, STDIN_FILENO);
 	}
 	else
 	{
