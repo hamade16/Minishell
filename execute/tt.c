@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -22,4 +22,4 @@ int main(int ac, char **av)
     // printf("opened the fd = % d\n", fd);
     // dup2(tmp_fd, 1);
 
-}
+}*/

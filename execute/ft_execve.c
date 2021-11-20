@@ -41,7 +41,8 @@ void	error_command(char	*str)
 	if (str)
 		ft_putstr_fd(str, 2);
 	ft_putstr_fd(" : command not found\n", 2);
-	exit(127);
+
+	
 }
 
 void	ft_perror(char *cmd)
@@ -85,12 +86,26 @@ void    ft_execve(char **envp)
     char *pathname;
     int pid;
 
-    pathname = research_path(envp);
     // printf("%s\n", pathname);
     pid = fork();
     wait(0);
-   int i = 0;
+	/*if (pathname == NULL)
+		exit (0);*/
     //    if child
     if (pid == 0)
+	{
+    	pathname = research_path(envp);
         execve(pathname, g_cmds->options, envp);
+		exit(0);
+
+	}
+}
+
+void    ft_execve_red(char **envp)
+{
+    char *pathname;
+    pathname = research_path(envp);
+    execve(pathname, g_cmds->options, envp);
+	exit(0);
+	//exit(WEXITSTATUS(status));
 }

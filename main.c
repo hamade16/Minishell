@@ -12,6 +12,7 @@ int	main(int ac, char **argv, char **envp)
 	{
 		line = readline("minishell% ");
 
+		//printf("%s\n", line);
 		// if line is not empty
 		// add it to history
 		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
@@ -19,7 +20,7 @@ int	main(int ac, char **argv, char **envp)
 			handle_line(line);
 			execute(&imp, envp);
 		}
-
+		//printf("here\n");
 		if (!ft_strncmp(line, "exit", 4))
 		{
 			free(line);

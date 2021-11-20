@@ -21,5 +21,7 @@ void    			ft_exit();
 void    print_env(struct imp **imp);
 void    ft_execve(char **envp);
 char   *path_env(char **str);
+void	ex_in_childs(struct imp **imp, char **envp);
+void    ft_execve_red(char **envp);
 
 #endif

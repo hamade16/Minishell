@@ -87,29 +87,95 @@ struct imp **manages_options(struct imp **imp)
 
 void	execute(struct imp **imp, char **envp)
 {
-	//printf("%d", g_cmds->is_builtin);
-	if (g_cmds->is_builtin)
+	int fd;
+	int pid;
+	int tmp_fd;
+	if (g_cmds->mini_cmd != NULL)
 	{
-		if (!ft_strcmp(g_cmds->cmd, "export"))
-		{
-			if (g_cmds->options[1] != NULL)
-				imp = manages_options(imp);
+		// pid = fork();
+		// if (!pid)
+		// {
+				//fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT, 0644);
+				//tmp_fd = dup(1);
+				//dup2(fd, 1);
+
+			//}
+			/*if (g_cmds->mini_cmd->redir == 2)
+			{
+				//tmp_fd = dup(0);
+				dup2(fd, 0);
+
+			}*/
+			if (g_cmds->mini_cmd->redir == 1)
+    		{
+				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT, 0644);
+        		tmp_fd = dup(1);
+        		dup2(fd, STDOUT_FILENO);
+       			//close(fd);
+    		}
+   			if (g_cmds->mini_cmd->redir == 2)
+    		{
+				 fd = open(g_cmds->mini_cmd->filename, O_RDONLY, 0);
+    			tmp_fd  = dup(0);
+   				 dup2(fd, STDIN_FILENO);
+					printf ("\nhamade\n");
+    			//in = 0;
+    		}
+		//printf("%d", g_cmds->is_builtin);
+			if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
+					print_export(imp);
+			if (!ft_strcmp(g_cmds->cmd, "cd"))
+				ft_cd(imp);
+			if (!ft_strcmp(g_cmds->cmd, "unset"))
+				ft_unset(imp);
+			if(!ft_strcmp(g_cmds->cmd, "exit"))
+				ft_exit();
+			// exit(0);
+		// }
 			else
-				print_export(imp);
-		}
-		if (!ft_strcmp(g_cmds->cmd, "echo"))
+				ex_in_childs(imp, envp);
+
+
+		/*if (!ft_strcmp(g_cmds->cmd, "echo"))
 			impecho();
-		if (!ft_strcmp(g_cmds->cmd, "unset"))
-			ft_unset(imp);
-		if (!ft_strcmp(g_cmds->cmd, "cd"))
-			ft_cd(imp);
 		if (!ft_strcmp(g_cmds->cmd, "pwd"))
 			ft_pwd();
-		if(!ft_strcmp(g_cmds->cmd, "exit"))
-			ft_exit();
 		if(!ft_strcmp(g_cmds->cmd, "env"))
 			print_env(imp);
+		}
+		else
+			ft_execve(envp);*/
+		dup2(tmp_fd, 1);
+		//close(fd);
 	}
 	else
-		ft_execve(envp);
+	{
+		 if (g_cmds->is_builtin)
+        {
+                if (!ft_strcmp(g_cmds->cmd, "export"))
+                {
+                        if (g_cmds->options[1] != NULL)
+                                imp = manages_options(imp);
+                        else
+                                print_export(imp);
+                }
+                if (!ft_strcmp(g_cmds->cmd, "echo"))
+                        impecho();
+                if (!ft_strcmp(g_cmds->cmd, "unset"))
+                        ft_unset(imp);
+                if (!ft_strcmp(g_cmds->cmd, "cd"))
+                        ft_cd(imp);
+                if (!ft_strcmp(g_cmds->cmd, "pwd"))
+                        ft_pwd();
+                if(!ft_strcmp(g_cmds->cmd, "exit"))
+                        ft_exit();
+                if(!ft_strcmp(g_cmds->cmd, "env"))
+                        print_env(imp);
+        }
+        else
+		{
+                ft_execve(envp);
+				//printf("hamada");
+		}
+	}
 }
