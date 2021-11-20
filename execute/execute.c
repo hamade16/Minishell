@@ -106,21 +106,29 @@ void	execute(struct imp **imp, char **envp)
 				dup2(fd, 0);
 
 			}*/
-			if (g_cmds->mini_cmd->redir == 1)
-    		{
-				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT, 0644);
-        		tmp_fd = dup(1);
-        		dup2(fd, STDOUT_FILENO);
-       			//close(fd);
-    		}
-   			if (g_cmds->mini_cmd->redir == 2)
-    		{
-				 fd = open(g_cmds->mini_cmd->filename, O_RDONLY, 0);
-    			tmp_fd  = dup(0);
-   				 dup2(fd, STDIN_FILENO);
+			while (g_cmds->mini_cmd != NULL)
+			{
+				if (g_cmds->mini_cmd->redir == 1)
+    			{
+					fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        			tmp_fd = dup(1);
+        			dup2(fd, STDOUT_FILENO);
+       				close(fd);
+    			}
+   				if (g_cmds->mini_cmd->redir == 2)
+    			{
+					 fd = open(g_cmds->mini_cmd->filename, O_RDONLY, 0);
+    				tmp_fd  = dup(0);
+   					 dup2(fd, STDIN_FILENO);
 					printf ("\nhamade\n");
-    			//in = 0;
-    		}
+    				//in = 0;
+    			}
+				if (g_cmds->mini_cmd->next_mini != NULL)
+					g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
+				else 
+					break;
+				//printf("%s\n", g_cmds->mini_cmd->filename);
+			}
 		//printf("%d", g_cmds->is_builtin);
 			if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
 					print_export(imp);
@@ -145,8 +153,8 @@ void	execute(struct imp **imp, char **envp)
 		}
 		else
 			ft_execve(envp);*/
-		dup2(tmp_fd, 1);
 		//close(fd);
+		dup2(tmp_fd, 1);
 	}
 	else
 	{
