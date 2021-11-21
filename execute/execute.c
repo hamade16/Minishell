@@ -35,156 +35,94 @@ struct imp *init_options()
 	return (init);
 }
 
-struct imp **manages_options(struct imp **imp)
+void	type_redirection(int fd)
 {
-	struct imp *tmp;
-	struct imp	*init;
-	struct imp	*tmp1;
-	struct imp *tmp2;
-	int 		i;
-	struct imp *new;
-
-	
-	init = init_options();
-	tmp1 = init;
-	i = 0;
-
-	while (tmp1->next != NULL)
-	{ 
-		tmp = *imp; 
-		while (tmp != NULL && ft_strcmp(tmp1->key, tmp->key)){
-			tmp = tmp->next;
-			// printf("|%p| * |%s * %p|\n", tmp1->key, tmp->key, tmp->key);
-		}
-		if (tmp == NULL)
+	while (g_cmds->mini_cmd != NULL)
 		{
-			struct imp *t = *imp;
-			while (t->next)
-				t = t->next;
-			new = malloc(sizeof(struct imp));
-			new->key = tmp1->key;
-			new->value = tmp1->value;
-			if (tmp1->egale == 1)
-				new->egale = 1;
-			else
-				new->egale = 0;
-			new->next = NULL;
-			t->next = new;
-		}
-		else
-		{
-			if (tmp1->egale == 1)
+			if (g_cmds->mini_cmd->redir == 1)
+    		{
+				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    			dup2(fd, STDOUT_FILENO);
+    			close(fd);
+    		}
+   			if (g_cmds->mini_cmd->redir == 2)
+    		{
+				printf("********%s\n", g_cmds->mini_cmd->filename);
+				 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
+				 if (fd < 0)
+				 {
+				 	perror("g_cmds->mini_cmd->filename :") ;
+					break;
+				 }
+   				 dup2(fd, STDIN_FILENO);
+    		}
+			if (g_cmds->mini_cmd->redir == 3)
 			{
-				tmp->key = tmp1->key;
-				tmp->value = tmp1->value;
-				tmp->egale = 1;
+				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    			dup2(fd, STDOUT_FILENO);
+    			close(fd);
 			}
+			if (g_cmds->mini_cmd->next_mini != NULL)
+				g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
+			else 
+				break;
 		}
-		tmp1 = tmp1->next;
-	}
-	return (imp);
 }
 
-void	execute(struct imp **imp, char **envp)
+void	redirection(struct imp **imp, char **envp)
 {
 	int fd;
 	int pid;
 	int tmp_fd_out;
 	int tmp_fd_in;
+
+	tmp_fd_out = dup(1);
+    tmp_fd_in  = dup(0);
+	type_redirection(fd);
+	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
+				print_export(imp);
+	if (!ft_strcmp(g_cmds->cmd, "cd"))
+		ft_cd(imp);
+	if (!ft_strcmp(g_cmds->cmd, "unset"))
+		ft_unset(imp);
+	if(!ft_strcmp(g_cmds->cmd, "exit"))
+		ft_exit();
+	else
+		ex_in_childs(imp, envp);
+	close(fd);
+	dup2(tmp_fd_out, STDOUT_FILENO);
+	dup2(tmp_fd_in, STDIN_FILENO);
+}
+
+void	execute(struct imp **imp, char **envp)
+{
 	if (g_cmds->mini_cmd != NULL)
-	{
-		// pid = fork();
-		// if (!pid)
-		// {
-				//fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT, 0644);
-				//tmp_fd = dup(1);
-				//dup2(fd, 1);
-
-			//}
-			/*if (g_cmds->mini_cmd->redir == 2)
-			{
-				//tmp_fd = dup(0);
-				dup2(fd, 0);
-
-			}*/
-        			tmp_fd_out = dup(1);
-    				tmp_fd_in  = dup(0);
-			while (g_cmds->mini_cmd != NULL)
-			{
-				if (g_cmds->mini_cmd->redir == 1)
-    			{
-					fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        			dup2(fd, STDOUT_FILENO);
-       				close(fd);
-    			}
-   				if (g_cmds->mini_cmd->redir == 2)
-    			{
-					 fd = open(g_cmds->mini_cmd->filename, O_RDONLY, 0);
-   					 dup2(fd, STDIN_FILENO);
-    				//in = 0;
-    			}
-				if (g_cmds->mini_cmd->next_mini != NULL)
-					g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
-				else 
-					break;
-				//printf("%s\n", g_cmds->mini_cmd->filename);
-			}
-		//printf("%d", g_cmds->is_builtin);
-			if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
-					print_export(imp);
-			if (!ft_strcmp(g_cmds->cmd, "cd"))
-				ft_cd(imp);
-			if (!ft_strcmp(g_cmds->cmd, "unset"))
-				ft_unset(imp);
-			if(!ft_strcmp(g_cmds->cmd, "exit"))
-				ft_exit();
-			// exit(0);
-		// }
-			else
-				ex_in_childs(imp, envp);
-
-
-		/*if (!ft_strcmp(g_cmds->cmd, "echo"))
-			impecho();
-		if (!ft_strcmp(g_cmds->cmd, "pwd"))
-			ft_pwd();
-		if(!ft_strcmp(g_cmds->cmd, "env"))
-			print_env(imp);
-		}
-		else
-			ft_execve(envp);*/
-		//close(fd);
-		dup2(tmp_fd_out, STDOUT_FILENO);
-		dup2(tmp_fd_in, STDIN_FILENO);
-	}
+		redirection(imp, envp);
 	else
 	{
 		 if (g_cmds->is_builtin)
         {
-                if (!ft_strcmp(g_cmds->cmd, "export"))
-                {
-                        if (g_cmds->options[1] != NULL)
-                                imp = manages_options(imp);
-                        else
-                                print_export(imp);
-                }
-                if (!ft_strcmp(g_cmds->cmd, "echo"))
-                        impecho();
-                if (!ft_strcmp(g_cmds->cmd, "unset"))
-                        ft_unset(imp);
-                if (!ft_strcmp(g_cmds->cmd, "cd"))
-                        ft_cd(imp);
-                if (!ft_strcmp(g_cmds->cmd, "pwd"))
-                        ft_pwd();
-                if(!ft_strcmp(g_cmds->cmd, "exit"))
-                        ft_exit();
-                if(!ft_strcmp(g_cmds->cmd, "env"))
-                        print_env(imp);
+            if (!ft_strcmp(g_cmds->cmd, "export"))
+            {
+                if (g_cmds->options[1] != NULL)
+                    imp = manages_options(imp);
+                else
+                    print_export(imp);
+            }
+            if (!ft_strcmp(g_cmds->cmd, "echo"))
+                    impecho();
+            if (!ft_strcmp(g_cmds->cmd, "unset"))
+                    ft_unset(imp);
+            if (!ft_strcmp(g_cmds->cmd, "cd"))
+                    ft_cd(imp);
+            if (!ft_strcmp(g_cmds->cmd, "pwd"))
+                    ft_pwd();
+            if(!ft_strcmp(g_cmds->cmd, "exit"))
+                    ft_exit();
+            if(!ft_strcmp(g_cmds->cmd, "env"))
+                    print_env(imp);
         }
         else
-		{
-                ft_execve(envp);
-				//printf("hamada");
-		}
+            ft_execve(envp);
 	}
 }

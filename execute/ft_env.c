@@ -5,11 +5,6 @@ void    print_env(struct imp **imp)
     struct imp *tmp;
 
 	tmp = *imp;
-    /*while (tmp != NULL)
-    {
-        printf("%s\n", tmp->key);
-        tmp = tmp->next;
-    }*/
 	while (tmp != NULL)
 	{
         if (tmp->egale == 1)

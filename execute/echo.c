@@ -24,7 +24,7 @@ void    impecho()
         while (g_cmds->options[i] != NULL)
         {
             printf ("%s", g_cmds->options[i]);
-            if (g_cmds->options[i +1] != NULL)
+            if (g_cmds->options[i + 1] != NULL)
                 printf(" ");
             i++;
         }

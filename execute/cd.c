@@ -14,10 +14,11 @@ void    ft_cd(struct  imp **imp)
        }
        chdir(tmp->value);
    }
-   else if (chdir(g_cmds->options[0]) == -1)
+   else if (chdir(g_cmds->options[1]) == -1)
    {
-       ft_putstr_fd("bash: cd:", 1);
-       ft_putstr_fd(g_cmds->options[0], 1);
+       ft_putstr_fd("bash: cd: ", 1);
+       ft_putstr_fd(g_cmds->options[1], 1);
+	   ft_putstr_fd(": ", 1);
        perror("");
    }
 }

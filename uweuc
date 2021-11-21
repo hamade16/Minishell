@@ -3,13 +3,13 @@
 Makefile
 a
 b
+c
 desktop
 execute
 f1
 f2
 f4
 hamade
-jwj
 libft
 main.c
 minishell
@@ -21,4 +21,3 @@ shared_utils
 t
 todo.txt
 uweuc
-ye
