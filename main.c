@@ -12,15 +12,17 @@ int	main(int ac, char **argv, char **envp)
 	{
 		line = readline("minishell% ");
 
-		//printf("%s\n", line);
-		// if line is not empty
-		// add it to history
+		if (!line)
+		{
+			free(line);
+			exit(EXIT_SUCCESS);
+		}
 		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
 			handle_line(line);
+			// print_cmd(g_cmds);
 			execute(&imp, envp);
 		}
-		//printf("here\n");
 		if (!ft_strncmp(line, "exit", 4))
 		{
 			free(line);
