@@ -8,11 +8,16 @@ void    ft_cd(struct  imp **imp)
     tmp = *imp;
    if (g_cmds->options[1] == NULL)
    {
-       while (ft_strcmp(tmp->key, "HOME"))
+       while ((tmp != NULL) && ft_strcmp(tmp->key, "HOME"))
        {
            tmp = tmp->next;
        }
-       chdir(tmp->value);
+	   if (tmp ==  NULL)
+		{
+			ft_putstr_fd("bash: cd: HOME not set\n", 1);
+		}
+		else
+       		chdir(tmp->value);
    }
    else if (chdir(g_cmds->options[1]) == -1)
    {

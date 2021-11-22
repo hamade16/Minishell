@@ -38,49 +38,48 @@ struct imp *init_options()
 void	type_redirection(int fd)
 {
 	while (g_cmds->mini_cmd != NULL)
-		{
-			if (g_cmds->mini_cmd->redir == 1)
-    		{
-				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    			dup2(fd, STDOUT_FILENO);
-    			close(fd);
-    		}
-   			if (g_cmds->mini_cmd->redir == 2)
-    		{
-				printf("********%s\n", g_cmds->mini_cmd->filename);
-				 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
-				 if (fd < 0)
-				 {
-				 	perror("g_cmds->mini_cmd->filename :") ;
-					break;
-				 }
-   				 dup2(fd, STDIN_FILENO);
-    		}
-			if (g_cmds->mini_cmd->redir == 3)
-			{
-				fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-    			dup2(fd, STDOUT_FILENO);
-    			close(fd);
-			}
-			if (g_cmds->mini_cmd->next_mini != NULL)
-				g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
-			else 
+	{
+		if (g_cmds->mini_cmd->redir == 1)
+    	{
+			fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		dup2(fd, STDOUT_FILENO);
+    		close(fd);
+    	}
+   		if (g_cmds->mini_cmd->redir == 2)
+    	{
+			printf("********%s\n", g_cmds->mini_cmd->filename);
+			 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
+			 if (fd < 0)
+			 {
+			 	perror("g_cmds->mini_cmd->filename :") ;
 				break;
+			 }
+   			 dup2(fd, STDIN_FILENO);
+    	}
+		if (g_cmds->mini_cmd->redir == 3)
+		{
+			fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    		dup2(fd, STDOUT_FILENO);
+    		close(fd);
 		}
+		if (g_cmds->mini_cmd->next_mini != NULL)
+			g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
+		else 
+			break;
+	}
 }
 
 void	redirection(struct imp **imp, char **envp)
 {
 	int fd;
-	int pid;
 	int tmp_fd_out;
 	int tmp_fd_in;
 
 	tmp_fd_out = dup(1);
     tmp_fd_in  = dup(0);
 	type_redirection(fd);
-	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
-				print_export(imp);
+	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] != NULL))
+		imp = manages_options(imp);
 	if (!ft_strcmp(g_cmds->cmd, "cd"))
 		ft_cd(imp);
 	if (!ft_strcmp(g_cmds->cmd, "unset"))
@@ -123,6 +122,8 @@ void	execute(struct imp **imp, char **envp)
                     print_env(imp);
         }
         else
+		{
             ft_execve(envp);
+		}
 	}
 }

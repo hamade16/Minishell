@@ -100,7 +100,7 @@ void    ft_execve(char **envp)
 
 	}
 }
-
+/*
 void    ft_execve_red(char **envp)
 {
     char *pathname;
@@ -108,4 +108,4 @@ void    ft_execve_red(char **envp)
     execve(pathname, g_cmds->options, envp);
 	exit(0);
 	//exit(WEXITSTATUS(status));
-}
+}*/

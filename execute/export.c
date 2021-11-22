@@ -49,7 +49,6 @@ struct imp **manages_options(struct imp **imp)
 	
 	init = init_options();
 	tmp1 = init;
-	i = 0;
 
 	while (tmp1->next != NULL)
 	{ 
@@ -59,6 +58,26 @@ struct imp **manages_options(struct imp **imp)
 		}
 		if (tmp == NULL)
 		{
+			i = 0;
+			if (tmp1->key[i] == '-')
+			{
+				ft_putstr_fd("bash: export: ", 1);
+				ft_putstr_fd(tmp1->key, 1);
+				ft_putstr_fd(": invalid option\n", 1);
+				ft_putstr_fd("export: usage: export [-nf] [name[=value] ...] or export -p\n", 1);
+				return(imp);
+			}
+			while (tmp1->key[i])
+			{
+				if ((tmp1->key[i] != '_' && !ft_isalnum(tmp1->key[i])) || (tmp1->key[0] != '_' && !ft_isalpha(tmp1->key[0])))
+				{
+					ft_putstr_fd("bash: export: `", 1);
+					ft_putstr_fd(tmp1->key, 1);
+					ft_putstr_fd("\' : not a valid identifier\n", 1);
+					return (imp);
+				}
+				i++;
+			}
 			struct imp *t = *imp;
 			while (t->next)
 				t = t->next;
@@ -89,16 +108,39 @@ struct imp **manages_options(struct imp **imp)
 void print_export(struct imp **imp)
 {
 	struct imp *tmp;
+	int i;
+	int cmpt;
 
+	i = 0;
+	cmpt = 0;
 	tmp = *imp;
 	while (tmp != NULL)
 	{
+		i = 0;
+		if (tmp->value != NULL)
+		{
+			while (tmp->value[i])
+			{
+				if (tmp->value[i] == '\"')
+					cmpt++;
+				i++;
+			}
+		}
+		i = 0;
 		if(tmp->value != NULL)
 		{
 			printf ("declare -x ");
 			printf("%s", tmp->key);
 			printf ("=\"");
-			printf("%s", tmp->value);
+			if ((cmpt % 2) == 0)
+			{
+				while (tmp->value[i])
+				{
+					if (tmp->value[i] != '\"')
+						printf("%c", tmp->value[i]);
+					i++;
+				}
+			}
 			printf("\"\n");
 		}
 		else
