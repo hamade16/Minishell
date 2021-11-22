@@ -71,4 +71,6 @@ t_lst_cmd		*ft_lstmap(t_lst_cmd *l, void *(*f)(void *), void (*d)(void *));
 
 char			**ft_split_wq(char *s, char c);
 
+void			print_cmd(t_cmd *c);
+
 #endif

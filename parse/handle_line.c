@@ -307,14 +307,12 @@ void	ft_fill_it(t_cmd **head, char *line)
 void	handle_line(char *line)
 {
 	size_t		i;
-	size_t		j;
 	t_cmd		*cmd;
 	char		**cmds;
 
 	g_cmds = NULL;
 	cmd = NULL;
 	i = -1;
-	j = -1;
 	// ||
 	if (!check_quotes(line) || check_pipes(line) || check_redirections(line))
 	{

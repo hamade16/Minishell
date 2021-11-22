@@ -24,26 +24,34 @@ int	is_quoted(char *qs)
 static size_t	count_splitted_wq(char *s, char c)
 {
 	size_t	i;
-	size_t	pipes;
+	size_t	len;
 	int		quote;
 
-	i = -1;
-	pipes = 0;
+	i = 0;
+	len = 0;
 	quote = 0;
-	while (s[++i])
+	while (s[i])
 	{
-		if (s[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (s[i] == '"' && quote == 0)
-			quote = 2;
-		else if (s[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (s[i] == '"' && quote == 2)
-			quote = 0;
-		if (s[i] == c && quote == 0)
-			pipes++;
+		while (s[i] == c)
+			i++;
+		while (s[i] && s[i] != c)
+		{
+			if (s[i] == '\'' && quote == 0)
+				quote = 1;
+			else if (s[i] == '"' && quote == 0)
+				quote = 2;
+			else if (s[i] == '\'' == quote == 1)
+				quote = 0;
+			else if (s[i] == '"' && quote == 2)
+				quote = 0;
+			i++;
+		}
+		if (s[i - 1] != c && quote == 0)
+			len++;
+		if (s[i])
+			i++;
 	}
-	return (pipes);
+	return (len);
 }
 
 // TODO :
@@ -63,7 +71,7 @@ char	**ft_split_wq(char *s, char c)
 	j = 0;
 	start = 0;
 	quote = 0;
-	len = count_splitted_wq(s, c) + 1;
+	len = count_splitted_wq(s, c);
 	result = (char **)malloc(sizeof(char *) * (len + 1));
 	if (!result)
 		return (NULL);
