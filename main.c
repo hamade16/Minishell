@@ -20,9 +20,10 @@ int	main(int ac, char **argv, char **envp)
 		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
 			handle_line(line);
-			// print_cmd(g_cmds);
+			//print_cmd(g_cmds);
 			execute(&imp, envp);
 		}
+
 		if (!ft_strncmp(line, "exit", 4))
 		{
 			free(line);

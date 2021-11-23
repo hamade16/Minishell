@@ -6,6 +6,7 @@ struct imp *init_options()
 	struct imp *tmp;
 	int len;
 	int i;
+	char *opt;
 
 	i = 1;
 	len = 0;
@@ -15,11 +16,16 @@ struct imp *init_options()
 	{
 
 		tmp->next = malloc(sizeof(struct imp));
-		if (ft_strchr(g_cmds->options[i], '='))
+		opt = ft_strchr(g_cmds->options[i], '=');
+		if (opt)
 		{
-			len = ft_strchr(g_cmds->options[i], '=') - g_cmds->options[i];
+			len = opt - g_cmds->options[i];
 			tmp->key = ft_substr(g_cmds->options[i], 0, len);
-			tmp->value = ft_substr(g_cmds->options[i], len + 1, ft_strlen(g_cmds->options[i]));
+			if (opt[1] == '"' || opt[1] == '\'')
+				tmp->value = ft_substr(g_cmds->options[i], len + 1 + 1, ft_strlen(opt) - 1 - 2);
+			else
+				tmp->value = ft_substr(g_cmds->options[i], len + 1, ft_strlen(g_cmds->options[i]));
+
 			tmp->egale = 1;
 		}
 		else
@@ -35,7 +41,7 @@ struct imp *init_options()
 	return (init);
 }
 
-void	type_redirection(int fd)
+int	type_redirection(int fd)
 {
 	while (g_cmds->mini_cmd != NULL)
 	{
@@ -49,12 +55,16 @@ void	type_redirection(int fd)
     	{
 			printf("********%s\n", g_cmds->mini_cmd->filename);
 			 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
-			 if (fd < 0)
+			/*if (fd < 0)
 			 {
-			 	perror("g_cmds->mini_cmd->filename :") ;
+				ft_putstr_fd("bash:  ", 1);
+       			ft_putstr_fd(g_cmds->mini_cmd->filename, 1);
+	   			ft_putstr_fd(": ", 1);
+       			perror("");
 				break;
-			 }
+			 }*/
    			 dup2(fd, STDIN_FILENO);
+			close(fd);
     	}
 		if (g_cmds->mini_cmd->redir == 3)
 		{
@@ -67,9 +77,10 @@ void	type_redirection(int fd)
 		else 
 			break;
 	}
+	return (fd);
 }
 
-void	redirection(struct imp **imp, char **envp)
+int	redirection(struct imp **imp, char **envp)
 {
 	int fd;
 	int tmp_fd_out;
@@ -77,7 +88,14 @@ void	redirection(struct imp **imp, char **envp)
 
 	tmp_fd_out = dup(1);
     tmp_fd_in  = dup(0);
-	type_redirection(fd);
+	fd = type_redirection(fd);
+	if (fd < 0)
+	{
+		ft_putstr_fd("minishell:  ", 1);
+		ft_putstr_fd(g_cmds->mini_cmd->filename, 1);
+		ft_putstr_fd(": No such file or directory\n", 1);
+		return (0);
+	}
 	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] != NULL))
 		imp = manages_options(imp);
 	if (!ft_strcmp(g_cmds->cmd, "cd"))
@@ -91,12 +109,15 @@ void	redirection(struct imp **imp, char **envp)
 	close(fd);
 	dup2(tmp_fd_out, STDOUT_FILENO);
 	dup2(tmp_fd_in, STDIN_FILENO);
+	return (1);
 }
 
 void	execute(struct imp **imp, char **envp)
 {
+	int i;
+
 	if (g_cmds->mini_cmd != NULL)
-		redirection(imp, envp);
+		i = redirection(imp, envp);
 	else
 	{
 		 if (g_cmds->is_builtin)
@@ -123,7 +144,7 @@ void	execute(struct imp **imp, char **envp)
         }
         else
 		{
-            ft_execve(envp);
+            ft_execve(imp, envp);
 		}
 	}
 }

@@ -19,13 +19,13 @@ void    			ft_pwd();
 void    			ft_cd(struct imp **imp);
 void    			ft_exit();
 void    print_env(struct imp **imp);
-void    ft_execve(char **envp);
-char   *path_env(char **str);
+void    ft_execve(struct imp **imp, char **envp);
+char   *path_env(struct imp **imp);
 void	ex_in_childs(struct imp **imp, char **envp);
 void    ft_execve_red(char **envp);
 struct imp **manages_options(struct imp **imp);
 struct imp *init_options();
-void	type_redirection(int fd);
-void	redirection(struct imp **imp, char **envp);
+int	type_redirection(int fd);
+int	redirection(struct imp **imp, char **envp);
 
 #endif

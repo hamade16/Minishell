@@ -22,18 +22,31 @@ void	ft_free_split(char **tab)
 }
 
 
-char   *path_env(char **str)
+char   *path_env(struct imp **imp)
 {
     int i;
 
     i = 0;
-    while (str[i])
+	struct imp *tmp;
+
+	tmp = *imp;
+    while (tmp)
     {
-        if (ft_strncmp(str[i], "PATH=", 5) == 0)
+		//printf("hamade\n");
+        if (ft_strcmp(tmp->key, "PATH") == 0)
             break ;
-        i++;
+        tmp = tmp->next;
     }
-    return (str[i]);
+	//printf("hamade\n");
+	if (tmp == NULL)
+	{
+		ft_putstr_fd("minishell: ", 1);
+		ft_putstr_fd(g_cmds->cmd, 1);
+		ft_putstr_fd(": No such file or directory\n", 1);
+		exit(0);
+		return (0);
+	}
+    return (tmp->value);
 }
 
 void	error_command(char	*str)
@@ -51,7 +64,7 @@ void	ft_perror(char *cmd)
 	exit(127);
 }
 
-char    *research_path(char **envp)
+char    *research_path(struct imp **imp)
 {
     char	**path;
 	char	*pathname;
@@ -62,8 +75,8 @@ char    *research_path(char **envp)
 		error_command(NULL);
 	if (access(g_cmds->cmd, F_OK) == 0 && g_cmds->cmd[0] == '/')
 		return (ft_strdup(g_cmds->cmd));
-	path = ft_split(path_env(envp), ':');
-	path[0] = ft_strdup(ft_strrchr(path[0], '=') + 1);
+	path = ft_split(path_env(imp), ':');
+	//path[0] = ft_strdup(ft_strrchr(path[0], '=') + 1);
     //printf("%s\n", path[0]);
   //printf("hamade\n");
 	while (path[i])
@@ -81,7 +94,7 @@ char    *research_path(char **envp)
 
 }
 
-void    ft_execve(char **envp)
+void    ft_execve(struct imp **imp, char **envp)
 {
     char *pathname;
     int pid;
@@ -94,7 +107,7 @@ void    ft_execve(char **envp)
     //    if child
     if (pid == 0)
 	{
-    	pathname = research_path(envp);
+    	pathname = research_path(imp);
         execve(pathname, g_cmds->options, envp);
 		exit(0);
 
