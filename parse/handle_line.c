@@ -487,9 +487,7 @@ void	handle_line(char *line, struct imp *env)
 	// ||
 	if (!check_quotes(line) || check_pipes(line) || check_redirections(line) || check_vars(line))
 	{
-		tmp = line;
 		line = expand_it(line, env);
-		free(tmp);
 		cmds = ft_split_wq(line, '|');
 
 		// check empty splits
