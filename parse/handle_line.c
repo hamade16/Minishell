@@ -1,3 +1,4 @@
+#include "../execute/minishell_execute.h"
 #include "../minishell.h"
 #include <stdio.h>
 
@@ -14,6 +15,28 @@ int	check_quotes(char *str)
 	i = -1;
 	quote = 0;
 	while (str[++i])
+	{
+		if (str[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (str[i] == '"' && quote == 0)
+			quote = 2;
+		else if (str[i] == '\'' == quote == 1)
+			quote = 0;
+		else if (str[i] == '"' && quote == 2)
+			quote = 0;
+	}
+	return (quote);
+}
+
+int	check_quotes_ind(char *str, size_t len)
+{
+	size_t	i;
+	int		quote;
+
+	// check not closed quote
+	i = -1;
+	quote = 0;
+	while (str[++i] && i < len)
 	{
 		if (str[i] == '\'' && quote == 0)
 			quote = 1;
@@ -94,12 +117,34 @@ int	check_redirections(char *s)
 					if (s[i + 2] == '<')
 						return (0);
 			}
-			else if (s[i] == '$')
-			{
-				if (s[i + 1] != '?' || ft_isalpha(s[i + 1]))
-					return (0);
-			}
 		}
+	}
+	return (1);
+}
+
+int		check_vars(char *s)
+{
+	size_t	i;
+	int		quote;
+
+	i = 0;
+	quote = 0;
+	while (s[i])
+	{
+		if (s[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (s[i] == '"' && quote == 0)
+			quote = 2;
+		else if (s[i] == '\'' == quote == 1)
+			quote = 0;
+		else if (s[i] == '"' && quote == 2)
+			quote = 0;
+		if (s[i] == '$' && quote != 1)
+		{
+			if (s[i + 1] != '_' && !ft_isalpha(s[i + 1]))
+				return (0);
+		}
+		i++;
 	}
 	return (1);
 }
@@ -181,108 +226,120 @@ void	ft_append(char ***opt, char *newopt)
 	}
 }
 
-t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst)
-{
-	if (lst)
-		while (lst->next_mini)
-			lst = lst->next_mini;
-	return (lst);
-}
-
-void	ft_mini_addback(t_mini_cmd **head, t_mini_cmd *new)
-{
-	t_mini_cmd	*last;
-
-	if (head && new)
-	{
-		if (*head)
-		{
-			last = ft_mini_lstlast(*head);
-			last->next_mini = new;
-		}
-		else
-			*head = new;
-	}
-}
-
 void	ft_fill_it(t_cmd **head, char *line)
 {
 	size_t		i;
+	size_t		j;
+	size_t		k;
 	char		**parts;
 	t_cmd		*cmd;
 	t_cmd		*tmp;
 	t_mini_cmd	*mini;
+	char		*filename;
+	int			redirection;
 
 	i = 0;
 
 	tmp = malloc(sizeof(t_cmd));
 
 	tmp->text = ft_strdup(line);
+	tmp->cmd = NULL;
 	tmp->options = NULL;
 	tmp->mini_cmd = NULL;
 
 	mini = NULL;
+	filename = NULL;
+	redirection = 0;
 
 	parts = ft_split_wq(line, ' ');
 	while (parts[i])
 	{
-		if (i == 0) {
-			tmp->cmd = parts[i];
-			ft_append(&tmp->options, parts[i]);
-			if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
-				!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
-				!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
-				!ft_strcmp(tmp->cmd, "env") || !ft_strcmp(tmp->cmd, "exit"))
-				tmp->is_builtin = 1;
-			else
-				tmp->is_builtin = 0;
-		}
-		else {
-			// is option
-			if (parts[i][0] == '-')
-				ft_append(&tmp->options, parts[i]);
-			// is redirection
-			else if (parts[i][0] == '>')
+		j = 0;
+		while (parts[i][j])
+		{
+			// if redirection
+			if (parts[i][j] == '>')
 			{
-
-				mini = malloc(sizeof(t_mini_cmd));
-				mini->filename = NULL;
-				mini->redir = 0;
-				mini->next_mini = NULL;
-
-				if (!ft_strcmp(parts[i], ">>")) {
-					mini->redir = 3;
-				}
-				else
-					mini->redir = 1;
-			}
-			// is redirection
-			else if (parts[i][0] == '<')
-			{
-				mini = malloc(sizeof(t_mini_cmd));
-				mini->filename = NULL;
-				mini->redir = 0;
-				mini->next_mini = NULL;
-
-				if (!ft_strcmp(parts[i], "<<")) {
-					mini->redir = 4;
-				}
-				else
-					mini->redir = 2;
-			}
-			// is filename
-			else
-			{
-				if (mini)
+				// get type
+				if (parts[i][j + 1] == '>')
 				{
-					mini->filename = ft_strdup(parts[i]);
-
-					ft_mini_addback(&tmp->mini_cmd, mini);
+					redirection = 3;
+					j++;
 				}
 				else
 				{
-					ft_append(&tmp->options, parts[i]);
+					redirection = 1;
 				}
+				j++;
+			}
+			else if (parts[i][j] == '<')
+			{
+				// get type
+				if (parts[i][j + 1] == '<')
+				{
+					redirection = 4;
+					j++;
+				}
+				else
+				{
+					redirection = 2;
+				}
+				j++;
+			}
+			else if (parts[i][j] == '-')
+			{
+				k = j;
+				j++;
+				while (parts[i][j] && parts[i][j] != '<' && parts[i][j] != '>')
+					j++;
+				if (tmp->cmd == NULL)
+				{
+					tmp->cmd = ft_substr(parts[i], k, j - k);
+					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
+					if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
+						!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
+						!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
+						!ft_strcmp(tmp->cmd, "env") || !ft_strcmp(tmp->cmd, "exit"))
+						tmp->is_builtin = 1;
+					else
+						tmp->is_builtin = 0;
+				}
+				else
+					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
+			}
+			else
+			{
+				k = j;
+				// TODO
+				if (parts[i][j] == '\'' || parts[i][j] == '"')
+					j++;
+				while (parts[i][j] && ((parts[i][j] != '<' && parts[i][j] != '>') || check_quotes_ind(parts[i], j)))
+					j++;
+				if (tmp->cmd == NULL)
+				{
+					tmp->cmd = ft_substr(parts[i], k, j - k);
+					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
+					if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
+						!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
+						!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
+						!ft_strcmp(tmp->cmd, "env") || !ft_strcmp(tmp->cmd, "exit"))
+						tmp->is_builtin = 1;
+					else
+						tmp->is_builtin = 0;
+				}
+				else if (redirection)
+				{
+					filename = ft_substr(parts[i], k, j - k);
+					ft_mini_addback(&tmp->mini_cmd, filename, redirection);
+					free(filename);
+					filename = NULL;
+					redirection = 0;
+				}
+				else
+				{
+					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
+				}
+				// j++;
 			}
 		}
 		i++;
@@ -302,20 +359,135 @@ void	ft_fill_it(t_cmd **head, char *line)
 	}
 }
 
-// TODO :
-	// ls a
-void	handle_line(char *line)
+char	*expand_it(char *s, struct imp *env)
+{
+	size_t	i;
+	size_t	j;
+	size_t	size;
+	size_t	var_size;
+	int		quote;
+	char	*res;
+	char	*var_key;
+	struct imp *head;
+
+	head = env;
+	i = 0;
+	size = 0;
+	var_size = 0;
+	quote = 0;
+	var_key = NULL;
+	res = NULL;
+
+	while (s[i])
+	{
+		if (s[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (s[i] == '"' && quote == 0)
+			quote = 2;
+		else if (s[i] == '\'' == quote == 1)
+			quote = 0;
+		else if (s[i] == '"' && quote == 2)
+			quote = 0;
+		
+		if (s[i] == '$')
+		{
+			i++;
+			var_size++;
+			if (ft_isalpha(s[i]) || s[i] == '_')
+			{
+				i++;
+				var_size++;
+				while (ft_isalnum(s[i]))
+				{
+					var_size++;
+					i++;
+				}
+			}
+
+			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
+			while (env)
+			{
+				if (ft_strcmp(var_key, env->key) == 0)
+					size += ft_strlen(env->value);
+				env = env->next;
+			}
+		}
+
+		if (s[i])
+		{
+			size++;
+			i++;
+		}
+	}
+
+	i = 0;
+	j = 0;
+	var_size = 0;
+	quote = 0;
+	res = malloc(sizeof(char) * size + 1);
+
+	while (s[i])
+	{
+		if (s[i] == '\'' && quote == 0)
+			quote = 1;
+		else if (s[i] == '"' && quote == 0)
+			quote = 2;
+		else if (s[i] == '\'' == quote == 1)
+			quote = 0;
+		else if (s[i] == '"' && quote == 2)
+			quote = 0;
+		
+		if (s[i] == '$' && quote != 1)
+		{
+			i++;
+			var_size++;
+			if (ft_isalpha(s[i]) || s[i] == '_')
+			{
+				i++;
+				var_size++;
+				while (ft_isalnum(s[i]))
+				{
+					var_size++;
+					i++;
+				}
+			}
+
+			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
+			while (head)
+			{
+				if (ft_strcmp(var_key, head->key) == 0)
+				{
+					ft_strlcpy(res+j, head->value, ft_strlen(head->value) + 1);
+					j += ft_strlen(head->value);
+				}
+				head = head->next;
+			}
+		}
+		else
+		{
+			res[j] = s[i];
+			j++;
+			i++;
+		}
+	}
+	res[j] = '\0';
+	return (res);
+}
+
+void	handle_line(char *line, struct imp *env)
 {
 	size_t		i;
 	t_cmd		*cmd;
 	char		**cmds;
+	char		*tmp;
 
 	g_cmds = NULL;
 	cmd = NULL;
 	i = -1;
 	// ||
-	if (!check_quotes(line) || check_pipes(line) || check_redirections(line))
+	if (!check_quotes(line) || check_pipes(line) || check_redirections(line) || check_vars(line))
 	{
+		line = expand_it(line, env);
 		cmds = ft_split_wq(line, '|');
 
 		// check empty splits

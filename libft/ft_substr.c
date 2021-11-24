@@ -12,6 +12,9 @@
 
 #include "libft.h"
 
+/*
+ * len should not consider \0
+ */
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	i;

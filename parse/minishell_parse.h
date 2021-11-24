@@ -57,7 +57,7 @@ typedef struct s_lst_cmd {
 	struct s_lst_cmd	*next;
 }				t_lst_cmd;
 
-void			handle_line(char *s);
+void			handle_line(char *s, struct imp *env);
 void			ft_lstprint(t_lst_cmd *list);
 t_lst_cmd		*ft_lstnew(void *content);
 void			ft_lstadd_front(t_lst_cmd **alst, t_lst_cmd *new);
@@ -68,6 +68,8 @@ void			ft_lstdelone(t_lst_cmd *lst, void (*del)(void *));
 void			ft_lstclear(t_lst_cmd **lst, void (*del)(void *));
 void			ft_lstiter(t_lst_cmd *lst, void (*f)(void *));
 t_lst_cmd		*ft_lstmap(t_lst_cmd *l, void *(*f)(void *), void (*d)(void *));
+t_mini_cmd		*ft_mini_lstlast(t_mini_cmd *lst);
+void			ft_mini_addback(t_mini_cmd **head, char *f, int r);
 
 char			**ft_split_wq(char *s, char c);
 

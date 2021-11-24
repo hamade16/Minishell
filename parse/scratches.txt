@@ -64,3 +64,6 @@ ls -l > a -a
 > a ls -l > b -a
 > a	> b ls
 > a	> b ls -l
+
+
+$variable
