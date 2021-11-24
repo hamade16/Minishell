@@ -51,6 +51,7 @@ char   *path_env(struct imp **imp)
 
 void	error_command(char	*str)
 {
+	ft_putstr_fd("minishell: ", 1);
 	if (str)
 		ft_putstr_fd(str, 2);
 	ft_putstr_fd(" : command not found\n", 2);

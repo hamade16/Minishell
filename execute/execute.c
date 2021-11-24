@@ -53,17 +53,11 @@ int	type_redirection(int fd)
     	}
    		if (g_cmds->mini_cmd->redir == 2)
     	{
-			printf("********%s\n", g_cmds->mini_cmd->filename);
+			//printf("********%s\n", g_cmds->mini_cmd->filename);
 			 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
-			/*if (fd < 0)
-			 {
-				ft_putstr_fd("bash:  ", 1);
-       			ft_putstr_fd(g_cmds->mini_cmd->filename, 1);
-	   			ft_putstr_fd(": ", 1);
-       			perror("");
-				break;
-			 }*/
-   			 dup2(fd, STDIN_FILENO);
+			if (fd < 0)
+				return (fd);
+   			dup2(fd, STDIN_FILENO);
 			close(fd);
     	}
 		if (g_cmds->mini_cmd->redir == 3)
@@ -72,6 +66,25 @@ int	type_redirection(int fd)
     		dup2(fd, STDOUT_FILENO);
     		close(fd);
 		}
+		if (g_cmds->mini_cmd->redir == 4)
+    	{
+			//printf("********%s\n", g_cmds->mini_cmd->filename);
+			
+			fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
+			while (1)
+			{
+				char *line;
+   				line = readline("> ");
+				if (ft_strcmp(line, g_cmds->mini_cmd->filename))
+					ft_putendl_fd(line, fd);
+				if(!ft_strcmp(line, g_cmds->mini_cmd->filename))
+					break;
+			}
+			close(fd);
+			fd = open("/tmp/heredocfile", O_RDONLY);
+			dup2(fd, STDIN_FILENO);
+			close(fd);
+    	}
 		if (g_cmds->mini_cmd->next_mini != NULL)
 			g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
 		else 
@@ -91,9 +104,11 @@ int	redirection(struct imp **imp, char **envp)
 	fd = type_redirection(fd);
 	if (fd < 0)
 	{
+		dup2(tmp_fd_out, STDOUT_FILENO);
 		ft_putstr_fd("minishell:  ", 1);
 		ft_putstr_fd(g_cmds->mini_cmd->filename, 1);
 		ft_putstr_fd(": No such file or directory\n", 1);
+		//dup2(tmp_fd_in, STDIN_FILENO);
 		return (0);
 	}
 	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] != NULL))
