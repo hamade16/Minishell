@@ -4,7 +4,6 @@ int	main(int ac, char **argv, char **envp)
 {
 	char		*line;
 	struct imp	*imp;
-	struct imp	*imp_env;
 
 	g_cmds = NULL;
 	imp = gere_exp(envp);
@@ -19,7 +18,7 @@ int	main(int ac, char **argv, char **envp)
 		}
 		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
-			handle_line(line);
+			handle_line(line, imp);
 			// print_cmd(g_cmds);
 			execute(&imp, envp);
 		}
