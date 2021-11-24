@@ -117,11 +117,6 @@ int	check_redirections(char *s)
 					if (s[i + 2] == '<')
 						return (0);
 			}
-			else if (s[i] == '$')
-			{
-				if (s[i + 1] != '?' || ft_isalpha(s[i + 1]))
-					return (0);
-			}
 		}
 	}
 	return (1);
@@ -228,36 +223,6 @@ void	ft_append(char ***opt, char *newopt)
 		}
 		(*opt)[i] = newopt;
 		(*opt)[i + 1] = NULL;
-	}
-}
-
-t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst)
-{
-	if (lst)
-		while (lst->next_mini)
-			lst = lst->next_mini;
-	return (lst);
-}
-
-void	ft_mini_addback(t_mini_cmd **head, char *f, int r)
-{
-	t_mini_cmd	*last;
-	t_mini_cmd	*new;
-
-	new = malloc(sizeof(t_mini_cmd));
-	new->filename = ft_strdup(f);
-	new->redir = r;
-	new->next_mini = NULL;
-
-	if (head && new)
-	{
-		if (*head)
-		{
-			last = ft_mini_lstlast(*head);
-			last->next_mini = new;
-		}
-		else
-			*head = new;
 	}
 }
 

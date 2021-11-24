@@ -68,6 +68,8 @@ void			ft_lstdelone(t_lst_cmd *lst, void (*del)(void *));
 void			ft_lstclear(t_lst_cmd **lst, void (*del)(void *));
 void			ft_lstiter(t_lst_cmd *lst, void (*f)(void *));
 t_lst_cmd		*ft_lstmap(t_lst_cmd *l, void *(*f)(void *), void (*d)(void *));
+t_mini_cmd		*ft_mini_lstlast(t_mini_cmd *lst);
+void			ft_mini_addback(t_mini_cmd **head, char *f, int r);
 
 char			**ft_split_wq(char *s, char c);
 

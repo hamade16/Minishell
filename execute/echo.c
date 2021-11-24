@@ -6,9 +6,11 @@ void    impecho()
     int j;
 
     i = 1;
+	if (!g_cmds->options[i])
+		printf("\n");
 	while (g_cmds->options[i])
 	{	j = 0;
-		if (g_cmds->options[i][j] == '-')
+		if (g_cmds->options[i][j] == '-' && g_cmds->options[i][j + 1] == 'n')
 		{
 			j++;
 			while (g_cmds->options[i][j] && g_cmds->options[i][j] == 'n')
@@ -39,38 +41,26 @@ void    impecho()
        		        printf(" ");
        		    i++;
        		}
-			if (g_cmds->options[1][0] != '-')
-				printf("\n");
 		}
 	}
-    /*if (g_cmds->options[i][j] == '-')
-    {
-		j++;
-        while (g_cmds->options[i][j] && g_cmds->options[i][j] == 'n')
-            j++;
-		if (g_cmds->options[i][j] != NULL)
+	j = 0;
+	if (g_cmds->options[1])
+	{
+		if (g_cmds->options[1][j] == '-')
 		{
-       		 while (g_cmds->options[i] != NULL)
-       		 {
-       		     printf("%s", g_cmds->options[i]);
-       		     if (g_cmds->options[i + 1] != NULL)
-       		         printf(" ");
-       		     i++;
-       		 }
+			j++;
+			while (g_cmds->options[1][j])
+			{
+				if (g_cmds->options[1][j] != 'n')
+				{
+					printf("\n");
+					break;
+				}
+				j++;
+			}
 		}
-		else
-			i++;
-    }
-    else
-    {
-        while (g_cmds->options[i] != NULL)
-        {
-            printf ("%s", g_cmds->options[i]);
-            if (g_cmds->options[i + 1] != NULL)
-                printf(" ");
-            i++;
-        }
-        printf("\n");
-    }*/
+		else 
+			printf("\n");
+	}
 
 }

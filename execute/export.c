@@ -45,13 +45,22 @@ struct imp **manages_options(struct imp **imp)
 	struct imp *tmp2;
 	int 		i;
 	struct imp *new;
+	int tm;
 
 	
 	init = init_options();
 	tmp1 = init;
-
+	if (tmp1->key[0] == '-')
+	{
+		ft_putstr_fd("minishell: export: ", 1);
+		ft_putstr_fd(tmp1->key, 1);
+		ft_putstr_fd(": invalid option\n", 1);
+		ft_putstr_fd("export: usage: export [-nf] [name[=value] ...] or export -p\n", 1);
+		return(imp);
+	}
 	while (tmp1->next != NULL)
 	{ 
+		tm = 0;
 		tmp = *imp; 
 		while (tmp != NULL && ft_strcmp(tmp1->key, tmp->key)){
 			tmp = tmp->next;
@@ -59,37 +68,34 @@ struct imp **manages_options(struct imp **imp)
 		if (tmp == NULL)
 		{
 			i = 0;
-			if (tmp1->key[i] == '-')
-			{
-				ft_putstr_fd("bash: export: ", 1);
-				ft_putstr_fd(tmp1->key, 1);
-				ft_putstr_fd(": invalid option\n", 1);
-				ft_putstr_fd("export: usage: export [-nf] [name[=value] ...] or export -p\n", 1);
-				return(imp);
-			}
 			while (tmp1->key[i])
 			{
 				if ((tmp1->key[i] != '_' && !ft_isalnum(tmp1->key[i])) || (tmp1->key[0] != '_' && !ft_isalpha(tmp1->key[0])))
 				{
-					ft_putstr_fd("bash: export: `", 1);
+					ft_putstr_fd("minishell: export: `", 1);
 					ft_putstr_fd(tmp1->key, 1);
 					ft_putstr_fd("\' : not a valid identifier\n", 1);
-					return (imp);
+					tm = 1;
+					break;
+					//return (imp);
 				}
 				i++;
 			}
-			struct imp *t = *imp;
-			while (t->next)
-				t = t->next;
-			new = malloc(sizeof(struct imp));
-			new->key = tmp1->key;
-			new->value = tmp1->value;
-			if (tmp1->egale == 1)
-				new->egale = 1;
-			else
-				new->egale = 0;
-			new->next = NULL;
-			t->next = new;
+			if (tm == 0)
+			{
+				struct imp *t = *imp;
+				while (t->next)
+					t = t->next;
+				new = malloc(sizeof(struct imp));
+				new->key = tmp1->key;
+				new->value = tmp1->value;
+				if (tmp1->egale == 1)
+					new->egale = 1;
+				else
+					new->egale = 0;
+				new->next = NULL;
+				t->next = new;
+			}
 		}
 		else
 		{

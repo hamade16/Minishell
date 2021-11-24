@@ -53,7 +53,7 @@ void	ex_in_childs(struct imp **imp, char **envp)
 			}
 		}
 		else
-			ft_execve(envp);
+			ft_execve(imp, envp);
 	}
 	//wait(&pid);
 }
