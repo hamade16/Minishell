@@ -43,6 +43,38 @@ struct imp *init_options()
 
 int	type_redirection(int fd)
 {
+	int heredoc = 0;
+	t_mini_cmd *c = g_cmds->mini_cmd;
+
+	while(c)
+	{
+		if (c->redir == 4)
+		{
+			heredoc = 1;
+			fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
+			while (1)
+			{
+				char *line;
+				line = readline("> ");
+				printf("|%s| |%s|\n", line, c->filename);
+				if (ft_strcmp(line, c->filename))
+					ft_putendl_fd(line, fd);
+				else
+					break;
+			}
+			c = c->next_mini;
+			close(fd);
+		}
+		else
+			c = c->next_mini;
+	}
+	if (heredoc == 1)
+	{
+		fd = open("/tmp/heredocfile", O_RDONLY);
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+		//heredoc = 0;
+	}
 	while (g_cmds->mini_cmd != NULL)
 	{
 		if (g_cmds->mini_cmd->redir == 1)
@@ -66,27 +98,8 @@ int	type_redirection(int fd)
     		dup2(fd, STDOUT_FILENO);
     		close(fd);
 		}
-		if (g_cmds->mini_cmd->redir == 4)
-    	{
-			//printf("********%s\n", g_cmds->mini_cmd->filename);
-			
-			fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
-			while (1)
-			{
-				char *line;
-   				line = readline("> ");
-				if (ft_strcmp(line, g_cmds->mini_cmd->filename))
-					ft_putendl_fd(line, fd);
-				if(!ft_strcmp(line, g_cmds->mini_cmd->filename))
-					break;
-			}
-			close(fd);
-			fd = open("/tmp/heredocfile", O_RDONLY);
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-    	}
 		if (g_cmds->mini_cmd->next_mini != NULL)
-			g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
+		 	g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
 		else 
 			break;
 	}
