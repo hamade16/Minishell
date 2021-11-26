@@ -7,28 +7,25 @@ int	main(int ac, char **argv, char **envp)
 
 	g_cmds = NULL;
 	imp = gere_exp(envp);
+	error = 0;
 	while (1)
 	{
 		line = readline("minishell% ");
 
-		if (!line)
-		{
-			free(line);
-			exit(EXIT_SUCCESS);
-		}
-		if (*line && ft_strlen(ft_strtrim(line, " ")) > 0) {
+		if (line && *line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
 			handle_line(line, imp);
 			// print_cmd(g_cmds);
 			execute(&imp, envp);
+			free(line);
 		}
 
-		if (!ft_strncmp(line, "exit", 4))
+		if (!line)
 		{
-			free(line);
+			if (line)
+				free(line);
 			exit(EXIT_SUCCESS);
 		}
-		free(line);
 	}
 	return (0);
 }

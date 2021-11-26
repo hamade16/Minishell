@@ -25,7 +25,7 @@ int	check_quotes(char *str)
 		else if (str[i] == '"' && quote == 2)
 			quote = 0;
 	}
-	return (quote);
+	return (!quote);
 }
 
 int	check_quotes_ind(char *str, size_t len)
@@ -36,7 +36,7 @@ int	check_quotes_ind(char *str, size_t len)
 	// check not closed quote
 	i = -1;
 	quote = 0;
-	while (str[++i] && i < len)
+	while (str[++i] && i < len + 1)
 	{
 		if (str[i] == '\'' && quote == 0)
 			quote = 1;
@@ -50,6 +50,12 @@ int	check_quotes_ind(char *str, size_t len)
 	return (quote);
 }
 
+// TODO
+	// unquote then check last pipe
+/*
+ * double pipes
+ * pipe is the last thing (not quoted)
+ */
 int	check_pipes(char *l)
 {
 	size_t	i;
@@ -73,9 +79,19 @@ int	check_pipes(char *l)
 				return (0);
 		}
 	}
+	size_t len = ft_strlen(ft_strtrim(l, " "));
+	if (ft_strtrim(l, " ")[len - 1] == '|')
+		return (0);
 	return (1);
 }
 
+/*
+ * check some errors
+ * ||, <>, ><, <<>, >><, <<<, >>>
+ * $ [a-zA-Z][?]
+ * on error 0
+ * on success 1
+ */
 int	check_redirections(char *s)
 {
 	size_t	i;
@@ -94,10 +110,6 @@ int	check_redirections(char *s)
 			quote = 0;
 		else if (s[i] == '"' && quote == 2)
 			quote = 0;
-
-		// check some errors
-		// ||, <>, ><, <<>, >><, <<<, >>>
-		// $ [a-zA-Z][?]
 
 		if (quote == 0)
 		{
@@ -122,6 +134,10 @@ int	check_redirections(char *s)
 	return (1);
 }
 
+/*
+ * on error 0
+ * on success 1
+ */
 int		check_vars(char *s)
 {
 	size_t	i;
@@ -141,7 +157,7 @@ int		check_vars(char *s)
 			quote = 0;
 		if (s[i] == '$' && quote != 1)
 		{
-			if (s[i + 1] != '_' && !ft_isalpha(s[i + 1]))
+			if (s[i + 1] != '?' && s[i + 1] != '_' && !ft_isalpha(s[i + 1]))
 				return (0);
 		}
 		i++;
@@ -162,7 +178,7 @@ int		check_empty_pipes(char **cmds)
 		flag = 0;
 		while (cmds[i][++j])
 		{
-			if (ft_isalnum(cmds[i][j]))
+			if (cmds[i][j] != ' ')
 				flag = 1;
 		}
 		if (!flag)
@@ -251,7 +267,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 	filename = NULL;
 	redirection = 0;
 
-	parts = ft_split_wq(line, ' ');
+	parts = ft_split_wq(line, ' ', 0, 0);
 	while (parts[i])
 	{
 		j = 0;
@@ -370,7 +386,6 @@ char	*expand_it(char *s, struct imp *env)
 	char	*var_key;
 	struct imp *head;
 
-	head = env;
 	i = 0;
 	size = 0;
 	var_size = 0;
@@ -389,11 +404,11 @@ char	*expand_it(char *s, struct imp *env)
 		else if (s[i] == '"' && quote == 2)
 			quote = 0;
 		
-		if (s[i] == '$')
+		if (s[i] == '$' && quote != 1)
 		{
 			i++;
-			var_size++;
-			if (ft_isalpha(s[i]) || s[i] == '_')
+			var_size = 1;
+			if (ft_isalpha(s[i]) || s[i] == '_' || s[i] == '?')
 			{
 				i++;
 				var_size++;
@@ -405,11 +420,14 @@ char	*expand_it(char *s, struct imp *env)
 			}
 
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
-			while (env)
+			head = env;
+			while (head)
 			{
-				if (ft_strcmp(var_key, env->key) == 0)
-					size += ft_strlen(env->value);
-				env = env->next;
+				if (ft_strcmp(var_key, head->key) == 0)
+				{
+					size += ft_strlen(head->value);
+				}
+				head = head->next;
 			}
 		}
 
@@ -440,8 +458,8 @@ char	*expand_it(char *s, struct imp *env)
 		if (s[i] == '$' && quote != 1)
 		{
 			i++;
-			var_size++;
-			if (ft_isalpha(s[i]) || s[i] == '_')
+			var_size = 1;
+			if (ft_isalpha(s[i]) || s[i] == '_' || s[i] == '?')
 			{
 				i++;
 				var_size++;
@@ -453,6 +471,7 @@ char	*expand_it(char *s, struct imp *env)
 			}
 
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
+			head = env;
 			while (head)
 			{
 				if (ft_strcmp(var_key, head->key) == 0)
@@ -474,6 +493,10 @@ char	*expand_it(char *s, struct imp *env)
 	return (res);
 }
 
+// TODO
+	// fix checks
+		// check unclosed quotes
+	// remove quotes
 void	handle_line(char *line, struct imp *env)
 {
 	size_t		i;
@@ -484,15 +507,20 @@ void	handle_line(char *line, struct imp *env)
 	g_cmds = NULL;
 	cmd = NULL;
 	i = -1;
-	// ||
-	if (!check_quotes(line) || check_pipes(line) || check_redirections(line) || check_vars(line))
+	// printf("%d\n", check_quotes(line));
+	// printf("%d\n", check_pipes(line));
+	// printf("%d\n", check_redirections(line));
+	// printf("%d\n\n", check_vars(line));
+	if (check_quotes(line) && check_pipes(line) && check_redirections(line) && check_vars(line))
 	{
 		line = expand_it(line, env);
-		cmds = ft_split_wq(line, '|');
+		cmds = ft_split_wq(line, '|', 0, 0);
 
+		// printf("%d\n", check_empty_pipes(cmds));
+		// printf("%d\n\n", check_in_redirections(cmds));
 		// check empty splits
 		// check wrong redirections
-		if (check_empty_pipes(cmds) || check_in_redirections(cmds))
+		if (check_empty_pipes(cmds) && check_in_redirections(cmds))
 		{
 			while (cmds[++i])
 			{
@@ -504,5 +532,5 @@ void	handle_line(char *line, struct imp *env)
 			printf("minishell: syntax error\n");
 	}
 	else
-		printf("minishell: forbidden error\n");
+		printf("minishell: syntax error\n");
 }

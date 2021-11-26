@@ -49,7 +49,7 @@ typedef struct s_cmd {
 	char				is_builtin;
 	struct s_mini_cmd	*mini_cmd;
 	struct s_cmd		*next_cmd;
-	char				error;
+	unsigned int		error;
 }				t_cmd;
 
 typedef struct s_lst_cmd {
@@ -71,7 +71,8 @@ t_lst_cmd		*ft_lstmap(t_lst_cmd *l, void *(*f)(void *), void (*d)(void *));
 t_mini_cmd		*ft_mini_lstlast(t_mini_cmd *lst);
 void			ft_mini_addback(t_mini_cmd **head, char *f, int r);
 
-char			**ft_split_wq(char *s, char c);
+char			**ft_split_wq(char *s, char c, size_t i, size_t j);
+int				check_quotes_ind(char *str, size_t len);
 
 void			print_cmd(t_cmd *c);
 
