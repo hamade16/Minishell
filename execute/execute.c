@@ -144,35 +144,38 @@ void	execute(struct imp **imp, char **envp)
 {
 	int i;
 
-	if (g_cmds->mini_cmd != NULL)
-		i = redirection(imp, envp);
-	else
+	if (!ft_strcmp(g_cmds->error, 0))
 	{
-		 if (g_cmds->is_builtin)
-        {
-            if (!ft_strcmp(g_cmds->cmd, "export"))
-            {
-                if (g_cmds->options[1] != NULL)
-                    imp = manages_options(imp);
-                else
-                    print_export(imp);
-            }
-            if (!ft_strcmp(g_cmds->cmd, "echo"))
-                    impecho();
-            if (!ft_strcmp(g_cmds->cmd, "unset"))
-                    ft_unset(imp);
-            if (!ft_strcmp(g_cmds->cmd, "cd"))
-                    ft_cd(imp);
-            if (!ft_strcmp(g_cmds->cmd, "pwd"))
-                    ft_pwd();
-            if(!ft_strcmp(g_cmds->cmd, "exit"))
-                    ft_exit();
-            if(!ft_strcmp(g_cmds->cmd, "env"))
-                    print_env(imp);
-        }
-        else
+		if (g_cmds->mini_cmd != NULL)
+			i = redirection(imp, envp);
+		else
 		{
-            ft_execve(imp, envp);
+			if (g_cmds->is_builtin)
+			{
+				if (!ft_strcmp(g_cmds->cmd, "export"))
+				{
+					if (g_cmds->options[1] != NULL)
+						imp = manages_options(imp);
+					else
+						print_export(imp);
+				}
+				if (!ft_strcmp(g_cmds->cmd, "echo"))
+						impecho();
+				if (!ft_strcmp(g_cmds->cmd, "unset"))
+						ft_unset(imp);
+				if (!ft_strcmp(g_cmds->cmd, "cd"))
+						ft_cd(imp);
+				if (!ft_strcmp(g_cmds->cmd, "pwd"))
+						ft_pwd();
+				if(!ft_strcmp(g_cmds->cmd, "exit"))
+						ft_exit();
+				if(!ft_strcmp(g_cmds->cmd, "env"))
+						print_env(imp);
+			}
+			else
+			{
+				ft_execve(imp, envp);
+			}
 		}
 	}
 }
