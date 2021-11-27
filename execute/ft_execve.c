@@ -40,9 +40,9 @@ char   *path_env(struct imp **imp)
 	//printf("hamade\n");
 	if (tmp == NULL)
 	{
-		ft_putstr_fd("minishell: ", 1);
-		ft_putstr_fd(g_cmds->cmd, 1);
-		ft_putstr_fd(": No such file or directory\n", 1);
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(g_cmds->cmd, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		exit(0);
 		return (0);
 	}
@@ -51,7 +51,7 @@ char   *path_env(struct imp **imp)
 
 void	error_command(char	*str)
 {
-	ft_putstr_fd("minishell: ", 1);
+	ft_putstr_fd("minishell: ", 2);
 	if (str)
 		ft_putstr_fd(str, 2);
 	ft_putstr_fd(" : command not found\n", 2);
@@ -77,9 +77,6 @@ char    *research_path(struct imp **imp)
 	if (access(g_cmds->cmd, F_OK) == 0 && g_cmds->cmd[0] == '/')
 		return (ft_strdup(g_cmds->cmd));
 	path = ft_split(path_env(imp), ':');
-	//path[0] = ft_strdup(ft_strrchr(path[0], '=') + 1);
-    //printf("%s\n", path[0]);
-  //printf("hamade\n");
 	while (path[i])
 	{
 		pathname = ft_strjoin_char(path[i], g_cmds->cmd, '/');
@@ -114,12 +111,3 @@ void    ft_execve(struct imp **imp, char **envp)
 
 	}
 }
-/*
-void    ft_execve_red(char **envp)
-{
-    char *pathname;
-    pathname = research_path(envp);
-    execve(pathname, g_cmds->options, envp);
-	exit(0);
-	//exit(WEXITSTATUS(status));
-}*/

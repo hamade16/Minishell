@@ -7,7 +7,7 @@ int	main(int ac, char **argv, char **envp)
 
 	g_cmds = NULL;
 	imp = gere_exp(envp);
-	error = 0;
+	//error = 0;
 	while (1)
 	{
 		line = readline("minishell% ");

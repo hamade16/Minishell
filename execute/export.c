@@ -52,10 +52,11 @@ struct imp **manages_options(struct imp **imp)
 	tmp1 = init;
 	if (tmp1->key[0] == '-')
 	{
-		ft_putstr_fd("minishell: export: ", 1);
-		ft_putstr_fd(tmp1->key, 1);
-		ft_putstr_fd(": invalid option\n", 1);
-		ft_putstr_fd("export: usage: export [-nf] [name[=value] ...] or export -p\n", 1);
+		ft_putstr_fd("minishell: export: ", 2);
+		ft_putchar_fd(tmp1->key[0], 2);
+		ft_putchar_fd(tmp1->key[1], 2);
+		ft_putstr_fd(": invalid option\n", 2);
+		ft_putstr_fd("export: usage: export [-nf] [name[=value] ...] or export -p\n", 2);
 		return(imp);
 	}
 	while (tmp1->next != NULL)
@@ -72,9 +73,9 @@ struct imp **manages_options(struct imp **imp)
 			{
 				if ((tmp1->key[i] != '_' && !ft_isalnum(tmp1->key[i])) || (tmp1->key[0] != '_' && !ft_isalpha(tmp1->key[0])))
 				{
-					ft_putstr_fd("minishell: export: `", 1);
-					ft_putstr_fd(tmp1->key, 1);
-					ft_putstr_fd("\' : not a valid identifier\n", 1);
+					ft_putstr_fd("minishell: export: `", 2);
+					ft_putstr_fd(tmp1->key, 2);
+					ft_putstr_fd("\' : not a valid identifier\n", 2);
 					tm = 1;
 					break;
 					//return (imp);

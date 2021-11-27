@@ -56,7 +56,7 @@ int	type_redirection(int fd)
 			{
 				char *line;
 				line = readline("> ");
-				printf("|%s| |%s|\n", line, c->filename);
+				//printf("|%s| |%s|\n", line, c->filename);
 				if (ft_strcmp(line, c->filename))
 					ft_putendl_fd(line, fd);
 				else
@@ -118,9 +118,9 @@ int	redirection(struct imp **imp, char **envp)
 	if (fd < 0)
 	{
 		dup2(tmp_fd_out, STDOUT_FILENO);
-		ft_putstr_fd("minishell:  ", 1);
-		ft_putstr_fd(g_cmds->mini_cmd->filename, 1);
-		ft_putstr_fd(": No such file or directory\n", 1);
+		ft_putstr_fd("minishell:  ", 2);
+		ft_putstr_fd(g_cmds->mini_cmd->filename, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		//dup2(tmp_fd_in, STDIN_FILENO);
 		return (0);
 	}

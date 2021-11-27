@@ -16,7 +16,7 @@ void        print_export(struct imp **tmp2);
 void    	impecho();
 struct imp  		**ft_unset(struct imp **imp);
 void    			ft_pwd();
-void    			ft_cd(struct imp **imp);
+int    			ft_cd(struct imp **imp);
 void    			ft_exit();
 void    print_env(struct imp **imp);
 void    ft_execve(struct imp **imp, char **envp);
