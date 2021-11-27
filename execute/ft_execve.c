@@ -41,7 +41,7 @@ char   *path_env(struct imp **imp)
 	if (tmp == NULL)
 	{
 		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(g_cmds->cmd, 2);
+		ft_putstr_fd(g_global->lst->cmd, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 		exit(0);
 		return (0);
@@ -72,20 +72,20 @@ char    *research_path(struct imp **imp)
 	int		i;
 
 	i = 0;
-	if (!g_cmds->cmd)
+	if (!g_global->lst->cmd)
 		error_command(NULL);
-	if (access(g_cmds->cmd, F_OK) == 0 && g_cmds->cmd[0] == '/')
-		return (ft_strdup(g_cmds->cmd));
+	if (access(g_global->lst->cmd, F_OK) == 0 && g_global->lst->cmd[0] == '/')
+		return (ft_strdup(g_global->lst->cmd));
 	path = ft_split(path_env(imp), ':');
 	while (path[i])
 	{
-		pathname = ft_strjoin_char(path[i], g_cmds->cmd, '/');
+		pathname = ft_strjoin_char(path[i], g_global->lst->cmd, '/');
 		if (access(pathname, F_OK) == 0)
 			break ;
 		i++;
 		free(pathname);
 		if (path[i] == 0)
-			error_command(g_cmds->cmd);
+			error_command(g_global->lst->cmd);
 	}
 	ft_free_split(path);
 	return (pathname);
@@ -106,7 +106,7 @@ void    ft_execve(struct imp **imp, char **envp)
     if (pid == 0)
 	{
     	pathname = research_path(imp);
-        execve(pathname, g_cmds->options, envp);
+        execve(pathname, g_global->lst->options, envp);
 		exit(0);
 
 	}

@@ -1,0 +1,123 @@
+echo
+echo a
+echo	tab
+echo "	tab	"
+echo		tab
+echo hello world
+echo -n
+echo -n a
+echo -n hello world
+echo -nnnnnnnn
+echo -nnnnnnnn a
+echo -nnnnnnnn hello world
+echo -nnnnnnnn -nnnnnnnn
+echo -nnnnnnnn -nnnnnnnn a
+echo -nnnnnnnn -nnnnnnnn hello world
+echo -nk hello
+echo -nnnnnnnnnnk hello
+echo -nknknknk hello
+echo hello -n
+echo hello -nnnnnnn
+echo hello -nknknknknk
+echo hello -nnnnnnnnn -nnnnnnnnn
+echo \-n hello
+echo "-n" hello
+echo '-n' hello
+echo "-n" "hello"
+echo '-n' 'hello'
+echo \-\n \h\e\l\l\o
+echo '\-\n' '\h\e\l\l\o'
+echo "\-\n" "\h\e\l\l\o"
+echo $PATH
+echo "$PATH"
+echo '$PATH'
+echo \$PATH
+echo "\$PATH"
+echo '\$PATH'
+echo a "" b "" c
+echo a "$NO_SUCH_ENV" b $NO_SUCH_ENV c, unset NO_SUCH_ENV
+echo		hello
+echo \"$\"
+echo "$ $ $ $ $ $ "
+echo "\$\$USER\\$USER""$USER"
+echo $
+echo \$USER
+echo \\$USER
+echo \\\$USER
+echo \\\\$USER
+exit 0
+exit 1
+exit -1
+exit 2147483647
+exit 2147483648
+exit -2147483648
+exit -2147483649
+exit 9223372036854775807
+exit 9223372036854775808
+exit -9223372036854775808
+exit -9223372036854775809
+exit -- 42
+exit "        42           "
+exit -- -- 42
+exit --42
+exit ++42
+exit 42 42
+exit a
+exit 1a
+exit +
+exit -
+exit "          "
+echo $
+echo "$"
+echo  '$'
+echo \$
+echo "\$"
+export =
+echo $OLDPWD
+echo $OLDPWD, export OLDPWD=/
+echo $PWD
+echo $PWD, export PWD=/
+pwd
+pwd, export PWD=/
+> file
+echo hello 2147483647> file
+echo hello 2147483648> file
+echo $SHLVL, export SHLVL=0
+echo $SHLVL, export SHLVL=998
+echo $SHLVL, export SHLVL=999
+echo $SHLVL, export SHLVL=1000
+echo $SHLVL, export SHLVL=+42
+echo $SHLVL, export SHLVL=-1
+echo $SHLVL, export SHLVL=4294967295
+echo $SHLVL, export SHLVL=4294967296
+echo $SHLVL, export SHLVL=-4294967296
+echo $SHLVL, export SHLVL=-4294967297
+echo $SHLVL, export SHLVL=a
+echo $SHLVL, export SHLVL=`printf "\t\n\v\f\r 42"`
+echo $SHLVL, export SHLVL=`printf " 42 "`
+echo $SHLVL, export SHLVL=`printf " 42\t"`
+echo $SHLVL, export SHLVL=`printf " 42\v"`
+echo $SHLVL, export SHLVL=`printf " 42\n"`
+echo $SHLVL, export SHLVL=`printf " 42\f"`
+echo $SHLVL, export SHLVL=`printf " 42\r"`
+/bin/ls, touch a .a
+/bin/ls -a, touch a .a
+ls, touch a .a
+ls -a, touch a .a
+no_such_file
+./no_such_file
+/bin/ls/no_such_file
+/bin/no_such_dir/file
+dir, mkdir dir
+./dir, mkdir dir
+>
+>>
+>>>
+>>>>
+<
+< >
+cat < >
+echo '
+echo "
+unset 1
+unset ' \"$&`\n'

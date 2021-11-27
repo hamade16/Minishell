@@ -9,7 +9,7 @@ int    ft_cd(struct  imp **imp)
 
     tmp = *imp;
 	str = ft_strdup("");
-   if (g_cmds->options[1] == NULL)
+   if (g_global->lst->options[1] == NULL)
    {
        while ((tmp != NULL) && ft_strcmp(tmp->key, "HOME"))
        {
@@ -46,10 +46,10 @@ int    ft_cd(struct  imp **imp)
 			return (0);
 		}
    }
-   else if (chdir(g_cmds->options[1]) == -1)
+   else if (chdir(g_global->lst->options[1]) == -1)
    {
        ft_putstr_fd("minishell: cd: ", 2);
-       ft_putstr_fd(g_cmds->options[1], 2);
+       ft_putstr_fd(g_global->lst->options[1], 2);
 	   ft_putstr_fd(": ", 2);
        perror("");
 	   return (0);

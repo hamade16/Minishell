@@ -12,25 +12,25 @@ struct imp *init_options()
 	len = 0;
 	init = malloc(sizeof(struct imp));
 	tmp = init;
-	while (g_cmds->options[i])
+	while (g_global->lst->options[i])
 	{
 
 		tmp->next = malloc(sizeof(struct imp));
-		opt = ft_strchr(g_cmds->options[i], '=');
+		opt = ft_strchr(g_global->lst->options[i], '=');
 		if (opt)
 		{
-			len = opt - g_cmds->options[i];
-			tmp->key = ft_substr(g_cmds->options[i], 0, len);
+			len = opt - g_global->lst->options[i];
+			tmp->key = ft_substr(g_global->lst->options[i], 0, len);
 			if (opt[1] == '"' || opt[1] == '\'')
-				tmp->value = ft_substr(g_cmds->options[i], len + 1 + 1, ft_strlen(opt) - 1 - 2);
+				tmp->value = ft_substr(g_global->lst->options[i], len + 1 + 1, ft_strlen(opt) - 1 - 2);
 			else
-				tmp->value = ft_substr(g_cmds->options[i], len + 1, ft_strlen(g_cmds->options[i]));
+				tmp->value = ft_substr(g_global->lst->options[i], len + 1, ft_strlen(g_global->lst->options[i]));
 
 			tmp->egale = 1;
 		}
 		else
 		{
-			tmp->key = g_cmds->options[i];
+			tmp->key = g_global->lst->options[i];
 			tmp->value = NULL;
 			tmp->egale = 0;
 		}
@@ -44,7 +44,7 @@ struct imp *init_options()
 int	type_redirection(int fd)
 {
 	int heredoc = 0;
-	t_mini_cmd *c = g_cmds->mini_cmd;
+	t_mini_cmd *c = g_global->lst->mini_cmd;
 
 	while(c)
 	{
@@ -75,31 +75,31 @@ int	type_redirection(int fd)
 		close(fd);
 		//heredoc = 0;
 	}
-	while (g_cmds->mini_cmd != NULL)
+	while (g_global->lst->mini_cmd != NULL)
 	{
-		if (g_cmds->mini_cmd->redir == 1)
+		if (g_global->lst->mini_cmd->redir == 1)
     	{
-			fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			fd = open(g_global->lst->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     		dup2(fd, STDOUT_FILENO);
     		close(fd);
     	}
-   		if (g_cmds->mini_cmd->redir == 2)
+   		if (g_global->lst->mini_cmd->redir == 2)
     	{
-			//printf("********%s\n", g_cmds->mini_cmd->filename);
-			 fd = open(g_cmds->mini_cmd->filename, O_RDONLY);
+			//printf("********%s\n", g_global->lst->mini_cmd->filename);
+			 fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
 			if (fd < 0)
 				return (fd);
    			dup2(fd, STDIN_FILENO);
 			close(fd);
     	}
-		if (g_cmds->mini_cmd->redir == 3)
+		if (g_global->lst->mini_cmd->redir == 3)
 		{
-			fd = open(g_cmds->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fd = open(g_global->lst->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
     		dup2(fd, STDOUT_FILENO);
     		close(fd);
 		}
-		if (g_cmds->mini_cmd->next_mini != NULL)
-		 	g_cmds->mini_cmd = g_cmds->mini_cmd->next_mini;
+		if (g_global->lst->mini_cmd->next_mini != NULL)
+		 	g_global->lst->mini_cmd = g_global->lst->mini_cmd->next_mini;
 		else 
 			break;
 	}
@@ -119,18 +119,18 @@ int	redirection(struct imp **imp, char **envp)
 	{
 		dup2(tmp_fd_out, STDOUT_FILENO);
 		ft_putstr_fd("minishell:  ", 2);
-		ft_putstr_fd(g_cmds->mini_cmd->filename, 2);
+		ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 		//dup2(tmp_fd_in, STDIN_FILENO);
 		return (0);
 	}
-	if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] != NULL))
+	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
 		imp = manages_options(imp);
-	if (!ft_strcmp(g_cmds->cmd, "cd"))
+	if (!ft_strcmp(g_global->lst->cmd, "cd"))
 		ft_cd(imp);
-	if (!ft_strcmp(g_cmds->cmd, "unset"))
+	if (!ft_strcmp(g_global->lst->cmd, "unset"))
 		ft_unset(imp);
-	if(!ft_strcmp(g_cmds->cmd, "exit"))
+	if(!ft_strcmp(g_global->lst->cmd, "exit"))
 		ft_exit();
 	else
 		ex_in_childs(imp, envp);
@@ -144,32 +144,32 @@ void	execute(struct imp **imp, char **envp)
 {
 	int i;
 
-	if (!ft_strcmp(g_cmds->error, 0))
+	if (!ft_strcmp(g_global->error, "0"))
 	{
-		if (g_cmds->mini_cmd != NULL)
+		if (g_global->lst->mini_cmd != NULL)
 			i = redirection(imp, envp);
 		else
 		{
-			if (g_cmds->is_builtin)
+			if (g_global->lst->is_builtin)
 			{
-				if (!ft_strcmp(g_cmds->cmd, "export"))
+				if (!ft_strcmp(g_global->lst->cmd, "export"))
 				{
-					if (g_cmds->options[1] != NULL)
+					if (g_global->lst->options[1] != NULL)
 						imp = manages_options(imp);
 					else
 						print_export(imp);
 				}
-				if (!ft_strcmp(g_cmds->cmd, "echo"))
+				if (!ft_strcmp(g_global->lst->cmd, "echo"))
 						impecho();
-				if (!ft_strcmp(g_cmds->cmd, "unset"))
+				if (!ft_strcmp(g_global->lst->cmd, "unset"))
 						ft_unset(imp);
-				if (!ft_strcmp(g_cmds->cmd, "cd"))
+				if (!ft_strcmp(g_global->lst->cmd, "cd"))
 						ft_cd(imp);
-				if (!ft_strcmp(g_cmds->cmd, "pwd"))
+				if (!ft_strcmp(g_global->lst->cmd, "pwd"))
 						ft_pwd();
-				if(!ft_strcmp(g_cmds->cmd, "exit"))
+				if(!ft_strcmp(g_global->lst->cmd, "exit"))
 						ft_exit();
-				if(!ft_strcmp(g_cmds->cmd, "env"))
+				if(!ft_strcmp(g_global->lst->cmd, "env"))
 						print_env(imp);
 			}
 			else

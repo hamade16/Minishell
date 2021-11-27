@@ -21,12 +21,12 @@ struct imp **ft_unset(struct imp **imp)
     struct imp *prev;
 
     i = 1;
-    if(g_cmds->options[1] == NULL)
+    if(g_global->lst->options[1] == NULL)
         return (imp);
-    while (g_cmds->options[i])
+    while (g_global->lst->options[i])
     {
         //tmp = *imp;
-        if (!(ft_strcmp((*imp)->key, g_cmds->options[i])))
+        if (!(ft_strcmp((*imp)->key, g_global->lst->options[i])))
         {
             tmp = *imp;
             (*imp) = (*imp)->next;
@@ -35,7 +35,7 @@ struct imp **ft_unset(struct imp **imp)
         else 
         {
             tmp = *imp;
-            while (tmp != NULL && ft_strcmp(tmp->key, g_cmds->options[i]))
+            while (tmp != NULL && ft_strcmp(tmp->key, g_global->lst->options[i]))
             {
                 prev = tmp;
                 tmp = tmp->next;

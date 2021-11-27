@@ -21,6 +21,6 @@
 # include <dirent.h>
 
 // Global Variable
-t_cmd		*g_cmds;
+t_global		*g_global;
 
 #endif

@@ -2,28 +2,37 @@
 
 void	print_cmd(t_cmd *c)
 {
-	printf("\n\n--------------\n");
-	printf("command name : [%s]\n", c->cmd);
-	printf("is implemented : [%d]\n", c->is_builtin);
-	if (c->options)
+	if (!c)
+		printf("NULL\n--------------\n\n");
+	while (c)
 	{
-		printf("options are\n");
-		for (int i = 0; c->options[i]; i++)
+		printf("\n\n--------------\n");
+		printf("full command   : [%s]\n", c->text);
+		printf("command name   : [%s]\n", c->cmd);
+		printf("is implemented : [%d]\n", c->is_builtin);
+		if (c->options)
 		{
-			printf("\t%d [%s]\n", i+1, c->options[i]);
+			printf("options are\n");
+			for (int i = 0; c->options[i]; i++)
+			{
+				printf("\t%d [%s]\n", i+1, c->options[i]);
+			}
 		}
-	}
-	if (c->mini_cmd)
-	{
-		printf("redirections are\n");
-		while (c->mini_cmd)
+		if (c->mini_cmd)
 		{
-			printf("\t[%d]\n", c->mini_cmd->redir);
-			printf("\t[%s]\n", c->mini_cmd->filename);
-			c->mini_cmd = c->mini_cmd->next_mini;
+			printf("redirections are\n");
+			while (c->mini_cmd)
+			{
+				printf("\t[%d]\n", c->mini_cmd->redir);
+				printf("\t[%s]\n", c->mini_cmd->filename);
+				c->mini_cmd = c->mini_cmd->next_mini;
+			}
 		}
+		printf("\n--------------\n\n");
+		printf("exit status : %s\n", g_global->error);
+		printf("\n--------------\n\n");
+		c = c->next_cmd;
 	}
-	printf("\n--------------\n\n");
 }
 
 t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst)

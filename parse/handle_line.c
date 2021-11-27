@@ -25,6 +25,8 @@ int	check_quotes(char *str)
 		else if (str[i] == '"' && quote == 2)
 			quote = 0;
 	}
+	if (quote != 0)
+		g_global->error = "256";
 	return (!quote);
 }
 
@@ -190,22 +192,15 @@ int		check_empty_pipes(char **cmds)
 /*
  * redirection at the end
  */
-int		check_in_redirections(char **cmds)
+int		check_in_redirections(char *cmd)
 {
-	size_t	i;
-	size_t	j;
 	char	*trimmd;
 	size_t	len;
 
-	i = -1;
-	while (cmds[++i])
-	{
-		j = 0;
-		trimmd = ft_strtrim(cmds[i], " ");
-		len = ft_strlen(trimmd);
-		if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
-			return (0);
-	}
+	trimmd = ft_strtrim(cmd, " ");
+	len = ft_strlen(trimmd);
+	if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
+		return (0);
 	return (1);
 }
 
@@ -363,15 +358,15 @@ void	ft_fill_it(t_cmd **head, char *line)
 	tmp->next_cmd = NULL;
 
 	if (*head == NULL)
+	{
 		*head = tmp;
+		printf("here 1\n");
+	}
 	else
 	{
-		cmd = *head;
-		while (cmd->next_cmd)
-		{
-			cmd = cmd->next_cmd;
-		}
-		cmd->next_cmd = tmp;
+		free(*head);
+		*head = tmp;
+		printf("here 2\n");
 	}
 }
 
@@ -388,7 +383,6 @@ char	*expand_it(char *s, struct imp *env)
 
 	i = 0;
 	size = 0;
-	var_size = 0;
 	quote = 0;
 	var_key = NULL;
 	res = NULL;
@@ -412,11 +406,12 @@ char	*expand_it(char *s, struct imp *env)
 			{
 				i++;
 				var_size++;
-				while (ft_isalnum(s[i]))
-				{
-					var_size++;
-					i++;
-				}
+				if (s[i - 1] == '?')
+					while (ft_isalnum(s[i]))
+					{
+						i++;
+						var_size++;
+					}
 			}
 
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
@@ -424,10 +419,13 @@ char	*expand_it(char *s, struct imp *env)
 			while (head)
 			{
 				if (ft_strcmp(var_key, head->key) == 0)
-				{
 					size += ft_strlen(head->value);
-				}
 				head = head->next;
+			}
+			if (ft_strcmp(var_key, "?") == 0)
+			{
+				size += ft_strlen(g_global->error);
+				// printf("[1] %s\n",var_key);
 			}
 		}
 
@@ -440,7 +438,6 @@ char	*expand_it(char *s, struct imp *env)
 
 	i = 0;
 	j = 0;
-	var_size = 0;
 	quote = 0;
 	res = malloc(sizeof(char) * size + 1);
 
@@ -463,11 +460,12 @@ char	*expand_it(char *s, struct imp *env)
 			{
 				i++;
 				var_size++;
-				while (ft_isalnum(s[i]))
-				{
-					var_size++;
-					i++;
-				}
+				if (s[i - 1] != '?')
+					while (ft_isalnum(s[i]))
+					{
+						i++;
+						var_size++;
+					}
 			}
 
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
@@ -480,6 +478,12 @@ char	*expand_it(char *s, struct imp *env)
 					j += ft_strlen(head->value);
 				}
 				head = head->next;
+			}
+			if (ft_strcmp(var_key, "?") == 0)
+			{
+				ft_strlcpy(res+j, g_global->error, ft_strlen(g_global->error) + 1);
+				// printf("[2] %s\n", g_global->error);
+				j += ft_strlen(g_global->error);
 			}
 		}
 		else
@@ -494,43 +498,31 @@ char	*expand_it(char *s, struct imp *env)
 }
 
 // TODO
-	// fix checks
-		// check unclosed quotes
 	// remove quotes
+	// stop at pipes
+	// stop at semicolon
 void	handle_line(char *line, struct imp *env)
 {
-	size_t		i;
-	t_cmd		*cmd;
-	char		**cmds;
-	char		*tmp;
-
-	g_cmds = NULL;
-	cmd = NULL;
-	i = -1;
-	// printf("%d\n", check_quotes(line));
-	// printf("%d\n", check_pipes(line));
-	// printf("%d\n", check_redirections(line));
-	// printf("%d\n\n", check_vars(line));
 	if (check_quotes(line) && check_pipes(line) && check_redirections(line) && check_vars(line))
 	{
 		line = expand_it(line, env);
-		cmds = ft_split_wq(line, '|', 0, 0);
-
-		// printf("%d\n", check_empty_pipes(cmds));
-		// printf("%d\n\n", check_in_redirections(cmds));
 		// check empty splits
 		// check wrong redirections
-		if (check_empty_pipes(cmds) && check_in_redirections(cmds))
+		if (check_in_redirections(line))
 		{
-			while (cmds[++i])
-			{
-				// get data and fill head
-				ft_fill_it(&g_cmds, cmds[i]);
-			}
+			// get data and fill head
+			ft_fill_it(&g_global->lst, line);
+			g_global->error = "0";
 		}
 		else
+		{
+			g_global->error = "258";
 			printf("minishell: syntax error\n");
+		}
 	}
 	else
+	{
+		g_global->error = "258";
 		printf("minishell: syntax error\n");
+	}
 }

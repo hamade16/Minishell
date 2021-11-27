@@ -8,9 +8,9 @@ void	ex_in_childs(struct imp **imp, char **envp)
 
 	//if (!pid)
 	{
-		if (g_cmds->is_builtin)
+		if (g_global->lst->is_builtin)
 		{
-			if (!ft_strcmp(g_cmds->cmd, "echo"))
+			if (!ft_strcmp(g_global->lst->cmd, "echo"))
 			{
 				pid = fork();
 				if (pid == 0)
@@ -21,7 +21,7 @@ void	ex_in_childs(struct imp **imp, char **envp)
 				waitpid(pid, NULL, 0);
 
 			}
-			if (!ft_strcmp(g_cmds->cmd, "pwd"))
+			if (!ft_strcmp(g_global->lst->cmd, "pwd"))
 			{
 				pid = fork();
 				if (pid == 0)
@@ -31,7 +31,7 @@ void	ex_in_childs(struct imp **imp, char **envp)
 				}
 				waitpid(pid, NULL, 0);
 			}
-			if(!ft_strcmp(g_cmds->cmd, "env"))
+			if(!ft_strcmp(g_global->lst->cmd, "env"))
 			{
 				pid = fork();
 				if (pid == 0)
@@ -41,7 +41,7 @@ void	ex_in_childs(struct imp **imp, char **envp)
 				}
 				waitpid(pid, NULL, 0);
 			}
-			if (!ft_strcmp(g_cmds->cmd, "export") && (g_cmds->options[1] == NULL))
+			if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] == NULL))
 			{
 				pid = fork();
 				if (pid == 0)
