@@ -402,7 +402,7 @@ char	*expand_it(char *s, struct imp *env)
 			{
 				i++;
 				var_size++;
-				if (s[i - 1] == '?')
+				if (s[i - 1] != '?')
 					while (ft_isalnum(s[i]))
 					{
 						i++;
@@ -415,13 +415,14 @@ char	*expand_it(char *s, struct imp *env)
 			while (head)
 			{
 				if (ft_strcmp(var_key, head->key) == 0)
+				{
 					size += ft_strlen(head->value);
+				}
 				head = head->next;
 			}
 			if (ft_strcmp(var_key, "?") == 0)
 			{
 				size += ft_strlen(g_global->error);
-				// printf("[1] %s\n",var_key);
 			}
 		}
 
@@ -478,7 +479,6 @@ char	*expand_it(char *s, struct imp *env)
 			if (ft_strcmp(var_key, "?") == 0)
 			{
 				ft_strlcpy(res+j, g_global->error, ft_strlen(g_global->error) + 1);
-				// printf("[2] %s\n", g_global->error);
 				j += ft_strlen(g_global->error);
 			}
 		}
@@ -497,6 +497,7 @@ char	*expand_it(char *s, struct imp *env)
 	// remove quotes
 	// stop at pipes
 	// stop at semicolon
+	// handle dollar sign alone
 void	handle_line(char *line, struct imp *env)
 {
 	if (check_quotes(line) && check_pipes(line) && check_redirections(line) && check_vars(line))
@@ -513,12 +514,12 @@ void	handle_line(char *line, struct imp *env)
 		else
 		{
 			g_global->error = "258";
-			printf("minishell: syntax error\n");
+			printf("minishell: syntax error2\n");
 		}
 	}
 	else
 	{
 		g_global->error = "258";
-		printf("minishell: syntax error\n");
+		printf("minishell: syntax error1\n");
 	}
 }
