@@ -97,7 +97,6 @@ int	check_pipes(char *l)
 int	check_redirections(char *s)
 {
 	size_t	i;
-	size_t	j;
 	int		quote;
 
 	i = -1;
@@ -243,7 +242,6 @@ void	ft_fill_it(t_cmd **head, char *line)
 	size_t		j;
 	size_t		k;
 	char		**parts;
-	t_cmd		*cmd;
 	t_cmd		*tmp;
 	t_mini_cmd	*mini;
 	char		*filename;
@@ -360,13 +358,11 @@ void	ft_fill_it(t_cmd **head, char *line)
 	if (*head == NULL)
 	{
 		*head = tmp;
-		printf("here 1\n");
 	}
 	else
 	{
 		free(*head);
 		*head = tmp;
-		printf("here 2\n");
 	}
 }
 

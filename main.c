@@ -17,7 +17,7 @@ int	main(int ac, char **argv, char **envp)
 		if (line && *line && ft_strlen(ft_strtrim(line, " ")) > 0) {
 			add_history(line);
 			handle_line(line, imp);
-			print_cmd(g_global->lst);
+			// print_cmd(g_global->lst);
 			execute(&imp, envp);
 			free(line);
 		}
