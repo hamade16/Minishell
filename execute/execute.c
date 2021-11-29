@@ -150,7 +150,11 @@ int	redirection(struct imp **imp, char **envp)
 		return (0);
 	}
 	if (fd == 0)
-		return (0);
+	{
+		dup2(tmp_fd_out, STDOUT_FILENO);
+		dup2(tmp_fd_in, STDIN_FILENO);
+		return(0);
+	}
 	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
 		imp = manages_options(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "cd"))
