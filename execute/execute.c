@@ -79,6 +79,18 @@ int	type_redirection(int fd)
 	{
 		if (g_global->lst->mini_cmd->redir == 1)
     	{
+			if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
+			{
+				//printf ("hamade\n");
+				if (access(g_global->lst->mini_cmd->filename, W_OK))
+				{
+					ft_putstr_fd("minishell: ", 2);
+					ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
+					ft_putstr_fd(": Permission denied\n", 2);
+					g_global->error = ft_strdup("1");
+					return (0);
+				}
+			}
 			fd = open(g_global->lst->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     		dup2(fd, STDOUT_FILENO);
     		close(fd);
@@ -86,7 +98,19 @@ int	type_redirection(int fd)
    		if (g_global->lst->mini_cmd->redir == 2)
     	{
 			//printf("********%s\n", g_global->lst->mini_cmd->filename);
-			 fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
+			if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
+			{
+				//printf ("hamade\n");
+				if (access(g_global->lst->mini_cmd->filename, R_OK))
+				{
+					ft_putstr_fd("minishell: ", 2);
+					ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
+					ft_putstr_fd(": Permission denied\n", 2);
+					g_global->error = ft_strdup("1");
+					return (0);
+				}
+			}
+			fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
 			if (fd < 0)
 				return (fd);
    			dup2(fd, STDIN_FILENO);
@@ -125,6 +149,8 @@ int	redirection(struct imp **imp, char **envp)
 		//dup2(tmp_fd_in, STDIN_FILENO);
 		return (0);
 	}
+	if (fd == 0)
+		return (0);
 	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
 		imp = manages_options(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "cd"))

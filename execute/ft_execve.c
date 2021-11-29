@@ -84,8 +84,8 @@ char    *research_path(struct imp **imp)
 			break ;
 		i++;
 		free(pathname);
-		if (path[i] == 0)
-			error_command(g_global->lst->cmd);
+		/*if (path[i] == 0)
+			error_command(g_global->lst->cmd);*/
 	}
 	if (path[i] == NULL)
 		return (NULL);
@@ -137,11 +137,26 @@ int    ft_execve(struct imp **imp, char **envp)
 	else 
 	{
     	pathname = research_path(imp);
-		if (pathname == NULL)
+		if ((pathname == NULL) && ft_strchr(g_global->lst->cmd, '/'))
 		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(g_global->lst->cmd, 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
 			g_global->error = ft_strdup("127");
 			return (0);
 		}
+		if (pathname == NULL)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(g_global->lst->cmd, 2);
+			ft_putstr_fd(": command not found\n", 2);
+			g_global->error = ft_strdup("127");
+			return (0);
+		}
+		/*if (g_global->lst->options[1])
+		{
+			if 
+		}*/
 		/*if (g_global->lst->options[1])
 		{
 			if (access((g_global->lst->options[1]), F_OK) != 0)
@@ -159,7 +174,6 @@ int    ft_execve(struct imp **imp, char **envp)
     	wait(0);
     	if (pid == 0)
 		{
-			printf("hamade\n");
     	   if (execve(pathname, g_global->lst->options, envp) == -1)
 				g_global->error = ft_strdup("1");
 
