@@ -87,27 +87,89 @@ char    *research_path(struct imp **imp)
 		if (path[i] == 0)
 			error_command(g_global->lst->cmd);
 	}
+	if (path[i] == NULL)
+		return (NULL);
 	ft_free_split(path);
 	return (pathname);
 
 }
 
-void    ft_execve(struct imp **imp, char **envp)
+int    ft_execve(struct imp **imp, char **envp)
 {
     char *pathname;
     int pid;
 
     // printf("%s\n", pathname);
-    pid = fork();
-    wait(0);
+	if (access((g_global->lst->cmd), F_OK) == 0)
+	{
+		if (access((g_global->lst->cmd),X_OK) == 0)
+		{
+			//printf ("***hamade***\n");
+			pid = fork();
+    		wait(0);
+			if (pid == 0)
+			{
+				execve(g_global->lst->cmd, g_global->lst->options, envp);
+				exit(0);
+
+			}
+		}
+		else
+		{
+    		
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(g_global->lst->cmd, 2);
+			ft_putstr_fd(": Permission denied\n", 1);
+			g_global->error = ft_strdup("126");
+			return (0);
+		}
 	/*if (pathname == NULL)
 		exit (0);*/
     //    if child
-    if (pid == 0)
+    		/*if (pid == 0)
+			{
+    		    execve(pathname, g_global->lst->options, envp);
+				exit(0);
+
+			}
+		}*/
+	}
+	else 
 	{
     	pathname = research_path(imp);
-        execve(pathname, g_global->lst->options, envp);
-		exit(0);
+		if (pathname == NULL)
+		{
+			g_global->error = ft_strdup("127");
+			return (0);
+		}
+		/*if (g_global->lst->options[1])
+		{
+			if (access((g_global->lst->options[1]), F_OK) != 0)
+			{
+				ft_putstr_fd(g_global->lst->cmd, 1);
+				ft_putstr_fd(": ", 1);
+				ft_putstr_fd(g_global->lst->options[1], 1);
+				ft_putstr_fd(": No such file or directory\n", 1);
+				g_global->error = ft_strdup("1");
+				return (0);
+			}
+		}*/
+    //    if child
+		pid = fork();
+    	wait(0);
+    	if (pid == 0)
+		{
+			printf("hamade\n");
+    	   if (execve(pathname, g_global->lst->options, envp) == -1)
+				g_global->error = ft_strdup("1");
 
+			exit(0);
+		}
+		/*printf("lwalida\n");
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(g_global->lst->cmd, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+		g_global->error = ft_strdup("127");*/
 	}
+	return (0);
 }

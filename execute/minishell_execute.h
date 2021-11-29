@@ -19,7 +19,7 @@ void    			ft_pwd();
 int    			ft_cd(struct imp **imp);
 void    			ft_exit();
 void    print_env(struct imp **imp);
-void    ft_execve(struct imp **imp, char **envp);
+int    ft_execve(struct imp **imp, char **envp);
 char   *path_env(struct imp **imp);
 void	ex_in_childs(struct imp **imp, char **envp);
 void    ft_execve_red(char **envp);

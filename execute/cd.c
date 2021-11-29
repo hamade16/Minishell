@@ -18,6 +18,7 @@ int    ft_cd(struct  imp **imp)
 	   if (tmp ==  NULL)
 		{
 			ft_putstr_fd(": cd: HOME not set\n", 2);
+			g_global->error = ft_strdup("1");
 			return (0);
 		}
 		else
@@ -28,6 +29,7 @@ int    ft_cd(struct  imp **imp)
        			ft_putstr_fd(tmp->value, 2);
 	   			ft_putstr_fd(": ", 2);
        			perror("");
+				 g_global->error = ft_strdup("1");  
 				return (0);
 			}
 			tmp = *imp;
@@ -52,6 +54,7 @@ int    ft_cd(struct  imp **imp)
        ft_putstr_fd(g_global->lst->options[1], 2);
 	   ft_putstr_fd(": ", 2);
        perror("");
+	   g_global->error = ft_strdup("1");
 	   return (0);
    }
   	tmp = *imp;

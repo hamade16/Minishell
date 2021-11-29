@@ -67,14 +67,14 @@ int	type_redirection(int fd)
 		}
 		else
 			c = c->next_mini;
-	}
+	}/*
 	if (heredoc == 1)
 	{
 		fd = open("/tmp/heredocfile", O_RDONLY);
 		dup2(fd, STDIN_FILENO);
 		close(fd);
 		//heredoc = 0;
-	}
+	}*/
 	while (g_global->lst->mini_cmd != NULL)
 	{
 		if (g_global->lst->mini_cmd->redir == 1)
@@ -121,6 +121,7 @@ int	redirection(struct imp **imp, char **envp)
 		ft_putstr_fd("minishell:  ", 2);
 		ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
+		g_global->error = ft_strdup("1");
 		//dup2(tmp_fd_in, STDIN_FILENO);
 		return (0);
 	}
