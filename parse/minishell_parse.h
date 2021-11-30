@@ -66,6 +66,7 @@ int				check_quotes_ind(char *str, size_t len);
 int				check_quotes(char *s);
 int				quote_macro(char c, int q);
 
+int				check_forbidden(char *s);
 int				check_pipes(char *l);
 int				check_redirections(char *s);
 int				check_vars(char *s);

@@ -1,5 +1,22 @@
 #include "../minishell.h"
 
+int	check_forbidden(char *s)
+{
+	size_t	i;
+	int		quote;
+
+	i = -1;
+	quote = 0;
+	while (s[++i])
+	{
+		quote = quote_macro(s[i], quote);
+
+		if ((s[i] == '|' || s[i] == ';' || s[i] == '\\') && quote == 0)
+			return (0);
+	}
+	return (1);
+}
+
 // TODO
 	// unquote then check last pipe
 /*

@@ -163,29 +163,22 @@ char	*expand_it(char *s, struct imp *env)
 	i = 0;
 	size = 0;
 	quote = 0;
+	var_size = 0;
 	var_key = NULL;
 	res = NULL;
-
 	while (s[i])
 	{
 		quote = quote_macro(s[i], quote);
-		
-		if (s[i] == '$' && quote != 1)
+		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?'))
 		{
-			i++;
-			var_size = 1;
-			if (ft_isalpha(s[i]) || s[i] == '_' || s[i] == '?')
-			{
-				i++;
-				var_size++;
-				if (s[i - 1] != '?')
-					while (ft_isalnum(s[i]))
-					{
-						i++;
-						var_size++;
-					}
-			}
-
+			i += 2;
+			var_size += 2;
+			if (s[i - 1] != '?')
+				while (ft_isalnum(s[i]))
+				{
+					i++;
+					var_size++;
+				}
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
 			head = env;
 			while (head)
@@ -201,7 +194,6 @@ char	*expand_it(char *s, struct imp *env)
 				size += ft_strlen(g_global->error);
 			}
 		}
-
 		if (s[i])
 		{
 			size++;
@@ -212,28 +204,21 @@ char	*expand_it(char *s, struct imp *env)
 	i = 0;
 	j = 0;
 	quote = 0;
+	var_size = 0;
 	res = malloc(sizeof(char) * size + 1);
-
 	while (s[i])
 	{
 		quote = quote_macro(s[i], quote);
-		
-		if (s[i] == '$' && quote != 1)
+		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?'))
 		{
-			i++;
-			var_size = 1;
-			if (ft_isalpha(s[i]) || s[i] == '_' || s[i] == '?')
-			{
-				i++;
-				var_size++;
-				if (s[i - 1] != '?')
-					while (ft_isalnum(s[i]))
-					{
-						i++;
-						var_size++;
-					}
-			}
-
+			i += 2;
+			var_size += 2;
+			if (s[i - 1] != '?')
+				while (ft_isalnum(s[i]))
+				{
+					i++;
+					var_size++;
+				}
 			var_key = ft_substr(s, i - var_size + 1, var_size - 1);
 			head = env;
 			while (head)
@@ -336,21 +321,26 @@ void	ft_unquote(t_cmd **cmd)
 	}
 }
 
-// TODO
-	// stop at pipes
-	// stop at semicolon
-	// handle dollar sign alone
 void	handle_line(char *line, struct imp *env)
 {
-	if (check_quotes(line) && check_pipes(line) && check_redirections(line) && check_vars(line))
+	// '|', ';'
+	if (check_forbidden(line))
 	{
-		line = expand_it(line, env);
-		if (check_in_redirections(line))
+		if (check_quotes(line) && check_redirections(line))
 		{
-			// get data and fill head
-			ft_fill_it(&g_global->lst, line);
-			ft_unquote(&g_global->lst);
-			g_global->error = "0";
+			line = expand_it(line, env);
+			if (check_in_redirections(line))
+			{
+				// get data and fill head
+				ft_fill_it(&g_global->lst, line);
+				ft_unquote(&g_global->lst);
+				g_global->error = "0";
+			}
+			else
+			{
+				g_global->error = "258";
+				printf("minishell: syntax error\n");
+			}
 		}
 		else
 		{
@@ -360,7 +350,7 @@ void	handle_line(char *line, struct imp *env)
 	}
 	else
 	{
-		g_global->error = "258";
-		printf("minishell: syntax error\n");
+		g_global->error = "259";
+		printf("minishell: forbidden character\n");
 	}
 }
