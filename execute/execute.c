@@ -67,14 +67,14 @@ int	type_redirection(int fd)
 		}
 		else
 			c = c->next_mini;
-	}/*
+	}
 	if (heredoc == 1)
 	{
 		fd = open("/tmp/heredocfile", O_RDONLY);
 		dup2(fd, STDIN_FILENO);
 		close(fd);
 		//heredoc = 0;
-	}*/
+	}
 	while (g_global->lst->mini_cmd != NULL)
 	{
 		if (g_global->lst->mini_cmd->redir == 1)
@@ -157,11 +157,11 @@ int	redirection(struct imp **imp, char **envp)
 	}
 	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
 		imp = manages_options(imp);
-	if (!ft_strcmp(g_global->lst->cmd, "cd"))
+	else if (!ft_strcmp(g_global->lst->cmd, "cd"))
 		ft_cd(imp);
-	if (!ft_strcmp(g_global->lst->cmd, "unset"))
+	else if (!ft_strcmp(g_global->lst->cmd, "unset"))
 		ft_unset(imp);
-	if(!ft_strcmp(g_global->lst->cmd, "exit"))
+	else if(!ft_strcmp(g_global->lst->cmd, "exit"))
 		ft_exit();
 	else
 		ex_in_childs(imp, envp);

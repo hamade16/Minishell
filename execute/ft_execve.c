@@ -98,6 +98,8 @@ int    ft_execve(struct imp **imp, char **envp)
 {
     char *pathname;
     int pid;
+	int wstatus;
+	int statuscode;
 
     // printf("%s\n", pathname);
 	if (access((g_global->lst->cmd), F_OK) == 0)
@@ -171,13 +173,23 @@ int    ft_execve(struct imp **imp, char **envp)
 		}*/
     //    if child
 		pid = fork();
-    	wait(0);
+    	//wait(0);
     	if (pid == 0)
 		{
-    	   if (execve(pathname, g_global->lst->options, envp) == -1)
-				g_global->error = ft_strdup("1");
-
+    		execve(pathname, g_global->lst->options, envp);
 			exit(0);
+
+		}
+		else
+		{
+			wait(&wstatus);
+			if (WIFEXITED(wstatus))
+			{
+				statuscode = WEXITSTATUS(wstatus);
+				if (statuscode != 0)
+					g_global->error = ft_strdup("1");
+			}
+
 		}
 		/*printf("lwalida\n");
 		ft_putstr_fd("minishell: ", 2);
