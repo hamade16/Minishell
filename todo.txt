@@ -35,3 +35,9 @@ $?
 
 CTRL + C D \
 
+
+remaining tasks:
+	norm
+	leaks
+	signals
+	env variables execve
