@@ -1,207 +1,5 @@
 #include "../execute/minishell_execute.h"
 #include "../minishell.h"
-#include <stdio.h>
-
-/*
- * 0	: Quotes are enclosed
- * else	: Quotes are not enclosed
- */
-int	check_quotes(char *str)
-{
-	size_t	i;
-	int		quote;
-
-	// check not closed quote
-	i = -1;
-	quote = 0;
-	while (str[++i])
-	{
-		if (str[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (str[i] == '"' && quote == 0)
-			quote = 2;
-		else if (str[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (str[i] == '"' && quote == 2)
-			quote = 0;
-	}
-	if (quote != 0)
-		g_global->error = "256";
-	return (!quote);
-}
-
-int	check_quotes_ind(char *str, size_t len)
-{
-	size_t	i;
-	int		quote;
-
-	// check not closed quote
-	i = -1;
-	quote = 0;
-	while (str[++i] && i < len + 1)
-	{
-		if (str[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (str[i] == '"' && quote == 0)
-			quote = 2;
-		else if (str[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (str[i] == '"' && quote == 2)
-			quote = 0;
-	}
-	return (quote);
-}
-
-// TODO
-	// unquote then check last pipe
-/*
- * double pipes
- * pipe is the last thing (not quoted)
- */
-int	check_pipes(char *l)
-{
-	size_t	i;
-	int		quote;
-
-	i = -1;
-	quote = 0;
-	while (l[++i])
-	{
-		if (l[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (l[i] == '"' && quote == 0)
-			quote = 2;
-		else if (l[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (l[i] == '"' && quote == 2)
-			quote = 0;
-
-		if (l[i] == '|' && quote == 0) {
-			if (l[i + 1] == '|')
-				return (0);
-		}
-	}
-	size_t len = ft_strlen(ft_strtrim(l, " "));
-	if (ft_strtrim(l, " ")[len - 1] == '|')
-		return (0);
-	return (1);
-}
-
-/*
- * check some errors
- * ||, <>, ><, <<>, >><, <<<, >>>
- * $ [a-zA-Z][?]
- * on error 0
- * on success 1
- */
-int	check_redirections(char *s)
-{
-	size_t	i;
-	int		quote;
-
-	i = -1;
-	quote = 0;
-	while (s[++i])
-	{
-		if (s[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (s[i] == '"' && quote == 0)
-			quote = 2;
-		else if (s[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (s[i] == '"' && quote == 2)
-			quote = 0;
-
-		if (quote == 0)
-		{
-			if (s[i] == '>')
-			{
-				if (s[i + 1] == '<')
-					return (0);
-				if (s[i + 1] == '>')
-					if (s[i + 2] == '>')
-						return (0);
-			}
-			else if (s[i] == '<')
-			{
-				if (s[i + 1] == '>')
-					return (0);
-				if (s[i + 1] == '<')
-					if (s[i + 2] == '<')
-						return (0);
-			}
-		}
-	}
-	return (1);
-}
-
-/*
- * on error 0
- * on success 1
- */
-int		check_vars(char *s)
-{
-	size_t	i;
-	int		quote;
-
-	i = 0;
-	quote = 0;
-	while (s[i])
-	{
-		if (s[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (s[i] == '"' && quote == 0)
-			quote = 2;
-		else if (s[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (s[i] == '"' && quote == 2)
-			quote = 0;
-		if (s[i] == '$' && quote != 1)
-		{
-			if (s[i + 1] != '?' && s[i + 1] != '_' && !ft_isalpha(s[i + 1]))
-				return (0);
-		}
-		i++;
-	}
-	return (1);
-}
-
-int		check_empty_pipes(char **cmds)
-{
-	size_t	i;
-	size_t	j;
-	int		flag;
-
-	i = -1;
-	while (cmds[++i])
-	{
-		j = -1;
-		flag = 0;
-		while (cmds[i][++j])
-		{
-			if (cmds[i][j] != ' ')
-				flag = 1;
-		}
-		if (!flag)
-			return (0);
-	}
-	return (1);
-}
-
-/*
- * redirection at the end
- */
-int		check_in_redirections(char *cmd)
-{
-	char	*trimmd;
-	size_t	len;
-
-	trimmd = ft_strtrim(cmd, " ");
-	len = ft_strlen(trimmd);
-	if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
-		return (0);
-	return (1);
-}
 
 void	ft_append(char ***opt, char *newopt)
 {
@@ -219,18 +17,13 @@ void	ft_append(char ***opt, char *newopt)
 	{
 		len = 0;
 		while ((*opt)[len])
-		{
 			len++;
-		}
-
 		tmp = *opt;
 		*opt = malloc(sizeof(char *) * (len + 1 + 1));
-		i = 0;
-		while (i < len)
-		{
+		i = -1;
+		while (++i < len)
 			(*opt)[i] = tmp[i];
-			i++;
-		}
+		free(tmp);
 		(*opt)[i] = newopt;
 		(*opt)[i + 1] = NULL;
 	}
@@ -276,9 +69,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 					j++;
 				}
 				else
-				{
 					redirection = 1;
-				}
 				j++;
 			}
 			else if (parts[i][j] == '<')
@@ -290,9 +81,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 					j++;
 				}
 				else
-				{
 					redirection = 2;
-				}
 				j++;
 			}
 			else if (parts[i][j] == '-')
@@ -345,20 +134,14 @@ void	ft_fill_it(t_cmd **head, char *line)
 					redirection = 0;
 				}
 				else
-				{
 					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
-				}
-				// j++;
 			}
 		}
 		i++;
 	}
 	tmp->next_cmd = NULL;
-
 	if (*head == NULL)
-	{
 		*head = tmp;
-	}
 	else
 	{
 		free(*head);
@@ -385,14 +168,7 @@ char	*expand_it(char *s, struct imp *env)
 
 	while (s[i])
 	{
-		if (s[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (s[i] == '"' && quote == 0)
-			quote = 2;
-		else if (s[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (s[i] == '"' && quote == 2)
-			quote = 0;
+		quote = quote_macro(s[i], quote);
 		
 		if (s[i] == '$' && quote != 1)
 		{
@@ -440,14 +216,7 @@ char	*expand_it(char *s, struct imp *env)
 
 	while (s[i])
 	{
-		if (s[i] == '\'' && quote == 0)
-			quote = 1;
-		else if (s[i] == '"' && quote == 0)
-			quote = 2;
-		else if (s[i] == '\'' == quote == 1)
-			quote = 0;
-		else if (s[i] == '"' && quote == 2)
-			quote = 0;
+		quote = quote_macro(s[i], quote);
 		
 		if (s[i] == '$' && quote != 1)
 		{
@@ -493,8 +262,81 @@ char	*expand_it(char *s, struct imp *env)
 	return (res);
 }
 
+int	contains_quotes(char *s)
+{
+	size_t	i;
+	int		len;
+	int		quote;
+
+	i = -1;
+	len = 0;
+	quote = 0;
+	while (s[++i])
+	{
+		if (s[i] == '\'' && quote == 0)
+		{
+			quote = 1;
+			len++;
+		}
+		else if (s[i] == '"' && quote == 0)
+		{
+			quote = 2;
+			len++;
+		}
+		else if (s[i] == '\'' == quote == 1)
+			quote = 0;
+		else if (s[i] == '"' && quote == 2)
+			quote = 0;
+	}
+	return (len);
+}
+
+char	*ft_remove_quotes(char *str)
+{
+	size_t	i;
+	size_t	j;
+	int		quote;
+	char	*new;
+
+	i = 0;
+	j = 0;
+	quote = 0;
+	new = malloc(sizeof(char) * (ft_strlen(str)
+				- contains_quotes(str) * 2 + 1));
+	while (str[i])
+	{
+		quote = quote_macro(str[i], quote);
+		if (!((str[i] == '\'' && quote != 2) || (str[i] == '"' && quote != 1)))
+		{
+			new[j] = str[i];
+			j++;
+		}
+		i++;
+	}
+	new[j] = '\0';
+	return (new);
+}
+
+void	ft_unquote(t_cmd **cmd)
+{
+	int		i;
+	char	*tmp;
+	char	*new;
+
+	tmp = (*cmd)->cmd;
+	(*cmd)->cmd = ft_remove_quotes((*cmd)->cmd);
+	free(tmp);
+	i = 0;
+	while ((*cmd)->options[i])
+	{
+		tmp = (*cmd)->options[i];
+		(*cmd)->options[i] = ft_remove_quotes((*cmd)->options[i]);
+		free(tmp);
+		i++;
+	}
+}
+
 // TODO
-	// remove quotes
 	// stop at pipes
 	// stop at semicolon
 	// handle dollar sign alone
@@ -503,23 +345,22 @@ void	handle_line(char *line, struct imp *env)
 	if (check_quotes(line) && check_pipes(line) && check_redirections(line) && check_vars(line))
 	{
 		line = expand_it(line, env);
-		// check empty splits
-		// check wrong redirections
 		if (check_in_redirections(line))
 		{
 			// get data and fill head
 			ft_fill_it(&g_global->lst, line);
+			ft_unquote(&g_global->lst);
 			g_global->error = "0";
 		}
 		else
 		{
 			g_global->error = "258";
-			printf("minishell: syntax error2\n");
+			printf("minishell: syntax error\n");
 		}
 	}
 	else
 	{
 		g_global->error = "258";
-		printf("minishell: syntax error1\n");
+		printf("minishell: syntax error\n");
 	}
 }

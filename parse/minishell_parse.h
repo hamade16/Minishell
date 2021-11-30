@@ -63,6 +63,14 @@ void			ft_mini_addback(t_mini_cmd **head, char *f, int r);
 
 char			**ft_split_wq(char *s, char c, size_t i, size_t j);
 int				check_quotes_ind(char *str, size_t len);
+int				check_quotes(char *s);
+int				quote_macro(char c, int q);
+
+int				check_pipes(char *l);
+int				check_redirections(char *s);
+int				check_vars(char *s);
+int				check_empty_pipes(char **cmds);
+int				check_in_redirections(char *cmd);
 
 void			print_cmd(t_cmd *c);
 
