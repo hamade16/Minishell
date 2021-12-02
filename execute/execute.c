@@ -43,27 +43,41 @@ struct imp *init_options()
 
 int	type_redirection(int fd)
 {
+	int pid;
 	int heredoc = 0;
 	t_mini_cmd *c = g_global->lst->mini_cmd;
 
 	while(c)
 	{
+		printf("%d\n", c->redir);
 		if (c->redir == 4)
 		{
 			heredoc = 1;
+			g_global->her_ex = 1;
 			fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
-			while (1)
+			pid = fork();
+			if (pid == 0)
 			{
-				char *line;
-				line = readline("> ");
-				//printf("|%s| |%s|\n", line, c->filename);
-				if (ft_strcmp(line, c->filename))
-					ft_putendl_fd(line, fd);
-				else
-					break;
+				g_global->child_ex = 1;
+				//signal(SIGINT, SIG_DFL);
+				//signal(SIGQUIT, SIG_DFL);
+				while (1)
+				{
+					char *line;
+					line = readline("> ");
+					//printf("|%s| |%s|\n", line, c->filename);
+					if (ft_strcmp(line, c->filename))
+						ft_putendl_fd(line, fd);
+					else
+						break;
+				}
+				//close (fd);
+				exit(0);
 			}
-			c = c->next_mini;
 			close(fd);
+			if (pid != 0)
+				wait(0);
+			c = c->next_mini;
 		}
 		else
 			c = c->next_mini;
@@ -155,13 +169,20 @@ int	redirection(struct imp **imp, char **envp)
 		dup2(tmp_fd_in, STDIN_FILENO);
 		return(0);
 	}
+	if (g_global->sig_ex == 1)
+	{
+		dup2(tmp_fd_out, STDOUT_FILENO);
+		dup2(tmp_fd_in, STDIN_FILENO);
+		g_global->sig_ex = 0;
+		return (1);
+	}
 	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
 		imp = manages_options(imp);
-	else if (!ft_strcmp(g_global->lst->cmd, "cd"))
+	if (!ft_strcmp(g_global->lst->cmd, "cd"))
 		ft_cd(imp);
-	else if (!ft_strcmp(g_global->lst->cmd, "unset"))
+	if (!ft_strcmp(g_global->lst->cmd, "unset"))
 		ft_unset(imp);
-	else if(!ft_strcmp(g_global->lst->cmd, "exit"))
+	if(!ft_strcmp(g_global->lst->cmd, "exit"))
 		ft_exit();
 	else
 		ex_in_childs(imp, envp);
@@ -174,11 +195,21 @@ int	redirection(struct imp **imp, char **envp)
 void	execute(struct imp **imp, char **envp)
 {
 	int i;
+	int pid;
 
 	if (!ft_strcmp(g_global->error, "0"))
 	{
 		if (g_global->lst->mini_cmd != NULL)
-			i = redirection(imp, envp);
+		{
+			//pid = fork();
+			//if (pid != 0)
+			//	wait(0);
+			//if (pid == 0){
+				i = redirection(imp, envp);
+				//exit(0);
+			//}
+
+		}
 		else
 		{
 			if (g_global->lst->is_builtin)

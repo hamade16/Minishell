@@ -334,7 +334,7 @@ void	handle_line(char *line, struct imp *env)
 				// get data and fill head
 				ft_fill_it(&g_global->lst, line);
 				ft_unquote(&g_global->lst);
-				g_global->error = "0";
+				// g_global->error = "0";
 			}
 			else
 			{

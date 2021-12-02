@@ -2,6 +2,9 @@
 
 void    ft_exit()
 {
-    printf("exit\n");
+	if (g_global->sig_exdeja == 1)
+    	printf("exit");
+	else
+		printf("exit\n");
     exit(0);
 }

@@ -55,6 +55,10 @@ typedef struct s_cmd {
 typedef struct s_globl {
 	t_cmd				*lst;
 	char				*error;
+	int					child_ex;
+	int					her_ex;
+	int					sig_exdeja;
+	int					sig_ex;
 }				t_global;
 
 void			handle_line(char *s, struct imp *env);

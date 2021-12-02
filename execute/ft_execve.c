@@ -43,7 +43,8 @@ char   *path_env(struct imp **imp)
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(g_global->lst->cmd, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
-		exit(0);
+		g_global->error = "127";
+		//exit(0);
 		return (0);
 	}
     return (tmp->value);
@@ -76,6 +77,8 @@ char    *research_path(struct imp **imp)
 		error_command(NULL);
 	if (access(g_global->lst->cmd, F_OK) == 0 && g_global->lst->cmd[0] == '/')
 		return (ft_strdup(g_global->lst->cmd));
+	if (!path_env(imp))
+		return ("uns_path");
 	path = ft_split(path_env(imp), ':');
 	while (path[i])
 	{
@@ -139,6 +142,7 @@ int    ft_execve(struct imp **imp, char **envp)
 	else 
 	{
     	pathname = research_path(imp);
+		//printf("****%s****\n",pathname);
 		if ((pathname == NULL) && ft_strchr(g_global->lst->cmd, '/'))
 		{
 			ft_putstr_fd("minishell: ", 2);
@@ -155,6 +159,8 @@ int    ft_execve(struct imp **imp, char **envp)
 			g_global->error = ft_strdup("127");
 			return (0);
 		}
+		if (!ft_strcmp(pathname, "uns_path"))
+			return (0);
 		/*if (g_global->lst->options[1])
 		{
 			if 
@@ -172,13 +178,18 @@ int    ft_execve(struct imp **imp, char **envp)
 			}
 		}*/
     //    if child
+		g_global->her_ex = 1;
 		pid = fork();
     	//wait(0);
+		/*if (!(ft_strcmp(g_global->lst->cmd, "cat")))
+			g_global->her_ex = 1;*/
     	if (pid == 0)
 		{
-    		execve(pathname, g_global->lst->options, envp);
+			if (!(ft_strcmp(g_global->lst->cmd, "cat")))
+				g_global->child_ex = 1;
+    	   execve(pathname, g_global->lst->options, envp);
+			//printf ("%s\n", g_global->error);
 			exit(0);
-
 		}
 		else
 		{
@@ -187,10 +198,11 @@ int    ft_execve(struct imp **imp, char **envp)
 			{
 				statuscode = WEXITSTATUS(wstatus);
 				if (statuscode != 0)
-					g_global->error = ft_strdup("1");
+					g_global->error = "1";
 			}
 
 		}
+		g_global->her_ex = 0;
 		/*printf("lwalida\n");
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(g_global->lst->cmd, 2);
