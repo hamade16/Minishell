@@ -29,6 +29,8 @@ void	ft_append(char ***opt, char *newopt)
 	}
 }
 
+// TODO:
+	// norm
 void	ft_fill_it(t_cmd **head, char *line)
 {
 	size_t		i;
@@ -113,7 +115,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 					j++;
 				while (parts[i][j] && ((parts[i][j] != '<' && parts[i][j] != '>') || check_quotes_ind(parts[i], j)))
 					j++;
-				if (tmp->cmd == NULL)
+				if (tmp->cmd == NULL && redirection == 0)
 				{
 					tmp->cmd = ft_substr(parts[i], k, j - k);
 					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
@@ -149,6 +151,8 @@ void	ft_fill_it(t_cmd **head, char *line)
 	}
 }
 
+// TODO:
+	// norm
 char	*expand_it(char *s, struct imp *env)
 {
 	size_t	i;
@@ -304,23 +308,40 @@ char	*ft_remove_quotes(char *str)
 
 void	ft_unquote(t_cmd **cmd)
 {
-	int		i;
-	char	*tmp;
-	char	*new;
+	int			i;
+	char		*tmp;
+	t_mini_cmd	*mini;
 
 	tmp = (*cmd)->cmd;
-	(*cmd)->cmd = ft_remove_quotes((*cmd)->cmd);
+	if ((*cmd)->cmd)
+		(*cmd)->cmd = ft_remove_quotes((*cmd)->cmd);
 	free(tmp);
 	i = 0;
-	while ((*cmd)->options[i])
+	if ((*cmd)->options)
+		while ((*cmd)->options[i])
+		{
+			tmp = (*cmd)->options[i];
+			(*cmd)->options[i] = ft_remove_quotes((*cmd)->options[i]);
+			free(tmp);
+			i++;
+		}
+	mini = (*cmd)->mini_cmd;
+	while (mini)
 	{
-		tmp = (*cmd)->options[i];
-		(*cmd)->options[i] = ft_remove_quotes((*cmd)->options[i]);
-		free(tmp);
-		i++;
+		if (mini->filename)
+		{
+			tmp = mini->filename;
+			mini->filename = ft_remove_quotes(mini->filename);
+			free(tmp);
+			i++;
+		}
+		mini = mini->next_mini;
 	}
 }
 
+// TODO:
+	// ambiguous redirect error
+	// echo $"abc"
 void	handle_line(char *line, struct imp *env)
 {
 	// '|', ';'
@@ -334,23 +355,18 @@ void	handle_line(char *line, struct imp *env)
 				// get data and fill head
 				ft_fill_it(&g_global->lst, line);
 				ft_unquote(&g_global->lst);
-				// g_global->error = "0";
+				g_global->error = "0";
 			}
 			else
-			{
 				g_global->error = "258";
-				printf("minishell: syntax error\n");
-			}
 		}
 		else
-		{
 			g_global->error = "258";
-			printf("minishell: syntax error\n");
-		}
 	}
 	else
-	{
 		g_global->error = "259";
+	if (!ft_strcmp(g_global->error, "258"))
+		printf("minishell: syntax error\n");
+	else if (!ft_strcmp(g_global->error, "259"))
 		printf("minishell: forbidden character\n");
-	}
 }
