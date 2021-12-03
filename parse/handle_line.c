@@ -49,6 +49,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 	tmp->text = ft_strdup(line);
 	tmp->cmd = NULL;
 	tmp->options = NULL;
+	tmp->is_builtin = 0;
 	tmp->mini_cmd = NULL;
 
 	mini = NULL;
@@ -85,27 +86,6 @@ void	ft_fill_it(t_cmd **head, char *line)
 				else
 					redirection = 2;
 				j++;
-			}
-			else if (parts[i][j] == '-')
-			{
-				k = j;
-				j++;
-				while (parts[i][j] && parts[i][j] != '<' && parts[i][j] != '>')
-					j++;
-				if (tmp->cmd == NULL)
-				{
-					tmp->cmd = ft_substr(parts[i], k, j - k);
-					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
-					if (!ft_strcmp(tmp->cmd, "export") || !ft_strcmp(tmp->cmd, "echo") ||
-						!ft_strcmp(tmp->cmd, "unset") || !ft_strcmp(tmp->cmd, "cd") ||
-						!ft_strcmp(tmp->cmd, "pwd") || !ft_strcmp(tmp->cmd, "pwd") ||
-						!ft_strcmp(tmp->cmd, "env") || !ft_strcmp(tmp->cmd, "exit"))
-						tmp->is_builtin = 1;
-					else
-						tmp->is_builtin = 0;
-				}
-				else
-					ft_append(&tmp->options, ft_substr(parts[i], k, j - k));
 			}
 			else
 			{
