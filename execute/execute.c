@@ -176,16 +176,19 @@ int	redirection(struct imp **imp, char **envp)
 		g_global->sig_ex = 0;
 		return (1);
 	}
-	if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] != NULL))
-		imp = manages_options(imp);
-	if (!ft_strcmp(g_global->lst->cmd, "cd"))
-		ft_cd(imp);
-	if (!ft_strcmp(g_global->lst->cmd, "unset"))
-		ft_unset(imp);
-	if(!ft_strcmp(g_global->lst->cmd, "exit"))
-		ft_exit();
-	else
-		ex_in_childs(imp, envp);
+	if (g_global->lst->cmd)
+	{
+		if (!ft_strcmp(g_global->lst->cmd, "export") && g_global->lst->options && g_global->lst->options[1] != NULL)
+			imp = manages_options(imp);
+		if (!ft_strcmp(g_global->lst->cmd, "cd"))
+			ft_cd(imp);
+		if (!ft_strcmp(g_global->lst->cmd, "unset"))
+			ft_unset(imp);
+		if(!ft_strcmp(g_global->lst->cmd, "exit"))
+			ft_exit();
+		else
+			ex_in_childs(imp, envp);
+	}
 	close(fd);
 	dup2(tmp_fd_out, STDOUT_FILENO);
 	dup2(tmp_fd_in, STDIN_FILENO);
@@ -210,9 +213,9 @@ void	execute(struct imp **imp, char **envp)
 			//}
 
 		}
-		else
+		else if (g_global->lst->cmd)
 		{
-			if (g_global->lst->is_builtin)
+			if (g_global->lst->is_builtin == 1)
 			{
 				if (!ft_strcmp(g_global->lst->cmd, "export"))
 				{
