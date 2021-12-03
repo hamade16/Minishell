@@ -2,46 +2,28 @@
 
 void	handlsignal(int sig)
 {
-
 	if (sig == SIGINT)
 	{
 		printf("\n");
 		g_global->sig_exdeja = 1;
 		if (g_global->child_ex == 1)
-		{
-			//printf("\n");
-				//close(g_global->close_fd);
-				exit(0);
-		}
+			exit(0);
 		else
 		{
-			//printf("\n");
 			rl_replace_line("", 0);
 			rl_on_new_line();
-			//if (!(g_global->lst->options[1] == NULL && !ft_strcmp(g_global->lst->cmd, "cat")))
-
 			if (g_global->her_ex == 1)
 			{
-				
 				g_global->sig_ex = 1;
-				//printf("***%d**\n", g_global->her_ex);
 				int stdout_copy = dup(1);
 				close(1);
 				rl_redisplay();
 				dup2(stdout_copy, 1);
 				g_global->her_ex = 0;
-				//printf("hello FILE %d\n", g_global->her_ex);
 			}
 			else
-			{
 				rl_redisplay();
-			}
 		}
-		//printf ("***%d***\n", g_global->her_ex);
-	}
-	else if (sig == SIGQUIT)
-	{
-		// exit(0);
 	}
 }
 
@@ -65,7 +47,7 @@ int	main(int ac, char **argv, char **envp)
 		line = readline("minishell% ");
 		if (!line)
 		{
-			printf("exit\n");
+			printf("exit");
 			exit(EXIT_SUCCESS);
 		}
 		else if (*line && ft_strlen(ft_strtrim(line, " ")) > 0)
