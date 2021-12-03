@@ -141,7 +141,7 @@ int		check_in_redirections(char *cmd)
 
 	trimmd = ft_strtrim(cmd, " ");
 	len = ft_strlen(trimmd);
-	if (trimmd[len - 1] == '<' || trimmd[len - 1] == '>')
+	if (len > 0 && (trimmd[len - 1] == '<' || trimmd[len - 1] == '>'))
 		return (0);
 	return (1);
 }
