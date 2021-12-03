@@ -103,8 +103,10 @@ int    ft_execve(struct imp **imp, char **envp)
     int pid;
 	int wstatus;
 	int statuscode;
+	char **env_conv;
 
     // printf("%s\n", pathname);
+	env_conv = ft_convert_to_arr(*imp);
 	if (access((g_global->lst->cmd), F_OK) == 0)
 	{
 		if (access((g_global->lst->cmd),X_OK) == 0)
@@ -114,7 +116,7 @@ int    ft_execve(struct imp **imp, char **envp)
     		wait(0);
 			if (pid == 0)
 			{
-				execve(g_global->lst->cmd, g_global->lst->options, envp);
+				execve(g_global->lst->cmd, g_global->lst->options, env_conv);
 				exit(0);
 
 			}
@@ -187,7 +189,7 @@ int    ft_execve(struct imp **imp, char **envp)
 		{
 			if (!(ft_strcmp(g_global->lst->cmd, "cat")))
 				g_global->child_ex = 1;
-    	   execve(pathname, g_global->lst->options, envp);
+    	   execve(pathname, g_global->lst->options, env_conv);
 			//printf ("%s\n", g_global->error);
 			exit(0);
 		}
