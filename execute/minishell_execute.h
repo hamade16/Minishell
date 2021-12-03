@@ -27,5 +27,6 @@ struct imp **manages_options(struct imp **imp);
 struct imp *init_options();
 int	type_redirection(int fd);
 int	redirection(struct imp **imp, char **envp);
+char	**ft_convert_to_arr(struct imp *env_lst);
 
 #endif
