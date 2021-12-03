@@ -60,27 +60,21 @@ int	main(int ac, char **argv, char **envp)
 	g_global->sig_exdeja = 0;
 	signal(SIGINT, handlsignal);
 	signal(SIGQUIT, handlsignal);
-	//error = 0;
 	while (1)
 	{
 		line = readline("minishell% ");
 		if (!line)
 		{
 			printf("exit\n");
-			exit(0);
+			exit(EXIT_SUCCESS);
 		}
-		handle_line(line, imp);
-		if (line && *line && ft_strlen(ft_strtrim(line, " ")) > 0) {
+		else if (*line && ft_strlen(ft_strtrim(line, " ")) > 0)
+		{
 			add_history(line);
 			handle_line(line, imp);
-			//print_cmd(g_global->lst);
+			// print_cmd(g_global->lst);
 			execute(&imp, envp);
 			free(line);
-		}
-
-		if (!line)
-		{
-			exit(EXIT_SUCCESS);
 		}
 	}
 	return (0);
