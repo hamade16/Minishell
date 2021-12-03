@@ -187,14 +187,13 @@ int    ft_execve(struct imp **imp, char **envp)
 			g_global->her_ex = 1;*/
     	if (pid == 0)
 		{
-			if (!(ft_strcmp(g_global->lst->cmd, "cat")))
-				g_global->child_ex = 1;
+			g_global->child_ex = 1;
     	   execve(pathname, g_global->lst->options, env_conv);
-			//printf ("%s\n", g_global->error);
 			exit(0);
 		}
 		else
 		{
+			g_global->child_ex = 0;
 			wait(&wstatus);
 			if (WIFEXITED(wstatus))
 			{
@@ -205,11 +204,6 @@ int    ft_execve(struct imp **imp, char **envp)
 
 		}
 		g_global->her_ex = 0;
-		/*printf("lwalida\n");
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(g_global->lst->cmd, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		g_global->error = ft_strdup("127");*/
 	}
 	return (0);
 }

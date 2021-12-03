@@ -7,7 +7,9 @@ void	handlsignal(int sig)
 		printf("\n");
 		g_global->sig_exdeja = 1;
 		if (g_global->child_ex == 1)
+		{
 			exit(0);
+		}
 		else
 		{
 			rl_replace_line("", 0);
@@ -20,9 +22,37 @@ void	handlsignal(int sig)
 				rl_redisplay();
 				dup2(stdout_copy, 1);
 				g_global->her_ex = 0;
+				g_global->error = "130";
 			}
 			else
+			{
 				rl_redisplay();
+				g_global->error = "1";
+			}
+		}
+	}
+	else if (sig == SIGQUIT)
+	{
+		if (g_global->child_ex == 1)
+		{
+			//g_global->sig_ex = 1;
+				//close(g_global->close_fd);
+			exit(0);
+		}
+		else
+		{
+			if (g_global->her_ex == 1)
+			{
+				printf("Quit: 3\n");
+				g_global->error = "131";
+
+			}
+			//printf("%s\n", g_global->lst->cmd);
+			//printf("***hamade***\n");
+			//printf("Quit: 3\n");
+			//g_global->sig_ex = 1;
+			signal(SIGQUIT, SIG_IGN);
+			
 		}
 	}
 }
@@ -31,6 +61,12 @@ int	main(int ac, char **argv, char **envp)
 {
 	char		*line;
 	struct imp	*imp;
+	// int i = 0;
+	// while (envp[i])
+	// {
+	// 	printf("%s\n", envp[i]);
+	// 	i++;
+	// }
 
 	g_global = malloc(sizeof(t_global));
 	g_global->lst = NULL;
