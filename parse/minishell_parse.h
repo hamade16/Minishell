@@ -39,6 +39,7 @@ echo string
 typedef struct s_mini_cmd {
 	char				*filename;
 	int					redir;
+	int					ambig;
 	struct s_mini_cmd	*next_mini;
 } t_mini_cmd;
 
@@ -48,7 +49,6 @@ typedef struct s_cmd {
 	char				**options;
 	char				is_builtin;
 	struct s_mini_cmd	*mini_cmd;
-	struct s_cmd		*next_cmd;
 	char				*error;
 }				t_cmd;
 
@@ -63,12 +63,13 @@ typedef struct s_globl {
 
 void			handle_line(char *s, struct imp *env);
 t_mini_cmd		*ft_mini_lstlast(t_mini_cmd *lst);
-void			ft_mini_addback(t_mini_cmd **head, char *f, int r);
+void			ft_mini_addback(t_mini_cmd **head, char *f, int r, int a);
 
 char			**ft_split_wq(char *s, char c, size_t i, size_t j);
 int				check_quotes_ind(char *str, size_t len);
 int				check_quotes(char *s);
 int				quote_macro(char c, int q);
+char			*expand_it(char *s, struct imp *env);
 
 int				check_forbidden(char *s);
 int				check_pipes(char *l);

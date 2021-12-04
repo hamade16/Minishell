@@ -4,7 +4,7 @@ void	print_cmd(t_cmd *c)
 {
 	if (!c)
 		printf("NULL\n--------------\n\n");
-	while (c)
+	else
 	{
 		printf("\n\n--------------\n");
 		printf("full command   : [%s]\n", c->text);
@@ -25,13 +25,13 @@ void	print_cmd(t_cmd *c)
 			{
 				printf("\t[%d]\n", c->mini_cmd->redir);
 				printf("\t[%s]\n", c->mini_cmd->filename);
+				printf("\t[%i]\n", c->mini_cmd->ambig);
 				c->mini_cmd = c->mini_cmd->next_mini;
 			}
 		}
 		printf("\n--------------\n\n");
 		printf("exit status : %s\n", g_global->error);
 		printf("\n--------------\n\n");
-		c = c->next_cmd;
 	}
 }
 
@@ -43,7 +43,7 @@ t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst)
 	return (lst);
 }
 
-void	ft_mini_addback(t_mini_cmd **head, char *f, int r)
+void	ft_mini_addback(t_mini_cmd **head, char *f, int r, int a)
 {
 	t_mini_cmd	*last;
 	t_mini_cmd	*new;
@@ -51,6 +51,7 @@ void	ft_mini_addback(t_mini_cmd **head, char *f, int r)
 	new = malloc(sizeof(t_mini_cmd));
 	new->filename = ft_strdup(f);
 	new->redir = r;
+	new->ambig = a;
 	new->next_mini = NULL;
 
 	if (head && new)

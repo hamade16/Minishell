@@ -110,7 +110,7 @@ void	ft_fill_it(t_cmd **head, char *line)
 				else if (redirection)
 				{
 					filename = ft_substr(parts[i], k, j - k);
-					ft_mini_addback(&tmp->mini_cmd, filename, redirection);
+					ft_mini_addback(&tmp->mini_cmd, filename, redirection, 0);
 					free(filename);
 					filename = NULL;
 					redirection = 0;
@@ -121,7 +121,6 @@ void	ft_fill_it(t_cmd **head, char *line)
 		}
 		i++;
 	}
-	tmp->next_cmd = NULL;
 	if (*head == NULL)
 		*head = tmp;
 	else
@@ -131,10 +130,45 @@ void	ft_fill_it(t_cmd **head, char *line)
 	}
 }
 
+void	ft_expand_data(t_cmd **cmd, struct imp *env)
+{
+	int			i;
+	char		*tmp;
+	t_mini_cmd	*mini;
+
+	if ((*cmd)->cmd)
+	{
+		tmp = (*cmd)->cmd;
+		(*cmd)->cmd = expand_it((*cmd)->cmd, env);
+		free(tmp);
+	}
+	if ((*cmd)->options)
+	{
+		i = 0;
+		while ((*cmd)->options[i])
+		{
+			tmp = (*cmd)->options[i];
+			(*cmd)->options[i] = expand_it((*cmd)->options[i], env);
+			free(tmp);
+			i++;
+		}
+	}
+	mini = (*cmd)->mini_cmd;
+	while (mini)
+	{
+		tmp = mini->filename;
+		mini->filename = expand_it(mini->filename, env);
+		free(tmp);
+		if (ft_strlen(mini->filename) <= 0)
+			mini->ambig = 1;
+		mini = mini->next_mini;
+	}
+}
+
 // TODO:
 	// norm
 char	*expand_it(char *s, struct imp *env)
-{
+{          
 	size_t	i;
 	size_t	j;
 	size_t	size;
@@ -153,7 +187,7 @@ char	*expand_it(char *s, struct imp *env)
 	while (s[i])
 	{
 		quote = quote_macro(s[i], quote);
-		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?'))
+		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?') && quote != 1)
 		{
 			i += 2;
 			var_size += 2;
@@ -193,7 +227,7 @@ char	*expand_it(char *s, struct imp *env)
 	while (s[i])
 	{
 		quote = quote_macro(s[i], quote);
-		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?'))
+		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?') && quote != 1)
 		{
 			i += 2;
 			var_size += 2;
@@ -329,11 +363,12 @@ void	handle_line(char *line, struct imp *env)
 	{
 		if (check_quotes(line) && check_redirections(line))
 		{
-			line = expand_it(line, env);
+			// line = expand_it(line, env);
 			if (check_in_redirections(line))
 			{
 				// get data and fill head
 				ft_fill_it(&g_global->lst, line);
+				ft_expand_data(&g_global->lst, env);
 				ft_unquote(&g_global->lst);
 				g_global->error = "0";
 			}
