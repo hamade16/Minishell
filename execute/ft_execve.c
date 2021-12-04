@@ -180,13 +180,18 @@ int    ft_execve(struct imp **imp, char **envp)
 			}
 		}*/
     //    if child
-		g_global->her_ex = 1;
+	// signal(SIGQUIT, SIG_DFL);
 		pid = fork();
+		
+		g_global->her_ex = 1;
+		
     	//wait(0);
 		/*if (!(ft_strcmp(g_global->lst->cmd, "cat")))
 			g_global->her_ex = 1;*/
     	if (pid == 0)
 		{
+			
+			signal(SIGQUIT, SIG_DFL);
 			g_global->child_ex = 1;
     	   execve(pathname, g_global->lst->options, env_conv);
 			exit(0);
@@ -194,13 +199,19 @@ int    ft_execve(struct imp **imp, char **envp)
 		else
 		{
 			g_global->child_ex = 0;
-			wait(&wstatus);
+			waitpid(pid, &wstatus, 0);
 			if (WIFEXITED(wstatus))
 			{
 				statuscode = WEXITSTATUS(wstatus);
 				if (statuscode != 0)
 					g_global->error = "1";
+				
 			}
+			  if (WIFSIGNALED(wstatus))
+    			{
+    			    if (WTERMSIG(wstatus) == SIGQUIT)
+    			        write(2, "Quit: 3\n", 8);
+    			}
 
 		}
 		g_global->her_ex = 0;

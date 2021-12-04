@@ -203,20 +203,12 @@ void	execute(struct imp **imp, char **envp)
 	if (!ft_strcmp(g_global->error, "0"))
 	{
 		if (g_global->lst->mini_cmd != NULL)
-		{
-			//pid = fork();
-			//if (pid != 0)
-			//	wait(0);
-			//if (pid == 0){
-				i = redirection(imp, envp);
-				//exit(0);
-			//}
-
-		}
+			i = redirection(imp, envp);
 		else if (g_global->lst->cmd)
 		{
 			if (g_global->lst->is_builtin == 1)
 			{
+				
 				if (!ft_strcmp(g_global->lst->cmd, "export"))
 				{
 					if (g_global->lst->options[1] != NULL)

@@ -31,30 +31,6 @@ void	handlsignal(int sig)
 			}
 		}
 	}
-	else if (sig == SIGQUIT)
-	{
-		if (g_global->child_ex == 1)
-		{
-			//g_global->sig_ex = 1;
-				//close(g_global->close_fd);
-			exit(0);
-		}
-		else
-		{
-			if (g_global->her_ex == 1)
-			{
-				printf("Quit: 3\n");
-				g_global->error = "131";
-
-			}
-			//printf("%s\n", g_global->lst->cmd);
-			//printf("***hamade***\n");
-			//printf("Quit: 3\n");
-			//g_global->sig_ex = 1;
-			signal(SIGQUIT, SIG_IGN);
-			
-		}
-	}
 }
 
 int	main(int ac, char **argv, char **envp)
@@ -77,7 +53,7 @@ int	main(int ac, char **argv, char **envp)
 	g_global->sig_ex = 0;
 	g_global->sig_exdeja = 0;
 	signal(SIGINT, handlsignal);
-	signal(SIGQUIT, handlsignal);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		line = readline("minishell% ");
