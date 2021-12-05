@@ -41,198 +41,20 @@ struct imp *init_options()
 	return (init);
 }
 
-int	type_redirection(int fd)
-{
-	int pid;
-	int heredoc = 0;
-	t_mini_cmd *c = g_global->lst->mini_cmd;
-
-	while(c)
-	{
-		printf("%d\n", c->redir);
-		if (c->redir == 4)
-		{
-			heredoc = 1;
-			g_global->her_ex = 1;
-			fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
-			pid = fork();
-			if (pid == 0)
-			{
-				g_global->child_ex = 1;
-				//signal(SIGINT, SIG_DFL);
-				//signal(SIGQUIT, SIG_DFL);
-				while (1)
-				{
-					char *line;
-					line = readline("> ");
-					//printf("|%s| |%s|\n", line, c->filename);
-					if (ft_strcmp(line, c->filename))
-						ft_putendl_fd(line, fd);
-					else
-						break;
-				}
-				//close (fd);
-				exit(0);
-			}
-			close(fd);
-			if (pid != 0)
-				wait(0);
-			c = c->next_mini;
-		}
-		else
-			c = c->next_mini;
-	}
-	if (heredoc == 1)
-	{
-		fd = open("/tmp/heredocfile", O_RDONLY);
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		//heredoc = 0;
-	}
-	while (g_global->lst->mini_cmd != NULL)
-	{
-		if (g_global->lst->mini_cmd->redir == 1)
-    	{
-			if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
-			{
-				//printf ("hamade\n");
-				if (access(g_global->lst->mini_cmd->filename, W_OK))
-				{
-					ft_putstr_fd("minishell: ", 2);
-					ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
-					ft_putstr_fd(": Permission denied\n", 2);
-					g_global->error = ft_strdup("1");
-					return (0);
-				}
-			}
-			fd = open(g_global->lst->mini_cmd->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    		dup2(fd, STDOUT_FILENO);
-    		close(fd);
-    	}
-   		if (g_global->lst->mini_cmd->redir == 2)
-    	{
-			//printf("********%s\n", g_global->lst->mini_cmd->filename);
-			if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
-			{
-				//printf ("hamade\n");
-				if (access(g_global->lst->mini_cmd->filename, R_OK))
-				{
-					ft_putstr_fd("minishell: ", 2);
-					ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
-					ft_putstr_fd(": Permission denied\n", 2);
-					g_global->error = ft_strdup("1");
-					return (0);
-				}
-			}
-			fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
-			if (fd < 0)
-				return (fd);
-   			dup2(fd, STDIN_FILENO);
-			close(fd);
-    	}
-		if (g_global->lst->mini_cmd->redir == 3)
-		{
-			fd = open(g_global->lst->mini_cmd->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-    		dup2(fd, STDOUT_FILENO);
-    		close(fd);
-		}
-		if (g_global->lst->mini_cmd->next_mini != NULL)
-		 	g_global->lst->mini_cmd = g_global->lst->mini_cmd->next_mini;
-		else 
-			break;
-	}
-	return (fd);
-}
-
-int	redirection(struct imp **imp, char **envp)
-{
-	int fd;
-	int tmp_fd_out;
-	int tmp_fd_in;
-
-	tmp_fd_out = dup(1);
-    tmp_fd_in  = dup(0);
-	fd = type_redirection(fd);
-	if (fd < 0)
-	{
-		dup2(tmp_fd_out, STDOUT_FILENO);
-		ft_putstr_fd("minishell:  ", 2);
-		ft_putstr_fd(g_global->lst->mini_cmd->filename, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-		g_global->error = ft_strdup("1");
-		//dup2(tmp_fd_in, STDIN_FILENO);
-		return (0);
-	}
-	if (fd == 0)
-	{
-		dup2(tmp_fd_out, STDOUT_FILENO);
-		dup2(tmp_fd_in, STDIN_FILENO);
-		return(0);
-	}
-	if (g_global->sig_ex == 1)
-	{
-		dup2(tmp_fd_out, STDOUT_FILENO);
-		dup2(tmp_fd_in, STDIN_FILENO);
-		g_global->sig_ex = 0;
-		return (1);
-	}
-	if (g_global->lst->cmd)
-	{
-		if (!ft_strcmp(g_global->lst->cmd, "export") && g_global->lst->options && g_global->lst->options[1] != NULL)
-			imp = manages_options(imp);
-		if (!ft_strcmp(g_global->lst->cmd, "cd"))
-			ft_cd(imp);
-		if (!ft_strcmp(g_global->lst->cmd, "unset"))
-			ft_unset(imp);
-		if(!ft_strcmp(g_global->lst->cmd, "exit"))
-			ft_exit();
-		else
-			ex_in_childs(imp, envp);
-	}
-	close(fd);
-	dup2(tmp_fd_out, STDOUT_FILENO);
-	dup2(tmp_fd_in, STDIN_FILENO);
-	return (1);
-}
-
-void	execute(struct imp **imp, char **envp)
+void	execute(struct imp **imp)
 {
 	int i;
-	int pid;
 
 	if (!ft_strcmp(g_global->error, "0"))
 	{
 		if (g_global->lst->mini_cmd != NULL)
-			i = redirection(imp, envp);
+			i = redirection(imp);
 		else if (g_global->lst->cmd)
 		{
 			if (g_global->lst->is_builtin == 1)
-			{
-				
-				if (!ft_strcmp(g_global->lst->cmd, "export"))
-				{
-					if (g_global->lst->options[1] != NULL)
-						imp = manages_options(imp);
-					else
-						print_export(imp);
-				}
-				if (!ft_strcmp(g_global->lst->cmd, "echo"))
-						impecho();
-				if (!ft_strcmp(g_global->lst->cmd, "unset"))
-						ft_unset(imp);
-				if (!ft_strcmp(g_global->lst->cmd, "cd"))
-						ft_cd(imp);
-				if (!ft_strcmp(g_global->lst->cmd, "pwd"))
-						ft_pwd();
-				if(!ft_strcmp(g_global->lst->cmd, "exit"))
-						ft_exit();
-				if(!ft_strcmp(g_global->lst->cmd, "env"))
-						print_env(imp);
-			}
+				is_builtin(imp);
 			else
-			{
-				ft_execve(imp, envp);
-			}
+				ft_execve(imp);
 		}
 	}
 }

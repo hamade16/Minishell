@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "__config": "c"
+		"__config": "c",
+		"minishell_parse.h": "c"
 	},
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false

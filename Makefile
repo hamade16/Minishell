@@ -6,7 +6,7 @@ SRCS	= main.c \
 
 OBJS	= $(SRCS:.c=.o)
 
-CFLAGS	=# -Wall -Wextra -Werror
+CFLAGS	=  -Wall -Wextra -Werror
 RFLAGS	= -lreadline -L /Users/$(USER)/.brew/opt/readline/lib -I /Users/$(USER)/.brew/opt/readline/include
 DFLAGS	= -g -fsanitize=address
 

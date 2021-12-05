@@ -37,13 +37,9 @@ int	main(int ac, char **argv, char **envp)
 {
 	char		*line;
 	struct imp	*imp;
-	// int i = 0;
-	// while (envp[i])
-	// {
-	// 	printf("%s\n", envp[i]);
-	// 	i++;
-	// }
 
+	ac = 0;
+	argv = NULL;
 	g_global = malloc(sizeof(t_global));
 	g_global->lst = NULL;
 	g_global->error = "0";
@@ -59,7 +55,7 @@ int	main(int ac, char **argv, char **envp)
 		line = readline("minishell% ");
 		if (!line)
 		{
-			printf("exit");
+			printf("exit\n");
 			exit(EXIT_SUCCESS);
 		}
 		else if (*line && ft_strlen(ft_strtrim(line, " ")) > 0)
@@ -67,7 +63,7 @@ int	main(int ac, char **argv, char **envp)
 			add_history(line);
 			handle_line(line, imp);
 			// print_cmd(g_global->lst);
-			execute(&imp, envp);
+			execute(&imp);
 			free(line);
 		}
 	}

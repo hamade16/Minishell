@@ -1,12 +1,9 @@
 #include "../minishell.h"
 
-void	ex_in_childs(struct imp **imp, char **envp)
+void	ex_in_childs(struct imp **imp)
 {
 	int pid;
 
-	//pid = fork();
-
-	//if (!pid)
 	{
 		if (g_global->lst->is_builtin)
 		{
@@ -53,7 +50,7 @@ void	ex_in_childs(struct imp **imp, char **envp)
 			}
 		}
 		else
-			ft_execve(imp, envp);
+			ft_execve(imp);
 	}
 	//wait(&pid);
 }

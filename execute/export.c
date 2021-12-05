@@ -42,7 +42,6 @@ struct imp **manages_options(struct imp **imp)
 	struct imp *tmp;
 	struct imp	*init;
 	struct imp	*tmp1;
-	struct imp *tmp2;
 	int 		i;
 	struct imp *new;
 	int tm;

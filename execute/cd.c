@@ -2,7 +2,6 @@
 
 int    ft_cd(struct  imp **imp)
 {
-    //printf("%s", imp->key);
     struct imp *tmp;
 	char *str;
 	char buff[100];

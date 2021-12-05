@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 20:40:20 by houbeid           #+#    #+#             */
-/*   Updated: 2021/11/14 15:34:35 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/04 22:07:00 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ struct imp **ft_unset(struct imp **imp)
 {
     struct imp *tmp;
     int i;
-    struct imp *tmp1;
     struct imp *prev;
 
     i = 1;
