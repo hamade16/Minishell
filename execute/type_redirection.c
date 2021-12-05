@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 00:23:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 02:35:45 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/05 19:39:20 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ int	red_out(void)
 	}
 	fd = open(g_global->lst->mini_cmd->filename,
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	dup2 (fd, STDOUT_FILENO);
+	dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (fd);
 }
 
 int	red_in(void)
 {
-	int fd;
+	int	fd;
 
 	if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
 	{
@@ -54,16 +54,17 @@ int	red_in(void)
 	fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
 	if (fd < 0)
 		return (fd);
-   	dup2(fd, STDIN_FILENO);
+	dup2(fd, STDIN_FILENO);
 	close(fd);
 	return (fd);
 }
-/*
-int	red_herdog(t_mini_cmd *c)
+
+int	red_herdog(char *file, t_imp *env)
 {
-	int fd;
-	int pid;
-	
+	int		fd;
+	int		pid;
+	char	*line;
+
 	g_global->her_ex = 1;
 	fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	pid = fork();
@@ -72,18 +73,45 @@ int	red_herdog(t_mini_cmd *c)
 		g_global->child_ex = 1;
 		while (1)
 		{
-			char *line;
 			line = readline("> ");
-			if (ft_strcmp(line, c->filename))
+			if (line)
+				line = expand_it(line, env);
+			if (ft_strcmp(line, file))
 				ft_putendl_fd(line, fd);
 			else
-				break;
+				break ;
 		}
 		exit(0);
 	}
 	close(fd);
-	if (pid != 0)
-		wait(0);
+	wait(0);
 	return (fd);
 }
-*/
+
+int	macro_typered(int fd)
+{
+	t_mini_cmd	*m;
+
+	m = g_global->lst->mini_cmd;
+	while (m != NULL)
+	{
+		if (m->redir == 1 || m->redir == 2)
+		{
+			if (m->redir == 1)
+				fd = red_out();
+			else
+				fd = red_in();
+			if (fd == 0)
+				return (0);
+		}
+		if (m->redir == 3)
+		{
+			fd = open(m->filename,
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+		m = m->next_mini;
+	}
+	return (fd);
+}

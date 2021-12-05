@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void    impecho()
+void    impecho(void)
 {
     int i;
     int j;
@@ -19,12 +19,11 @@ void    impecho()
 			{
        			 while (g_global->lst->options[i])
        		 	{
-       		    	 printf("%s", g_global->lst->options[i]);
+       		    	printf("%s", g_global->lst->options[i]);
        		     	if (g_global->lst->options[i + 1])
        		        	 printf(" ");
        		     	i++;
        		 	}
-				//printf("hamade\n");
 				break;
 			}
 			else

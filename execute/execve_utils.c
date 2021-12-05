@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:41:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 03:56:11 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	ex_execve(char *pathname, char **env_conv)
 	}
 }
 
-int	inexecutable(struct imp **imp, char **env_conv)
+int	inexecutable(t_imp **imp, char **env_conv)
 {
 	char	*pathname;
 

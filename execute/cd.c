@@ -1,8 +1,8 @@
 #include "../minishell.h"
 
-int    ft_cd(struct  imp **imp)
+int    ft_cd(t_imp **imp)
 {
-    struct imp *tmp;
+    t_imp *tmp;
 	char *str;
 	char buff[100];
 
@@ -24,11 +24,7 @@ int    ft_cd(struct  imp **imp)
 		{
        		if(chdir(tmp->value) == -1)
 			{
-				ft_putstr_fd("minishell: cd: ", 2);
-       			ft_putstr_fd(tmp->value, 2);
-	   			ft_putstr_fd(": ", 2);
-       			perror("");
-				 g_global->error = ft_strdup("1");  
+				ft_error(tmp->value, ": No such file or directory", "1");
 				return (0);
 			}
 			tmp = *imp;
@@ -49,11 +45,7 @@ int    ft_cd(struct  imp **imp)
    }
    else if (chdir(g_global->lst->options[1]) == -1)
    {
-       ft_putstr_fd("minishell: cd: ", 2);
-       ft_putstr_fd(g_global->lst->options[1], 2);
-	   ft_putstr_fd(": ", 2);
-       perror("");
-	   g_global->error = ft_strdup("1");
+	   ft_error(g_global->lst->options[1], ": No such file or directory", "1");
 	   return (0);
    }
   	tmp = *imp;

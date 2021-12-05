@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtine.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/05 14:40:37 by houbeid           #+#    #+#             */
+/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void	is_builtin(struct imp **imp)
+void	is_builtin(t_imp **imp)
 {
-	int i;
-
+	int	i;
 
 	if (!ft_strcmp(g_global->lst->cmd, "export"))
 	{
@@ -20,8 +31,8 @@ void	is_builtin(struct imp **imp)
 		i = ft_cd(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "pwd"))
 		ft_pwd();
-	if(!ft_strcmp(g_global->lst->cmd, "exit"))
+	if (!ft_strcmp(g_global->lst->cmd, "exit"))
 		ft_exit();
-	if(!ft_strcmp(g_global->lst->cmd, "env"))
+	if (!ft_strcmp(g_global->lst->cmd, "env"))
 		print_env(imp);
 }

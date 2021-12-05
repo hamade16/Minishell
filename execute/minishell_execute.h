@@ -1,42 +1,55 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell_execute.h                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/05 15:49:27 by houbeid           #+#    #+#             */
+/*   Updated: 2021/12/05 18:25:08 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_EXECUTE_H
 
 # define MINISHELL_EXECUTE_H
 
-struct imp {
-	char *data;
-	char *key;
-	char *value;
-    int egale;
-	struct imp *next;
-};
+typedef struct s_imp {
+	char			*data;
+	char			*key;
+	char			*value;
+	int				egale;
+	struct s_imp	*next;
+}					t_imp;
 
-void		execute(struct imp **imp);
-struct imp	*gere_exp(char **envp);
-void        print_export(struct imp **tmp2);
-void    	impecho();
-struct imp  		**ft_unset(struct imp **imp);
-void    			ft_pwd(void);
-int    			ft_cd(struct imp **imp);
-void    			ft_exit(void);
-void    print_env(struct imp **imp);
-int    ft_execve(struct imp **imp);
-char   *path_env(struct imp **imp);
-void	ex_in_childs(struct imp **imp);
-struct imp **manages_options(struct imp **imp);
-struct imp *init_options();
-int	type_redirection(int fd);
-int	redirection(struct imp **imp);
-char	**ft_convert_to_arr(struct imp *env_lst);
-void	is_builtin(struct imp **imp);
-void	ft_error(char *str1, char *str2, char *str3);
-void	ex_with_redriction(struct imp **imp);
-int		red_out(void);
-void	dup_red(int a, int b);
-int		red_in(void);
-//int		red_herdog(t_mini_cmd *c);
-int	is_execitable(char **env_conv);
-void	ex_execve(char *pathname, char **env_conv);
-int	inexecutable(struct imp **imp, char **env_conv);
-char	*research_path(struct imp **imp);
+void				execute(t_imp **imp);
+t_imp				*gere_exp(char **envp);
+void				print_export(t_imp **tmp2);
+void				impecho(void);
+t_imp				**ft_unset(t_imp **imp);
+void				ft_pwd(void);
+int					ft_cd(t_imp **imp);
+void				ft_exit(void);
+void				print_env(t_imp **imp);
+int					ft_execve(t_imp **imp);
+char				*path_env(t_imp **imp);
+void					ex_in_childs(t_imp **imp);
+t_imp				**manages_options(t_imp **imp);
+t_imp				*init_options(void);
+int					type_redirection(int fd, t_imp *env);
+int					redirection(t_imp **imp);
+char				**ft_convert_to_arr(t_imp *env_lst);
+void				is_builtin(t_imp **imp);
+void				ft_error(char *str1, char *str2, char *str3);
+void				ex_with_redriction(t_imp **imp);
+int					red_out(void);
+void				dup_red(int a, int b);
+int					red_in(void);
+int					is_execitable(char **env_conv);
+void				ex_execve(char *pathname, char **env_conv);
+int					inexecutable(t_imp **imp, char **env_conv);
+char				*research_path(t_imp **imp);
+int					red_herdog(char *filename, t_imp *env);
+int					macro_typered(int fd);
 
 #endif

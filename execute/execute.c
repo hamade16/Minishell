@@ -1,39 +1,57 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/05 16:08:05 by houbeid           #+#    #+#             */
+/*   Updated: 2021/12/05 16:18:16 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-struct imp *init_options()
+void	macro_init_options(t_imp *tmp, int i)
 {
-	struct imp *init;
-	struct imp *tmp;
-	int len;
-	int i;
-	char *opt;
+	char	*opt;
+	int		len;
+
+	len = 0;
+	opt = ft_strchr(g_global->lst->options[i], '=');
+	if (opt)
+	{
+		len = opt - g_global->lst->options[i];
+		tmp->key = ft_substr(g_global->lst->options[i], 0, len);
+		if (opt[1] == '"' || opt[1] == '\'')
+			tmp->value = ft_substr(g_global->lst->options[i],
+					len + 1 + 1, ft_strlen(opt) - 1 - 2);
+		else
+			tmp->value = ft_substr(g_global->lst->options[i],
+					len + 1, ft_strlen(g_global->lst->options[i]));
+		tmp->egale = 1;
+	}
+	else
+	{
+		tmp->key = g_global->lst->options[i];
+		tmp->value = NULL;
+		tmp->egale = 0;
+	}
+}
+
+t_imp	*init_options(void)
+{
+	t_imp	*init;
+	t_imp	*tmp;
+	int		i;
 
 	i = 1;
-	len = 0;
-	init = malloc(sizeof(struct imp));
+	init = malloc(sizeof(t_imp));
 	tmp = init;
 	while (g_global->lst->options[i])
 	{
-
-		tmp->next = malloc(sizeof(struct imp));
-		opt = ft_strchr(g_global->lst->options[i], '=');
-		if (opt)
-		{
-			len = opt - g_global->lst->options[i];
-			tmp->key = ft_substr(g_global->lst->options[i], 0, len);
-			if (opt[1] == '"' || opt[1] == '\'')
-				tmp->value = ft_substr(g_global->lst->options[i], len + 1 + 1, ft_strlen(opt) - 1 - 2);
-			else
-				tmp->value = ft_substr(g_global->lst->options[i], len + 1, ft_strlen(g_global->lst->options[i]));
-
-			tmp->egale = 1;
-		}
-		else
-		{
-			tmp->key = g_global->lst->options[i];
-			tmp->value = NULL;
-			tmp->egale = 0;
-		}
+		tmp->next = malloc(sizeof(t_imp));
+		macro_init_options(tmp, i);
 		tmp = tmp->next;
 		i++;
 	}
@@ -41,9 +59,9 @@ struct imp *init_options()
 	return (init);
 }
 
-void	execute(struct imp **imp)
+void	execute(t_imp **imp)
 {
-	int i;
+	int	i;
 
 	if (!ft_strcmp(g_global->error, "0"))
 	{

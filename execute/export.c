@@ -1,20 +1,20 @@
 #include "../minishell.h"
 
 
-struct imp	*gere_exp(char **envp)
-{	struct imp *imp;
-	struct imp *tmp;
+t_imp	*gere_exp(char **envp)
+{	t_imp *imp;
+	t_imp *tmp;
 	int i;
 	int len;
 
 	i = 0;
 	len = 0;
-	imp = malloc(sizeof(struct imp));
+	imp = malloc(sizeof(t_imp));
 	tmp = imp;
 	while (envp[i])
 	{
 
-		tmp->next = malloc(sizeof(struct imp));
+		tmp->next = malloc(sizeof(t_imp));
 		if (ft_strchr(envp[i], '='))
 		{
 			len = ft_strchr(envp[i], '=') - envp[i];
@@ -37,13 +37,13 @@ struct imp	*gere_exp(char **envp)
 	return (imp);
 }
 
-struct imp **manages_options(struct imp **imp)
+t_imp **manages_options(t_imp **imp)
 {
-	struct imp *tmp;
-	struct imp	*init;
-	struct imp	*tmp1;
+	t_imp *tmp;
+	t_imp	*init;
+	t_imp	*tmp1;
 	int 		i;
-	struct imp *new;
+	t_imp *new;
 	int tm;
 
 	
@@ -75,18 +75,18 @@ struct imp **manages_options(struct imp **imp)
 					ft_putstr_fd("minishell: export: `", 2);
 					ft_putstr_fd(tmp1->key, 2);
 					ft_putstr_fd("\' : not a valid identifier\n", 2);
+					g_global->error = "1";
 					tm = 1;
 					break;
-					//return (imp);
 				}
 				i++;
 			}
 			if (tm == 0)
 			{
-				struct imp *t = *imp;
+				t_imp *t = *imp;
 				while (t->next)
 					t = t->next;
-				new = malloc(sizeof(struct imp));
+				new = malloc(sizeof(t_imp));
 				new->key = tmp1->key;
 				new->value = tmp1->value;
 				if (tmp1->egale == 1)
@@ -111,9 +111,9 @@ struct imp **manages_options(struct imp **imp)
 	return (imp);
 }
 
-void print_export(struct imp **imp)
+void print_export(t_imp **imp)
 {
-	struct imp *tmp;
+	t_imp *tmp;
 	int i;
 	int cmpt;
 

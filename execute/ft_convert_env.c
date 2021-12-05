@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_convert_env.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/05 16:38:36 by houbeid           #+#    #+#             */
+/*   Updated: 2021/12/05 16:39:01 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-static size_t	ft_get_env_size(struct imp *env_lst)
+static size_t	ft_get_env_size(t_imp *env_lst)
 {
 	size_t	len;
 
@@ -13,7 +25,7 @@ static size_t	ft_get_env_size(struct imp *env_lst)
 	return (len);
 }
 
-char	**ft_convert_to_arr(struct imp *env_lst)
+char	**ft_convert_to_arr(t_imp *env_lst)
 {
 	char	**env_arr;
 	size_t	len;
@@ -31,7 +43,6 @@ char	**ft_convert_to_arr(struct imp *env_lst)
 			len2 = ft_strlen(env_lst->value);
 		else
 			len2 = 0;
-
 		env_arr[i] = malloc(sizeof(char)
 				* (ft_strlen(env_lst->key)
 					+ len2 + 1 + 1));

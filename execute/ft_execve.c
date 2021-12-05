@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:39:56 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 03:36:55 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void	ft_free_split(char **tab)
 	free(tab);
 }
 
-char	*path_env(struct imp **imp)
+char	*path_env(t_imp **imp)
 {
 	int			i;
-	struct imp	*tmp;
+	t_imp	*tmp;
 
 	i = 0;
 	tmp = *imp;
@@ -47,7 +47,7 @@ char	*path_env(struct imp **imp)
 	return (tmp->value);
 }
 
-char	*research_path(struct imp **imp)
+char	*research_path(t_imp **imp)
 {
 	char	**path;
 	char	*pathname;
@@ -73,7 +73,7 @@ char	*research_path(struct imp **imp)
 	return (pathname);
 }
 
-int	ft_execve(struct imp **imp)
+int	ft_execve(t_imp **imp)
 {
 	char	**env_conv;
 	int		acces;
