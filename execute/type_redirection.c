@@ -12,46 +12,52 @@
 
 #include "../minishell.h"
 
-int	red_out(void)
+int	red_out(char *filename, int ambig)
 {
 	int	fd;
 
-	if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
+	if (access(filename, F_OK) == 0)
 	{
-		if (access(g_global->lst->mini_cmd->filename, W_OK))
+		if (access(filename, W_OK))
 		{
-			ft_error(g_global->lst->mini_cmd->filename,
+			ft_error(filename,
 				": Permission denied", "1");
 			return (0);
 		}
 	}
-	if (g_global->lst->mini_cmd->ambig == 1)
+	if (ambig == 1)
 	{
-		ft_error(g_global->lst->mini_cmd->filename,
+		ft_error(filename,
 			": ambiguous redirect", "1");
 		return (0);
 	}
-	fd = open(g_global->lst->mini_cmd->filename,
+	fd = open(filename,
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (fd);
 }
 
-int	red_in(void)
+int	red_in(char *filename, int ambig)
 {
 	int	fd;
 
-	if (access(g_global->lst->mini_cmd->filename, F_OK) == 0)
+	if (access(filename, F_OK) == 0)
 	{
-		if (access(g_global->lst->mini_cmd->filename, R_OK))
+		if (access(filename, R_OK))
 		{
-			ft_error(g_global->lst->mini_cmd->filename,
+			ft_error(filename,
 				": Permission denied", "1");
 			return (0);
 		}
 	}
-	fd = open(g_global->lst->mini_cmd->filename, O_RDONLY);
+	if (ambig == 1)
+	{
+		ft_error(filename,
+			": ambiguous redirect", "1");
+		return (0);
+	}
+	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		return (fd);
 	dup2(fd, STDIN_FILENO);
@@ -98,18 +104,22 @@ int	macro_typered(int fd)
 		if (m->redir == 1 || m->redir == 2)
 		{
 			if (m->redir == 1)
-				fd = red_out();
+				fd = red_out(m->filename, m->ambig);
 			else
-				fd = red_in();
+				fd = red_in(m->filename, m->ambig);
 			if (fd == 0)
 				return (0);
 		}
 		if (m->redir == 3)
 		{
-			fd = open(m->filename,
-					O_WRONLY | O_CREAT | O_APPEND, 0644);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
+			if (m->ambig == 1)
+				ft_error(m->filename, ": ambiguous redirect", "1");
+			else
+			{
+				fd = open(m->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
 		}
 		m = m->next_mini;
 	}
