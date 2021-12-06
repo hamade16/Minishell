@@ -39,23 +39,29 @@ char	*ft_charjoin(char const *s, char const c)
 		return (NULL);
 	i = 0;
 	len_s = ft_strlen(s);
-	new_string = (char *)malloc(len_s + 2);
+	new_string = (char *)pmalloc(len_s + 2);
 	ft_strcpy(new_string, s);
 	new_string[len_s] = c;
 	new_string[len_s + 1] = '\0';
 	return (new_string);
 }
 
-// TODO :
-	// reduce lines
+void	ft_norm_split(char **str, char *joined_str)
+{
+	char	*tmp;
+
+	tmp = *str;
+	*str = joined_str;
+	free(tmp);
+}
+
 char	**ft_split_wq(char *s, char c, size_t i, size_t j)
 {
 	size_t	len;
 	char	**result;
-	char	*tmp;
 
 	len = count_splitted_wq(s, c, -1);
-	result = (char **)malloc(sizeof(char *) * (len + 1));
+	result = (char **)pmalloc(sizeof(char *) * (len + 1));
 	if (!result)
 		return (NULL);
 	while (s[i] && s[i] == c)
@@ -64,14 +70,9 @@ char	**ft_split_wq(char *s, char c, size_t i, size_t j)
 	{
 		if (s[i] && (s[i] != c || check_quotes_ind(s, i) != 0))
 		{
-			result[j] = ft_strdup("");
+			result[j] = ft_strdup_wrap("");
 			while (s[i] && (s[i] != c || check_quotes_ind(s, i) != 0))
-			{
-				tmp = result[j];
-				result[j] = ft_charjoin(result[j], s[i]);
-				free(tmp);
-				i++;
-			}
+				ft_norm_split(&result[j], ft_charjoin(result[j], s[i++]));
 			j++;
 		}
 		else

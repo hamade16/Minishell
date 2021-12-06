@@ -35,7 +35,7 @@ char	**ft_convert_to_arr(t_imp *env_lst)
 
 	i = 0;
 	len = ft_get_env_size(env_lst);
-	env_arr = malloc(sizeof(char *) * (len + 1));
+	env_arr = pmalloc(sizeof(char *) * (len + 1));
 	while (i < len)
 	{
 		j = 0;
@@ -43,7 +43,7 @@ char	**ft_convert_to_arr(t_imp *env_lst)
 			len2 = ft_strlen(env_lst->value);
 		else
 			len2 = 0;
-		env_arr[i] = malloc(sizeof(char)
+		env_arr[i] = pmalloc(sizeof(char)
 				* (ft_strlen(env_lst->key)
 					+ len2 + 1 + 1));
 		env_arr[i][j] = 0;

@@ -36,11 +36,11 @@ void	handlsignal(int sig)
 int	main(int ac, char **argv, char **envp)
 {
 	char		*line;
-	struct imp	*imp;
+	t_imp		*imp;
 
 	ac = 0;
 	argv = NULL;
-	g_global = malloc(sizeof(t_global));
+	g_global = pmalloc(sizeof(t_global));
 	g_global->lst = NULL;
 	g_global->error = "0";
 	imp = gere_exp(envp);

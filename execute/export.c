@@ -9,12 +9,12 @@ t_imp	*gere_exp(char **envp)
 
 	i = 0;
 	len = 0;
-	imp = malloc(sizeof(t_imp));
+	imp = pmalloc(sizeof(t_imp));
 	tmp = imp;
 	while (envp[i])
 	{
 
-		tmp->next = malloc(sizeof(t_imp));
+		tmp->next = pmalloc(sizeof(t_imp));
 		if (ft_strchr(envp[i], '='))
 		{
 			len = ft_strchr(envp[i], '=') - envp[i];
@@ -86,7 +86,7 @@ t_imp **manages_options(t_imp **imp)
 				t_imp *t = *imp;
 				while (t->next)
 					t = t->next;
-				new = malloc(sizeof(t_imp));
+				new = pmalloc(sizeof(t_imp));
 				new->key = tmp1->key;
 				new->value = tmp1->value;
 				if (tmp1->egale == 1)

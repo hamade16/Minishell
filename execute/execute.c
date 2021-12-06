@@ -46,11 +46,11 @@ t_imp	*init_options(void)
 	int		i;
 
 	i = 1;
-	init = malloc(sizeof(t_imp));
+	init = pmalloc(sizeof(t_imp));
 	tmp = init;
 	while (g_global->lst->options[i])
 	{
-		tmp->next = malloc(sizeof(t_imp));
+		tmp->next = pmalloc(sizeof(t_imp));
 		macro_init_options(tmp, i);
 		tmp = tmp->next;
 		i++;
