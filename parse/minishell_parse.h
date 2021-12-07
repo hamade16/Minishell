@@ -35,6 +35,7 @@ char			**ft_split_wq(char *s, char c, size_t i, size_t j);
 int				check_quotes_ind(char *str, size_t len);
 int				check_quotes(char *s);
 int				quote_macro(char c, int q);
+void			ft_expand_data(t_cmd **cmd, t_imp *env);
 char			*expand_it(char *s, t_imp *env);
 void			ft_unquote(t_cmd **cmd);
 char			*ft_remove_quotes(char *str);

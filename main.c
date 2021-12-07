@@ -54,8 +54,8 @@ void	free_global(void)
 	{
 		if (g_global->lst->cmd)
 		{
-			// free(g_global->lst->cmd);
-			// g_global->lst->cmd = NULL;
+			free(g_global->lst->cmd);
+			g_global->lst->cmd = NULL;
 		}
 		if (g_global->lst->options)
 		{
@@ -103,8 +103,8 @@ int	main(int ac, char **argv, char **envp)
 		{
 			add_history(line);
 			handle_line(line, imp);
-			// print_cmd(g_global->lst);
 			execute(&imp);
+			// print_cmd(g_global->lst);
 			free_global();
 			free(line);
 		}

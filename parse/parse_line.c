@@ -80,53 +80,131 @@ int	ft_is_builtin(char *cmd)
 		return (0);
 }
 
+// void	ft_extract_it_norm(char *part, char **f, int *redir, size_t *j)
+// {
+// 	size_t	k;
+
+// 	k = *j;
+// 	if (part[*j] == '\'' || part[*j] == '"')
+// 		(*j)++;
+// 	while (part[*j] && ((part[*j] != '<' && part[*j] != '>')
+// 			|| check_quotes_ind(part, *j)))
+// 		(*j)++;
+// 	if (tmp->cmd == NULL && redirection == 0)
+// 	{
+// 		tmp->cmd = ft_substr_wrap(part, k, *j - k);
+// 		ft_append(&tmp->options, ft_substr_wrap(part, k, *j - k));
+// 		tmp->is_builtin = ft_is_builtin(tmp->cmd);
+// 	}
+// 	else if (redirection)
+// 	{
+// 		*f = ft_substr_wrap(part, k, *j - k);
+// 		ft_mini_addback(&tmp->mini_cmd, *f, redirection, 0);
+// 		free(*f);
+// 		*f = NULL;
+// 		*redir = 0;
+// 	}
+// 	else
+// 		ft_append(&tmp->options, ft_substr_wrap(part, k, *j - k));
+// }
+
+void	ft_extract_data(char *part, t_cmd **new)
+{
+	size_t	j;
+	size_t	k;
+	int		redir;
+	char	*filename;
+
+	j = 0;
+	while (part[j])
+	{
+		if (part[j] == '>' || part[j] == '<')
+			parse_redir_macro(part, &redir, &j);
+		else
+		{
+			k = j;
+			if (part[j] == '\'' || part[j] == '"')
+				j++;
+			while (part[j] &&
+				((part[j] != '<' && part[j] != '>')
+					|| check_quotes_ind(part, j)))
+				j++;
+			if ((*new)->cmd == NULL && redir == 0)
+			{
+				(*new)->cmd = ft_substr_wrap(part, k, j - k);
+				ft_append(&(*new)->options, ft_substr_wrap(part, k, j - k));
+				(*new)->is_builtin = ft_is_builtin((*new)->cmd);
+			}
+			else if (redir)
+			{
+				filename = ft_substr_wrap(part, k, j - k);
+				if ((*new)->cmd == NULL)
+					ft_exit_malloc();
+				ft_mini_addback(&(*new)->mini_cmd, filename, redir, 0);
+				free(filename);
+				filename = NULL;
+				redir = 0;
+			}
+			else
+				ft_append(&(*new)->options, ft_substr_wrap(part, k, j - k));
+		}
+	}
+}
+
+size_t	ft_extract_it_skip(char *part, size_t j)
+{
+	if (part[j] == '\'' || part[j] == '"')
+		j++;
+	while (part[j] &&
+		((part[j] != '<' && part[j] != '>')
+			|| check_quotes_ind(part, j)))
+		j++;
+	return (j);
+}
+
 // TODO:
 	// norm
-void	ft_extract_it(t_cmd **head, char *line)
+void	ft_extract_it(t_cmd **head, char *line, char *filename, int redir)
 {
 	size_t		i;
 	size_t		j;
 	size_t		k;
 	char		**parts;
 	t_cmd		*tmp;
-	// t_mini_cmd	*mini;
-	char		*filename;
-	int			redirection;
 
 	i = 0;
-	tmp = init_for_extract(&filename, &redirection);
+	tmp = init_for_extract(&filename, &redir);
 	parts = ft_split_wq(line, ' ', 0, 0);
 	while (parts[i])
 	{
 		j = 0;
+		// ft_extract_data(parts[i], &tmp);
 		while (parts[i][j])
 		{
 			if (parts[i][j] == '>' || parts[i][j] == '<')
-				parse_redir_macro(parts[i], &redirection, &j);
+				parse_redir_macro(parts[i], &redir, &j);
 			else
 			{
 				k = j;
-				if (parts[i][j] == '\'' || parts[i][j] == '"')
-					j++;
-				while (parts[i][j] &&
-					((parts[i][j] != '<' && parts[i][j] != '>')
-						|| check_quotes_ind(parts[i], j)))
-					j++;
-				if (tmp->cmd == NULL && redirection == 0)
+				j = ft_extract_it_skip(parts[i], j);
+				// if (parts[i][j] == '\'' || parts[i][j] == '"')
+				// 	j++;
+				// while (parts[i][j] &&
+				// 	((parts[i][j] != '<' && parts[i][j] != '>')
+				// 		|| check_quotes_ind(parts[i], j)))
+				// 	j++;
+				if (tmp->cmd == NULL && redir == 0)
 				{
 					tmp->cmd = ft_substr_wrap(parts[i], k, j - k);
 					ft_append(&tmp->options, ft_substr_wrap(parts[i], k, j - k));
 					tmp->is_builtin = ft_is_builtin(tmp->cmd);
 				}
-				else if (redirection)
+				else if (redir)
 				{
 					filename = ft_substr_wrap(parts[i], k, j - k);
-					if (tmp->cmd == NULL)
-						ft_exit_malloc();
-					ft_mini_addback(&tmp->mini_cmd, filename, redirection, 0);
+					ft_mini_addback(&tmp->mini_cmd, filename, redir, 0);
 					free(filename);
-					filename = NULL;
-					redirection = 0;
+					redir = 0;
 				}
 				else
 					ft_append(&tmp->options, ft_substr_wrap(parts[i], k, j - k));
@@ -134,175 +212,14 @@ void	ft_extract_it(t_cmd **head, char *line)
 		}
 		i++;
 	}
+	i = 0;
 	while (parts[i])
 	{
 		free(parts[i]);
 		i++;
 	}
 	free(parts);
-	// if (*head)
-	// {
-	// 	if ((*head)->cmd)
-	// 		free((*head)->cmd);
-	// 	if ((*head)->options)
-	// 	{
-	// 		i = 0;
-	// 		while ((*head)->options[i])
-	// 		{
-	// 			free((*head)->options[i]);
-	// 			i++;
-	// 		}
-	// 	}
-	// 	while ((*head)->mini_cmd)
-	// 	{
-	// 		mini = (*head)->mini_cmd;
-	// 		free((*head)->mini_cmd->filename);
-	// 		(*head)->mini_cmd = (*head)->mini_cmd->next_mini;
-	// 		free(mini);
-	// 	}
-	// 	free(*head);
-	// }
 	*head = tmp;
-}
-
-char	*ft_expand_norm(char *str, t_imp *env)
-{
-	char	*tmp;
-
-	tmp = str;
-	str = expand_it(str, env);
-	free(tmp);
-	return (str);
-}
-
-void	ft_expand_data(t_cmd **cmd, t_imp *env)
-{
-	int			i;
-	t_mini_cmd	*mini;
-
-	if ((*cmd)->cmd)
-	{
-		(*cmd)->cmd = ft_expand_norm((*cmd)->cmd, env);
-	}
-	if ((*cmd)->options)
-	{
-		i = 0;
-		while ((*cmd)->options[i])
-		{
-			(*cmd)->options[i] = ft_expand_norm((*cmd)->options[i], env);
-			i++;
-		}
-	}
-	mini = (*cmd)->mini_cmd;
-	while (mini)
-	{
-		mini->filename = ft_expand_norm(mini->filename, env);
-		if (ft_strlen(mini->filename) <= 0)
-			mini->ambig = 1;
-		mini = mini->next_mini;
-	}
-}
-
-// TODO:
-	// norm
-char	*expand_it(char *s, t_imp *env)
-{          
-	size_t	i;
-	size_t	j;
-	size_t	size;
-	size_t	var_size;
-	int		quote;
-	char	*res;
-	char	*var_key;
-	t_imp *head;
-
-	i = 0;
-	size = 0;
-	quote = 0;
-	var_size = 0;
-	var_key = NULL;
-	res = NULL;
-	while (s[i])
-	{
-		quote = quote_macro(s[i], quote);
-		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?') && quote != 1)
-		{
-			i += 2;
-			var_size += 2;
-			if (s[i - 1] != '?')
-				while (ft_isalnum(s[i]))
-				{
-					i++;
-					var_size++;
-				}
-			var_key = ft_substr_wrap(s, i - var_size + 1, var_size - 1);
-			head = env;
-			while (head)
-			{
-				if (ft_strcmp(var_key, head->key) == 0)
-				{
-					size += ft_strlen(head->value);
-				}
-				head = head->next;
-			}
-			if (ft_strcmp(var_key, "?") == 0)
-			{
-				size += ft_strlen(g_global->error);
-			}
-			free(var_key);
-		}
-		if (s[i])
-		{
-			size++;
-			i++;
-		}
-	}
-
-	i = 0;
-	j = 0;
-	quote = 0;
-	var_size = 0;
-	res = pmalloc(sizeof(char) * size + 1);
-	while (s[i])
-	{
-		quote = quote_macro(s[i], quote);
-		if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_' || s[i + 1] == '?') && quote != 1)
-		{
-			i += 2;
-			var_size += 2;
-			if (s[i - 1] != '?')
-				while (ft_isalnum(s[i]))
-				{
-					i++;
-					var_size++;
-				}
-			var_key = ft_substr_wrap(s, i - var_size + 1, var_size - 1);
-			head = env;
-			while (head)
-			{
-				if (ft_strcmp(var_key, head->key) == 0)
-				{
-					ft_strlcpy(res+j, head->value, ft_strlen(head->value) + 1);
-					j += ft_strlen(head->value);
-				}
-				head = head->next;
-			}
-			if (ft_strcmp(var_key, "?") == 0)
-			{
-				ft_strlcpy(res+j, g_global->error, ft_strlen(g_global->error) + 1);
-				j += ft_strlen(g_global->error);
-			}
-			free(var_key);
-		}
-		else
-		{
-			res[j] = s[i];
-			j++;
-			i++;
-		}
-	}
-	res[j] = '\0';
-	return (res);
 }
 
 void	handle_line(char *line, t_imp *env)
@@ -315,7 +232,7 @@ void	handle_line(char *line, t_imp *env)
 			{
 				if (check_redirections(line) && check_end_redirections(line))
 				{
-					ft_extract_it(&g_global->lst, line);
+					ft_extract_it(&g_global->lst, line, NULL, 0);
 					ft_expand_data(&g_global->lst, env);
 					ft_unquote(&g_global->lst);
 					g_global->error = "0";

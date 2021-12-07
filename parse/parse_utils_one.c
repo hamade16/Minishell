@@ -46,12 +46,14 @@ char	*ft_charjoin(char const *s, char const c)
 	return (new_string);
 }
 
-void	ft_norm_split(char **str, char *joined_str)
+void	ft_norm_split(char **str, char *s, size_t *i)
+// void	ft_norm_split(char **str, char *joined_str)
 {
 	char	*tmp;
 
 	tmp = *str;
-	*str = joined_str;
+	*str = ft_charjoin(*str, s[(*i)++]);
+	// *str = joined_str;
 	free(tmp);
 }
 
@@ -72,7 +74,8 @@ char	**ft_split_wq(char *s, char c, size_t i, size_t j)
 		{
 			result[j] = ft_strdup_wrap("");
 			while (s[i] && (s[i] != c || check_quotes_ind(s, i) != 0))
-				ft_norm_split(&result[j], ft_charjoin(result[j], s[i++]));
+				ft_norm_split(&result[j], s, &i);
+				// ft_norm_split(&result[j], ft_charjoin(result[j], s[i++]));
 			j++;
 		}
 		else

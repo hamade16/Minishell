@@ -22,9 +22,9 @@ void	print_cmd(t_cmd *c)
 			printf("redirections are\n");
 			while (c->mini_cmd)
 			{
-				printf("\t[%d]\n", c->mini_cmd->redir);
-				printf("\t[%s]\n", c->mini_cmd->filename);
-				printf("\t[%i]\n", c->mini_cmd->ambig);
+				printf("\t[%d]", c->mini_cmd->redir);
+				printf(" [%s] ", c->mini_cmd->filename);
+				printf("[%d]\n", c->mini_cmd->ambig);
 				c->mini_cmd = c->mini_cmd->next_mini;
 			}
 		}

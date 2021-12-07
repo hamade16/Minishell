@@ -56,10 +56,13 @@ int	check_end_redirections(char *cmd)
 {
 	char	*trimmd;
 	size_t	len;
+	int		flag;
 
+	flag = 1;
 	trimmd = ft_strtrim(cmd, " ");
 	len = ft_strlen(trimmd);
 	if (len > 0 && (trimmd[len - 1] == '<' || trimmd[len - 1] == '>'))
-		return (0);
-	return (1);
+		flag = 0;
+	free(trimmd);
+	return (flag);
 }
