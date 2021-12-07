@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 18:52:56 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/06 21:19:36 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:42:45 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	type_redirection(int fd, t_imp *env)
 		if (c->redir == 4)
 		{
 			heredoc = 1;
-			printf("%s\n", c->filename);
 			red_herdog(c->filename, env);
 			c = c->next_mini;
 		}

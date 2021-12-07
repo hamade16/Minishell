@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:41:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 06:53:39 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:29:43 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	macro_2(int wstatus)
 			ft_error(g_global->lst->cmd, ": is a directory", "127");
 		else
 			g_global->error = "1";
-		
 	}
 }
 

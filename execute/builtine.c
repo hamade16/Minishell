@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 14:40:37 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 02:02:49 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:56:20 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	is_builtin(t_imp **imp)
 	if (!ft_strcmp(g_global->lst->cmd, "cd"))
 		i = ft_cd(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "pwd"))
-		ft_pwd();
+		ft_pwd(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "exit"))
 		ft_exit();
 	if (!ft_strcmp(g_global->lst->cmd, "env"))

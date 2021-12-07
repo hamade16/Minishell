@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 15:49:27 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 06:40:36 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:56:06 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_imp				*gere_exp(char **envp);
 void				print_export(t_imp **tmp2);
 void				impecho(int j);
 t_imp				**ft_unset(t_imp **imp);
-void				ft_pwd(void);
+void				ft_pwd(t_imp **imp);
 int					ft_cd(t_imp **imp);
 void				ft_exit(void);
 void				print_env(t_imp **imp);

@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 21:34:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/06 22:47:41 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:56:28 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	ex_in_childs(t_imp **imp)
 			if (!ft_strcmp(g_global->lst->cmd, "echo"))
 				impecho(0);
 			if (!ft_strcmp(g_global->lst->cmd, "pwd"))
-				ft_pwd();
+				ft_pwd(imp);
 			if (!ft_strcmp(g_global->lst->cmd, "env"))
 				print_env(imp);
 			if (!ft_strcmp(g_global->lst->cmd, "export")
