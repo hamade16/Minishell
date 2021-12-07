@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_utils_one.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abel-haj <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/07 14:12:34 by abel-haj          #+#    #+#             */
+/*   Updated: 2021/12/07 14:12:36 by abel-haj         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static size_t	count_splitted_wq(char *s, char c, size_t i)
@@ -47,13 +59,11 @@ char	*ft_charjoin(char const *s, char const c)
 }
 
 void	ft_norm_split(char **str, char *s, size_t *i)
-// void	ft_norm_split(char **str, char *joined_str)
 {
 	char	*tmp;
 
 	tmp = *str;
 	*str = ft_charjoin(*str, s[(*i)++]);
-	// *str = joined_str;
 	free(tmp);
 }
 
@@ -75,7 +85,6 @@ char	**ft_split_wq(char *s, char c, size_t i, size_t j)
 			result[j] = ft_strdup_wrap("");
 			while (s[i] && (s[i] != c || check_quotes_ind(s, i) != 0))
 				ft_norm_split(&result[j], s, &i);
-				// ft_norm_split(&result[j], ft_charjoin(result[j], s[i++]));
 			j++;
 		}
 		else

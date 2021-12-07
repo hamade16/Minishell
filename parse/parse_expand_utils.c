@@ -1,157 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_expand_utils.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abel-haj <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/07 14:13:48 by abel-haj          #+#    #+#             */
+/*   Updated: 2021/12/07 14:13:49 by abel-haj         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-char	*ft_expand_norm(char *str, t_imp *env)
+void	expand_it_init(size_t *a, size_t *b, int *c)
 {
-	char	*tmp;
-
-	tmp = str;
-	str = expand_it(str, env);
-	free(tmp);
-	return (str);
+	*a = 0;
+	*b = 0;
+	*c = 0;
 }
 
-void	ft_expand_data(t_cmd **cmd, t_imp *env)
+char	*expand_it(char *s, t_imp *env, size_t size)
 {
-	int			i;
-	t_mini_cmd	*mini;
-
-	if ((*cmd)->cmd)
-	{
-		(*cmd)->cmd = ft_expand_norm((*cmd)->cmd, env);
-	}
-	if ((*cmd)->options)
-	{
-		i = 0;
-		while ((*cmd)->options[i])
-		{
-			(*cmd)->options[i] = ft_expand_norm((*cmd)->options[i], env);
-			i++;
-		}
-	}
-	mini = (*cmd)->mini_cmd;
-	while (mini)
-	{
-		mini->filename = ft_expand_norm(mini->filename, env);
-		if (ft_strlen(mini->filename) <= 0)
-			mini->ambig = 1;
-		mini = mini->next_mini;
-	}
-}
-
-size_t	expand_it_one_norm(char *key_var, char *key_lst, char *val_lst)
-{
-	if (ft_strcmp(key_var, key_lst) == 0)
-		return (ft_strlen(val_lst));
-	return (0);
-}
-
-void	expand_it_count(char *s, size_t *i, size_t *size, t_imp *head)
-{
-	size_t	var_size;
-	char	*var_key;
-
-	(*i) += 2;
-	var_size = 2;
-	if (s[(*i) - 1] != '?')
-	{
-		while (ft_isalnum(s[*i]) || s[*i] == '_')
-		{
-			(*i)++;
-			var_size++;
-		}
-	}
-	var_key = ft_substr_wrap(s, *i - var_size + 1, var_size - 1);
-	while (head)
-	{
-		(*size) += expand_it_one_norm(var_key, head->key, head->value);
-		head = head->next;
-	}
-	if (ft_strcmp(var_key, "?") == 0)
-		(*size) += ft_strlen(g_global->error);
-	free(var_key);
-}
-
-void	expand_it_rep(char *s, size_t *i, size_t *j, char **res, t_imp *head)
-{
-	size_t	var_size;
-	char	*var_key;
-
-	(*i) += 2;
-	var_size = 2;
-	if (s[*i - 1] != '?')
-	{
-		while (ft_isalnum(s[*i]) || s[*i] == '_')
-		{
-			(*i)++;
-			var_size++;
-		}
-	}
-	var_key = ft_substr_wrap(s, (*i) - var_size + 1, var_size - 1);
-	while (head)
-	{
-		if (ft_strcmp(var_key, head->key) == 0)
-		{
-			ft_strlcpy(*res + *j, head->value, ft_strlen(head->value) + 1);
-			*j += ft_strlen(head->value);
-		}
-		head = head->next;
-	}
-	if (ft_strcmp(var_key, "?") == 0)
-	{
-		ft_strlcpy(*res + *j, g_global->error, ft_strlen(g_global->error) + 1);
-		*j += ft_strlen(g_global->error);
-	}
-	free(var_key);
-}
-
-int	expand_it_cmp_macro(char *s, size_t i, int quote)
-{
-	if (s[i] == '$' && (ft_isalpha(s[i + 1]) || s[i + 1] == '_'
-			|| s[i + 1] == '?') && quote != 1)
-		return (1);
-	return (0);
-}
-
-// TODO:
-	// norm
-char	*expand_it(char *s, t_imp *env)
-{
-	size_t	i;
-	size_t	j;
-	size_t	size;
+	t_norm	norm;
 	int		quote;
 	char	*res;
 
-	i = 0;
-	size = 0;
-	quote = 0;
-	while (s[i])
+	expand_it_init(&norm.i, &size, &quote);
+	while (s[norm.i])
 	{
-		quote = quote_macro(s[i], quote);
-		if (expand_it_cmp_macro(s, i, quote))
-			expand_it_count(s, &i, &size, env);
-		if (s[i])
-		{
-			size++;
-			i++;
-		}
+		quote = quote_macro(s[norm.i], quote);
+		if (expand_it_cmp_macro(s, norm.i, quote))
+			expand_it_count(s, &norm.i, &size, env);
+		expand_cmp_iter_macro(s, &norm.i, &size);
 	}
-	i = 0;
-	j = 0;
-	quote = 0;
+	expand_it_init(&norm.i, &norm.j, &quote);
 	res = pmalloc(sizeof(char) * size + 1);
-	while (s[i])
+	while (s[norm.i])
 	{
-		quote = quote_macro(s[i], quote);
-		if (expand_it_cmp_macro(s, i, quote))
-			expand_it_rep(s, &i, &j, &res, env);
+		quote = quote_macro(s[norm.i], quote);
+		if (expand_it_cmp_macro(s, norm.i, quote))
+			norm = expand_it_repl(s, norm, &res, env);
 		else
-		{
-			res[j] = s[i];
-			j++;
-			i++;
-		}
+			expand_repl_iter_macro(s, &res, &norm.i, &norm.j);
 	}
-	res[j] = '\0';
+	res[norm.j] = '\0';
 	return (res);
 }

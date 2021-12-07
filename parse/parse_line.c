@@ -1,4 +1,3 @@
-#include "../execute/minishell_execute.h"
 #include "../minishell.h"
 
 void	ft_append(char ***opt, char *newopt)
@@ -71,11 +70,11 @@ t_cmd	*init_for_extract(char **f, int *redir)
 
 int	ft_is_builtin(char *cmd)
 {
-	if (!ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "echo") ||
-		!ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "cd") ||
-		!ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "pwd") ||
-		!ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"))
-		return(1);
+	if (!ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "echo")
+		|| !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "cd")
+		|| !ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "pwd")
+		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"))
+		return (1);
 	else
 		return (0);
 }
@@ -108,6 +107,16 @@ int	ft_is_builtin(char *cmd)
 // 		ft_append(&tmp->options, ft_substr_wrap(part, k, *j - k));
 // }
 
+size_t	ft_extract_it_skip(char *part, size_t j)
+{
+	if (part[j] == '\'' || part[j] == '"')
+		j++;
+	while (part[j] && ((part[j] != '<' && part[j] != '>')
+			|| check_quotes_ind(part, j)))
+		j++;
+	return (j);
+}
+
 void	ft_extract_data(char *part, t_cmd **new)
 {
 	size_t	j;
@@ -123,12 +132,7 @@ void	ft_extract_data(char *part, t_cmd **new)
 		else
 		{
 			k = j;
-			if (part[j] == '\'' || part[j] == '"')
-				j++;
-			while (part[j] &&
-				((part[j] != '<' && part[j] != '>')
-					|| check_quotes_ind(part, j)))
-				j++;
+			j = ft_extract_it_skip(part, j);
 			if ((*new)->cmd == NULL && redir == 0)
 			{
 				(*new)->cmd = ft_substr_wrap(part, k, j - k);
@@ -138,28 +142,14 @@ void	ft_extract_data(char *part, t_cmd **new)
 			else if (redir)
 			{
 				filename = ft_substr_wrap(part, k, j - k);
-				if ((*new)->cmd == NULL)
-					ft_exit_malloc();
 				ft_mini_addback(&(*new)->mini_cmd, filename, redir, 0);
 				free(filename);
-				filename = NULL;
 				redir = 0;
 			}
 			else
 				ft_append(&(*new)->options, ft_substr_wrap(part, k, j - k));
 		}
 	}
-}
-
-size_t	ft_extract_it_skip(char *part, size_t j)
-{
-	if (part[j] == '\'' || part[j] == '"')
-		j++;
-	while (part[j] &&
-		((part[j] != '<' && part[j] != '>')
-			|| check_quotes_ind(part, j)))
-		j++;
-	return (j);
 }
 
 // TODO:
@@ -187,12 +177,6 @@ void	ft_extract_it(t_cmd **head, char *line, char *filename, int redir)
 			{
 				k = j;
 				j = ft_extract_it_skip(parts[i], j);
-				// if (parts[i][j] == '\'' || parts[i][j] == '"')
-				// 	j++;
-				// while (parts[i][j] &&
-				// 	((parts[i][j] != '<' && parts[i][j] != '>')
-				// 		|| check_quotes_ind(parts[i], j)))
-				// 	j++;
 				if (tmp->cmd == NULL && redir == 0)
 				{
 					tmp->cmd = ft_substr_wrap(parts[i], k, j - k);

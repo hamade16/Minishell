@@ -14,7 +14,7 @@ void	print_cmd(t_cmd *c)
 			printf("options are\n");
 			for (int i = 0; c->options[i]; i++)
 			{
-				printf("\t%d [%s]\n", i+1, c->options[i]);
+				printf("\t%d [%s]\n", i + 1, c->options[i]);
 			}
 		}
 		if (c->mini_cmd)

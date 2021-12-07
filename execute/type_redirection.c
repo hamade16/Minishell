@@ -94,7 +94,7 @@ int	red_herdog(char *file, t_imp *env)
 		{
 			line = readline("> ");
 			if (line)
-				line = expand_it(line, env);
+				line = expand_it(line, env, 0);
 			if (ft_strcmp(line, file))
 				ft_putendl_fd(line, fd);
 			else
