@@ -33,10 +33,47 @@ void	handlsignal(int sig)
 	}
 }
 
+void	free_global_mini(void)
+{
+	t_mini_cmd	*mini;
+
+	while (g_global->lst->mini_cmd)
+	{
+		mini = g_global->lst->mini_cmd;
+		free(g_global->lst->mini_cmd->filename);
+		g_global->lst->mini_cmd = g_global->lst->mini_cmd->next_mini;
+		free(mini);
+	}
+}
+
+void	free_global(void)
+{
+	int			i;
+
+	if (g_global->lst)
+	{
+		if (g_global->lst->cmd)
+			free(g_global->lst->cmd);
+		if (g_global->lst->options)
+		{
+			i = 0;
+			while (g_global->lst->options[i])
+			{
+				free(g_global->lst->options[i]);
+				i++;
+			}
+		}
+		free_global_mini();
+		free(g_global->lst);
+		g_global->lst = NULL;
+	}
+}
+
 int	main(int ac, char **argv, char **envp)
 {
 	char		*line;
 	t_imp		*imp;
+	char		*trimmd;
 
 	ac = 0;
 	argv = NULL;
@@ -53,19 +90,22 @@ int	main(int ac, char **argv, char **envp)
 	while (1)
 	{
 		line = readline("minishell% ");
+		trimmd = ft_strtrim(line, " ");
 		if (!line)
 		{
 			printf("exit\n");
 			exit(EXIT_SUCCESS);
 		}
-		else if (*line && ft_strlen(ft_strtrim(line, " ")) > 0)
+		else if (*line && ft_strlen(trimmd) > 0)
 		{
 			add_history(line);
 			handle_line(line, imp);
 			// print_cmd(g_global->lst);
 			execute(&imp);
+			free_global();
 			free(line);
 		}
+		free(trimmd);
 	}
 	return (0);
 }
