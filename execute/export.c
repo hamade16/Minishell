@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 01:43:28 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 09:38:33 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 21:58:20 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,11 @@ t_imp	**manages_options(t_imp **imp)
 	init = init_options();
 	tmp1 = init;
 	if (first_caractere(tmp1->key))
+	{
+		free_list(init);
 		return (imp);
-	while (tmp1->next != NULL)
+	}
+	while (tmp1 != NULL)
 	{
 		tmp = *imp;
 		while (tmp != NULL && ft_strcmp(tmp1->key, tmp->key))
@@ -95,6 +98,8 @@ t_imp	**manages_options(t_imp **imp)
 			if (tmp1->egale == 1)
 				var_exist(&tmp, tmp1);
 		}
+		if (tmp1->next == NULL)
+			break ;
 		tmp1 = tmp1->next;
 	}
 	free_list(init);

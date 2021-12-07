@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 15:01:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 03:59:18 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 22:14:08 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,11 @@ void	remplir_imp(t_imp **imp, t_imp *tmp1)
 	while (t->next)
 		t = t->next;
 	new = pmalloc(sizeof(t_imp));
-	new->key = tmp1->key;
-	new->value = tmp1->value;
+	new->key = ft_strdup(tmp1->key);
+	if (tmp1->value)
+		new->value = ft_strdup(tmp1->value);
+	else
+		new->value = ft_strdup("");
 	if (tmp1->egale == 1)
 		new->egale = 1;
 	else
@@ -62,8 +65,17 @@ void	remplir_imp(t_imp **imp, t_imp *tmp1)
 
 void	var_exist(t_imp **tmp, t_imp *tmp1)
 {
-	(*tmp)->key = tmp1->key;
-	(*tmp)->value = tmp1->value;
+	char	*imp;
+	char	*imp1;
+
+	imp = (*tmp)->key;
+	(*tmp)->key = ft_strdup(tmp1->key);
+	free(imp);
+	imp = NULL;
+	imp1 = (*tmp)->value;
+	(*tmp)->value = ft_strdup(tmp1->value);
+	free(imp1);
+	imp1 = NULL;
 	(*tmp)->egale = 1;
 }
 

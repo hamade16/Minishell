@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 16:38:36 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 06:40:19 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 19:57:04 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,11 @@ void	free_list(t_imp *init)
 		tmp = init;
 		init = init->next;
 		free(tmp->key);
+		tmp->key = NULL;
 		free(tmp->value);
+		tmp->value = NULL;
 		free(tmp);
+		tmp = NULL;
 	}
 }
 

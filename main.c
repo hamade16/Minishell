@@ -80,8 +80,8 @@ t_imp	*init_main(int ac, char **av, char **envp)
 	g_global->her_ex = 0;
 	g_global->sig_ex = 0;
 	g_global->sig_exdeja = 0;
-	signal(SIGINT, handlsignal);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGINT, handlsignal);
+	//signal(SIGQUIT, SIG_IGN);
 	return (gere_exp(envp));
 }
 
@@ -110,6 +110,7 @@ int	main(int ac, char **av, char **envp)
 			free(line);
 		}
 		free(trimmd);
+		//system("leaks minishell");
 	}
 	return (0);
 }

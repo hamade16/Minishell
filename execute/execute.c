@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 16:08:05 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 03:59:18 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 22:09:58 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ t_imp	*init_options(void)
 	tmp = init;
 	while (g_global->lst->options[i])
 	{
-		tmp->next = pmalloc(sizeof(t_imp));
 		macro_init_options(tmp, i);
+		if (!g_global->lst->options[i + 1])
+			break ;
+		tmp->next = pmalloc(sizeof(t_imp));
 		tmp = tmp->next;
 		i++;
 	}
