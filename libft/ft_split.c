@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-haj <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/14 13:55:23 by abel-haj          #+#    #+#             */
-/*   Updated: 2019/11/05 00:02:07 by abel-haj         ###   ########.fr       */
+/*   Updated: 2021/12/07 10:05:24 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,9 @@ char	**ft_split(char const *s, char c)
 	while (j < k)
 	{
 		ft_split_incr(s, &i, c, 1);
-		result_array[j] = (char *)malloc(sizeof(char) * ft_strclen((s + i), c));
+		result_array[j] = ft_substr(s, i, ft_strclen((s + i), c));
 		if (!result_array[j])
 			return (ft_freesplitted(result_array, j));
-		result_array[j] = ft_substr(s, i, ft_strclen((s + i), c));
 		ft_split_incr(s, &i, c, 0);
 		j++;
 	}

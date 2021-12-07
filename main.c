@@ -53,7 +53,10 @@ void	free_global(void)
 	if (g_global->lst)
 	{
 		if (g_global->lst->cmd)
-			free(g_global->lst->cmd);
+		{
+			// free(g_global->lst->cmd);
+			// g_global->lst->cmd = NULL;
+		}
 		if (g_global->lst->options)
 		{
 			i = 0;

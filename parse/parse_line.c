@@ -89,7 +89,7 @@ void	ft_extract_it(t_cmd **head, char *line)
 	size_t		k;
 	char		**parts;
 	t_cmd		*tmp;
-	t_mini_cmd	*mini;
+	// t_mini_cmd	*mini;
 	char		*filename;
 	int			redirection;
 
@@ -140,28 +140,28 @@ void	ft_extract_it(t_cmd **head, char *line)
 		i++;
 	}
 	free(parts);
-	if (*head)
-	{
-		if ((*head)->cmd)
-			free((*head)->cmd);
-		if ((*head)->options)
-		{
-			i = 0;
-			while ((*head)->options[i])
-			{
-				free((*head)->options[i]);
-				i++;
-			}
-		}
-		while ((*head)->mini_cmd)
-		{
-			mini = (*head)->mini_cmd;
-			free((*head)->mini_cmd->filename);
-			(*head)->mini_cmd = (*head)->mini_cmd->next_mini;
-			free(mini);
-		}
-		free(*head);
-	}
+	// if (*head)
+	// {
+	// 	if ((*head)->cmd)
+	// 		free((*head)->cmd);
+	// 	if ((*head)->options)
+	// 	{
+	// 		i = 0;
+	// 		while ((*head)->options[i])
+	// 		{
+	// 			free((*head)->options[i]);
+	// 			i++;
+	// 		}
+	// 	}
+	// 	while ((*head)->mini_cmd)
+	// 	{
+	// 		mini = (*head)->mini_cmd;
+	// 		free((*head)->mini_cmd->filename);
+	// 		(*head)->mini_cmd = (*head)->mini_cmd->next_mini;
+	// 		free(mini);
+	// 	}
+	// 	free(*head);
+	// }
 	*head = tmp;
 }
 

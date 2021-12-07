@@ -19,6 +19,7 @@ typedef struct s_cmd {
 
 typedef struct s_globl {
 	t_cmd				*lst;
+	char				*pathname;
 	char				*error;
 	int					child_ex;
 	int					her_ex;

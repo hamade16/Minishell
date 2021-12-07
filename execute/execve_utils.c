@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:41:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 09:21:31 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 09:47:56 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ int	inexecutable(t_imp **imp, char **env_conv)
 	g_global->her_ex = 0;
 	if (g_global->pathname)
 	{
-		printf("|||\n");
 		free(g_global->pathname);
 		g_global->pathname = NULL;
 	}
