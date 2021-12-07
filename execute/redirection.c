@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 18:52:56 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 19:38:43 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/06 21:19:36 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	error_file(int fd, int tmp_fd_out, int tmp_fd_in)
 		dup2(tmp_fd_out, STDOUT_FILENO);
 		ft_error(g_global->lst->mini_cmd->filename,
 			": No such file or directory", "1");
+		dup_red(tmp_fd_out, tmp_fd_in);
 		return (0);
 	}
 	if (fd == 0)
@@ -62,6 +63,7 @@ int	type_redirection(int fd, t_imp *env)
 		if (c->redir == 4)
 		{
 			heredoc = 1;
+			printf("%s\n", c->filename);
 			red_herdog(c->filename, env);
 			c = c->next_mini;
 		}

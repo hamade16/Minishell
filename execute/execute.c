@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 16:08:05 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 16:18:16 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 03:59:18 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	macro_init_options(t_imp *tmp, int i)
 	}
 	else
 	{
-		tmp->key = g_global->lst->options[i];
+		tmp->key = ft_strdup(g_global->lst->options[i]);
 		tmp->value = NULL;
 		tmp->egale = 0;
 	}

@@ -1,50 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ex_in_childs.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/06 21:34:47 by houbeid           #+#    #+#             */
+/*   Updated: 2021/12/06 22:47:41 by houbeid          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	ex_in_childs(t_imp **imp)
 {
-	int pid;
+	int	pid;
 
 	if (g_global->lst->is_builtin)
 	{
-		if (!ft_strcmp(g_global->lst->cmd, "echo"))
+		pid = fork();
+		wait(0);
+		if (pid == 0)
 		{
-			pid = fork();
-			if (pid == 0)
-			{
-				impecho();
-				exit(0);
-			}
-			waitpid(pid, NULL, 0);
-		}
-		if (!ft_strcmp(g_global->lst->cmd, "pwd"))
-		{
-			pid = fork();
-			if (pid == 0)
-			{
+			if (!ft_strcmp(g_global->lst->cmd, "echo"))
+				impecho(0);
+			if (!ft_strcmp(g_global->lst->cmd, "pwd"))
 				ft_pwd();
-				exit(0);
-			}
-			waitpid(pid, NULL, 0);
-		}
-		if(!ft_strcmp(g_global->lst->cmd, "env"))
-		{
-			pid = fork();
-			if (pid == 0)
-			{
+			if (!ft_strcmp(g_global->lst->cmd, "env"))
 				print_env(imp);
-				exit(0);
-			}
-			waitpid(pid, NULL, 0);
-		}
-		if (!ft_strcmp(g_global->lst->cmd, "export") && (g_global->lst->options[1] == NULL))
-		{
-			pid = fork();
-			if (pid == 0)
-			{
+			if (!ft_strcmp(g_global->lst->cmd, "export")
+				&& (g_global->lst->options[1] == NULL))
 				print_export(imp);
-				exit(0);
-			}
-			waitpid(pid, NULL, 0);
+			exit(0);
 		}
 	}
 	else

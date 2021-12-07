@@ -6,13 +6,30 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:39:56 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 07:27:22 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_free_split(char **tab)
+void	is_file(int wstatus)
+{
+	int	statuscode;
+	DIR	*directory;
+
+	if (WIFEXITED(wstatus))
+	{
+		statuscode = WEXITSTATUS(wstatus);
+		if (statuscode != 0)
+		{
+			directory = opendir(g_global->lst->cmd);
+			if (directory)
+				ft_error(g_global->lst->cmd, ": is a directory", "127");
+		}
+	}
+}
+
+char	*ft_free_split(char **tab)
 {
 	int	i;
 
@@ -23,12 +40,13 @@ void	ft_free_split(char **tab)
 		i++;
 	}
 	free(tab);
+	return (NULL);
 }
 
 char	*path_env(t_imp **imp)
 {
 	int			i;
-	t_imp	*tmp;
+	t_imp		*tmp;
 
 	i = 0;
 	tmp = *imp;
@@ -55,7 +73,7 @@ char	*research_path(t_imp **imp)
 
 	i = 0;
 	if (access(g_global->lst->cmd, F_OK) == 0 && g_global->lst->cmd[0] == '/')
-		return (ft_strdup(g_global->lst->cmd));
+		return (g_global->lst->cmd);
 	if (!path_env(imp))
 		return ("uns_path");
 	path = ft_split(path_env(imp), ':');
@@ -66,9 +84,8 @@ char	*research_path(t_imp **imp)
 			break ;
 		i++;
 		free(pathname);
+		pathname = NULL;
 	}
-	if (path[i] == NULL)
-		return (NULL);
 	ft_free_split(path);
 	return (pathname);
 }
@@ -81,15 +98,18 @@ int	ft_execve(t_imp **imp)
 
 	env_conv = ft_convert_to_arr(*imp);
 	if (access((g_global->lst->cmd), F_OK) == 0
-		&& g_global->lst->cmd[0] == '.' && g_global->lst->cmd[1] == '/')
+		&& g_global->lst->cmd[0] == '.'
+		&& g_global->lst->cmd[1] == '/')
 	{
 		acces = is_execitable(env_conv);
+		free_double(env_conv);
 		if (acces == 0)
 			return (0);
 	}
 	else
 	{
 		inacces = inexecutable(imp, env_conv);
+		free_double(env_conv);
 		if (inacces == 0)
 			return (0);
 	}

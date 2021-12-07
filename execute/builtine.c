@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 14:40:37 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 02:02:49 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	is_builtin(t_imp **imp)
 			print_export(imp);
 	}
 	if (!ft_strcmp(g_global->lst->cmd, "echo"))
-		impecho();
+		impecho(0);
 	if (!ft_strcmp(g_global->lst->cmd, "unset"))
 		imp = ft_unset(imp);
 	if (!ft_strcmp(g_global->lst->cmd, "cd"))

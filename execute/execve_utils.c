@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:41:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 15:52:49 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 06:53:39 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,38 @@ void	macro_1(int wstatus)
 void	macro_2(int wstatus)
 {
 	int	statuscode;
+	DIR	*directory;
 
 	statuscode = WEXITSTATUS(wstatus);
 	if (statuscode != 0)
-		g_global->error = "1";
+	{
+		directory = opendir(g_global->lst->cmd);
+		if (directory)
+			ft_error(g_global->lst->cmd, ": is a directory", "127");
+		else
+			g_global->error = "1";
+		
+	}
 }
 
 int	is_execitable(char **env_conv)
 {
 	int	pid;
+	int	wstatus;
+	int	i;
 
 	if (access((g_global->lst->cmd), X_OK) == 0)
 	{
 		pid = fork();
-		wait(0);
 		if (pid == 0)
 		{
-			execve(g_global->lst->cmd, g_global->lst->options, env_conv);
-			exit(0);
+			i = execve(g_global->lst->cmd, g_global->lst->options, env_conv);
+			exit(i);
+		}
+		else
+		{
+			waitpid(pid, &wstatus, 0);
+			is_file(wstatus);
 		}
 	}
 	else
@@ -56,6 +70,7 @@ void	ex_execve(char *pathname, char **env_conv)
 {
 	int	pid;
 	int	wstatus;
+	int	i;
 
 	pid = fork();
 	g_global->her_ex = 1;
@@ -63,8 +78,8 @@ void	ex_execve(char *pathname, char **env_conv)
 	{
 		signal(SIGQUIT, SIG_DFL);
 		g_global->child_ex = 1;
-		execve(pathname, g_global->lst->options, env_conv);
-		exit(0);
+		i = execve(pathname, g_global->lst->options, env_conv);
+		exit(i);
 	}
 	else
 	{
@@ -96,5 +111,7 @@ int	inexecutable(t_imp **imp, char **env_conv)
 		return (0);
 	ex_execve(pathname, env_conv);
 	g_global->her_ex = 0;
+	if (pathname)
+		free(pathname);
 	return (1);
 }

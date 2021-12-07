@@ -6,11 +6,23 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 00:23:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 19:39:20 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/06 21:09:08 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	macro_red(int red, char *file, int ambig)
+{
+	int	fd;
+
+	fd = 0;
+	if (red == 1)
+		fd = red_out(file, ambig);
+	else
+		fd = red_in(file, ambig);
+	return (fd);
+}
 
 int	red_out(char *filename, int ambig)
 {
@@ -74,6 +86,7 @@ int	red_herdog(char *file, t_imp *env)
 	g_global->her_ex = 1;
 	fd = open("/tmp/heredocfile", O_RDWR | O_CREAT | O_TRUNC, 0644);
 	pid = fork();
+	wait(0);
 	if (pid == 0)
 	{
 		g_global->child_ex = 1;
@@ -90,7 +103,6 @@ int	red_herdog(char *file, t_imp *env)
 		exit(0);
 	}
 	close(fd);
-	wait(0);
 	return (fd);
 }
 
@@ -103,10 +115,7 @@ int	macro_typered(int fd)
 	{
 		if (m->redir == 1 || m->redir == 2)
 		{
-			if (m->redir == 1)
-				fd = red_out(m->filename, m->ambig);
-			else
-				fd = red_in(m->filename, m->ambig);
+			fd = macro_red(m->redir, m->filename, m->ambig);
 			if (fd == 0)
 				return (0);
 		}
