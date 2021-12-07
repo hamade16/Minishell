@@ -20,10 +20,8 @@ void	*pmalloc(size_t size)
 	if (data)
 		return (data);
 	else
-	{
-		ft_putstr_fd("Cannot allocate memory\n", 0);
-		exit(12);
-	}
+		ft_exit_malloc();
+	return (NULL);
 }
 
 void	ft_exit_malloc(void)

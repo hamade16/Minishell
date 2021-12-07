@@ -48,6 +48,9 @@ void		handle_line(char *s, t_imp *env);
 t_mini_cmd	*ft_mini_lstlast(t_mini_cmd *lst);
 void		ft_mini_addback(t_mini_cmd **head, char *f, int r, int a);
 
+int			ft_is_builtin(char *cmd);
+void		ft_append(char ***option, char *newoption);
+
 char		**ft_split_wq(char *s, char c, size_t i, size_t j);
 int			check_quotes_ind(char *str, size_t len);
 int			check_quotes(char *s);
@@ -62,6 +65,7 @@ void		expand_it_count(char *s, size_t *i, size_t *size, t_imp *e);
 void		expand_cmp_iter_macro(char *s, size_t *i, size_t *size);
 t_norm		expand_it_repl(char *s, t_norm norm, char **r, t_imp *e);
 void		expand_repl_iter_macro(char *s, char **r, size_t *i, size_t *j);
+void		ft_extract_it(t_cmd **head, char *line, int redir);
 
 int			check_forbidden(char *s);
 int			check_pipes(char *l);
