@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:39:56 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 07:27:22 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 09:40:40 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ char	*path_env(t_imp **imp)
 char	*research_path(t_imp **imp)
 {
 	char	**path;
-	char	*pathname;
 	int		i;
 
 	i = 0;
+	g_global->pathname = NULL;
 	if (access(g_global->lst->cmd, F_OK) == 0 && g_global->lst->cmd[0] == '/')
 		return (g_global->lst->cmd);
 	if (!path_env(imp))
@@ -79,15 +79,15 @@ char	*research_path(t_imp **imp)
 	path = ft_split(path_env(imp), ':');
 	while (path[i])
 	{
-		pathname = ft_strjoin_char(path[i], g_global->lst->cmd, '/');
-		if (access(pathname, F_OK) == 0)
+		g_global->pathname = ft_strjoin_char(path[i], g_global->lst->cmd, '/');
+		if (access(g_global->pathname, F_OK) == 0)
 			break ;
 		i++;
-		free(pathname);
-		pathname = NULL;
+		free(g_global->pathname);
+		g_global->pathname = NULL;
 	}
 	ft_free_split(path);
-	return (pathname);
+	return (g_global->pathname);
 }
 
 int	ft_execve(t_imp **imp)

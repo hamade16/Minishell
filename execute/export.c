@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 01:43:28 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 03:59:18 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 09:38:33 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_imp	*gere_exp(char **envp)
 	len = 0;
 	imp = pmalloc(sizeof(t_imp));
 	tmp = imp;
-	while (envp[i])
+	while (envp[i + 1])
 	{
 		tmp->next = pmalloc(sizeof(t_imp));
 		imp_env(&tmp, envp, i);
@@ -46,6 +46,7 @@ t_imp	*gere_exp(char **envp)
 			tmp = tmp->next;
 		i++;
 	}
+	imp_env(&tmp, envp, i);
 	tmp->next = NULL;
 	return (imp);
 }

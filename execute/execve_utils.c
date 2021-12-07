@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 02:41:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 07:29:43 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/07 09:21:31 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,21 +96,25 @@ int	inexecutable(t_imp **imp, char **env_conv)
 	char	*pathname;
 
 	pathname = research_path(imp);
-	if ((pathname == NULL) && ft_strchr(g_global->lst->cmd, '/'))
+	if ((g_global->pathname == NULL) && ft_strchr(g_global->lst->cmd, '/'))
 	{
 		ft_error(g_global->lst->cmd, ": No such file or directory", "127");
 		return (0);
 	}
-	if (pathname == NULL)
+	if (g_global->pathname == NULL)
 	{
 		ft_error(g_global->lst->cmd, ": command not found", "127");
 		return (0);
 	}
-	if (!ft_strcmp(pathname, "uns_path"))
+	if (!ft_strcmp(g_global->pathname, "uns_path"))
 		return (0);
 	ex_execve(pathname, env_conv);
 	g_global->her_ex = 0;
-	if (pathname)
-		free(pathname);
+	if (g_global->pathname)
+	{
+		printf("|||\n");
+		free(g_global->pathname);
+		g_global->pathname = NULL;
+	}
 	return (1);
 }
