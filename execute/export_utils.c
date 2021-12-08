@@ -6,11 +6,29 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 15:01:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 22:14:08 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/08 23:52:52 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	check_export(char *option)
+{
+    size_t    i;
+
+    i = 0;
+    while (option[i] == ' ')
+        i++;
+    if (ft_isalpha(option[i]))
+        i++;
+    else
+        return (0);
+    while (ft_isalnum(option[i]))
+        i++;
+    if (option[i] == '=' && (option[i + 1] || (ft_isalnum(option[i]))))
+        return (0);
+    return (1);
+}
 
 void	macro_print(char *str1, char *str2, int cmpt)
 {

@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 01:43:28 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 21:58:20 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/09 00:02:32 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ void	f(t_imp **tmp1, t_imp **imp, int tm)
 		if (((*tmp1)->key[i] != '_'
 				&& !ft_isalnum((*tmp1)->key[i]))
 			|| ((*tmp1)->key[0] != '_'
-				&& !ft_isalpha((*tmp1)->key[0])))
+				&& !ft_isalpha((*tmp1)->key[0])) )
 		{
-			ft_error((*tmp1)->key, "\' : not a valid identifier\n", "1");
+			ft_error((*tmp1)->key, "\' : not a valid identifier", "1");
 			tm = 1;
 			break ;
 		}
@@ -85,6 +85,8 @@ t_imp	**manages_options(t_imp **imp)
 		return (free_list_return(init, imp));
 	while (tmp1 != NULL)
 	{
+		/*if (check_export(tmp1->key) == 0)
+			return (0);*/
 		tmp = *imp;
 		while (tmp != NULL && ft_strcmp(tmp1->key, tmp->key))
 			tmp = tmp->next;

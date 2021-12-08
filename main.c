@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-haj <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 18:19:17 by abel-haj          #+#    #+#             */
-/*   Updated: 2021/12/08 18:19:35 by abel-haj         ###   ########.fr       */
+/*   Updated: 2021/12/08 21:00:38 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 void	handlsignal(int sig)
 {
 	int	stdout_copy;
@@ -32,7 +32,7 @@ void	handlsignal(int sig)
 			g_global->error = "1";
 		}
 	}
-}
+}*/
 
 void	free_global_mini(void)
 {
@@ -85,8 +85,8 @@ t_imp	*init_main(int ac, char **av, char **envp)
 	g_global->her_ex = 0;
 	g_global->sig_ex = 0;
 	g_global->sig_exdeja = 0;
-	signal(SIGINT, handlsignal);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGINT, handlsignal);
+	//signal(SIGQUIT, SIG_IGN);
 	return (gere_exp(envp));
 }
 

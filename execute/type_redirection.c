@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 00:23:47 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 22:57:51 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/08 23:22:16 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,9 @@ int	macro_typered(int fd)
 	{
 		if (m->redir == 1 || m->redir == 2)
 		{
-			fd = macro_red(m->redir, m->filename, m->ambig);
-			if (fd == 0)
-				return (0);
+			fd = typered_norm(m->ambig, m->filename, m->ambig);
+			if (fd < 1)
+				return (fd);
 		}
 		if (m->redir == 3)
 		{

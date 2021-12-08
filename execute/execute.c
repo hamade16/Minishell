@@ -6,19 +6,32 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 16:08:05 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 22:09:58 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/09 00:12:40 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	macro_init_options(t_imp *tmp, int i)
+int	typered_norm(int redir, char *filename, int ambig)
+{
+	int fd;
+	fd = macro_red(redir, filename, ambig);
+	if (fd == 0)
+		return (0);
+	if (fd < 0)
+		return (fd);
+	return (fd);
+}
+
+void	macro_init_options(t_imp *tmp, int i, int j)
 {
 	char	*opt;
 	int		len;
 
 	len = 0;
-	opt = ft_strchr(g_global->lst->options[i], '=');
+	while (g_global->lst->options[i][j] == '=')
+		j++;
+	opt = ft_strchr((g_global->lst->options[i] + j), '=');
 	if (opt)
 	{
 		len = opt - g_global->lst->options[i];
@@ -50,7 +63,7 @@ t_imp	*init_options(void)
 	tmp = init;
 	while (g_global->lst->options[i])
 	{
-		macro_init_options(tmp, i);
+		macro_init_options(tmp, i, 0);
 		if (!g_global->lst->options[i + 1])
 			break ;
 		tmp->next = pmalloc(sizeof(t_imp));

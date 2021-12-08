@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 15:49:27 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/07 22:57:21 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/08 23:49:38 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int					red_out(char *filename, int ambig);
 void				dup_red(int a, int b);
 int					red_in(char *filename, int ambig);
 int					is_execitable(char **env_conv);
-void				ex_execve(char *pathname, char **env_conv);
 int					inexecutable(t_imp **imp, char **env_conv);
 char				*research_path(t_imp **imp);
 int					red_herdog(char *filename, t_imp *env);
@@ -57,5 +56,9 @@ void				var_exist(t_imp **tmp, t_imp *tmp1);
 void				imp_env(t_imp **tmp, char **envp, int i);
 t_imp				**free_list_return(t_imp *init, t_imp **imp);
 void				free_double(char **env_var);
+void				ex_execve(char **env_conv);
+int					typered_norm(int redir, char *filename, int ambig);
+int					macro_red(int red, char *file, int ambig);
+int					check_export(char *option);
 
 #endif

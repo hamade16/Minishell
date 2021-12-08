@@ -6,7 +6,7 @@
 /*   By: houbeid <houbeid@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 04:34:43 by houbeid           #+#    #+#             */
-/*   Updated: 2021/12/05 04:41:59 by houbeid          ###   ########.fr       */
+/*   Updated: 2021/12/08 20:50:55 by houbeid          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	macro_exit(void)
 	int	i;
 
 	i = 0;
+	if (g_global->lst->options[1][0] == '-')
+		i++;
 	while (g_global->lst->options[1][i])
 	{
 		if (!ft_isdigit(g_global->lst->options[1][i]))
