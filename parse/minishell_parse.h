@@ -79,6 +79,8 @@ void		ft_exit_malloc(void);
 char		*ft_substr_wrap(char const *s, unsigned int start, size_t len);
 char		*ft_strdup_wrap(const char *s);
 
+int			handlsignal_helper(void);
+
 void		print_cmd(t_cmd *c);
 
 #endif

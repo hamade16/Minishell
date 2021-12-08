@@ -82,10 +82,7 @@ t_imp	**manages_options(t_imp **imp)
 	init = init_options();
 	tmp1 = init;
 	if (first_caractere(tmp1->key))
-	{
-		free_list(init);
-		return (imp);
-	}
+		return (free_list_return(init, imp));
 	while (tmp1 != NULL)
 	{
 		tmp = *imp;
@@ -102,8 +99,7 @@ t_imp	**manages_options(t_imp **imp)
 			break ;
 		tmp1 = tmp1->next;
 	}
-	free_list(init);
-	return (imp);
+	return (free_list_return(init, imp));
 }
 
 void	print_export(t_imp **imp)

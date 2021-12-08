@@ -75,12 +75,3 @@ void	handle_line(char *line, t_imp *env)
 		}
 	}
 }
-/*
-expand three	4
-
-
-checks one		4
-checks two		3
-
-			
-*/

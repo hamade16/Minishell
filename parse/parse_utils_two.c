@@ -41,3 +41,17 @@ void	ft_mini_addback(t_mini_cmd **head, char *f, int r, int a)
 			*head = new;
 	}
 }
+
+int	handlsignal_helper(void)
+{
+	int	stdout_copy;
+
+	g_global->sig_ex = 1;
+	stdout_copy = dup(1);
+	close(1);
+	rl_redisplay();
+	dup2(stdout_copy, 1);
+	g_global->her_ex = 0;
+	g_global->error = "130";
+	return (stdout_copy);
+}

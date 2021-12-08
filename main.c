@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abel-haj <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/08 18:19:17 by abel-haj          #+#    #+#             */
+/*   Updated: 2021/12/08 18:19:35 by abel-haj         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	handlsignal(int sig)
@@ -13,15 +25,7 @@ void	handlsignal(int sig)
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		if (g_global->her_ex == 1)
-		{
-			g_global->sig_ex = 1;
-			stdout_copy = dup(1);
-			close(1);
-			rl_redisplay();
-			dup2(stdout_copy, 1);
-			g_global->her_ex = 0;
-			g_global->error = "130";
-		}
+			stdout_copy = handlsignal_helper();
 		else
 		{
 			rl_redisplay();
@@ -62,6 +66,7 @@ void	free_global(void)
 				free(g_global->lst->options[i]);
 				i++;
 			}
+			free(g_global->lst->options);
 		}
 		free_global_mini();
 		free(g_global->lst);
@@ -80,8 +85,8 @@ t_imp	*init_main(int ac, char **av, char **envp)
 	g_global->her_ex = 0;
 	g_global->sig_ex = 0;
 	g_global->sig_exdeja = 0;
-	//signal(SIGINT, handlsignal);
-	//signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, handlsignal);
+	signal(SIGQUIT, SIG_IGN);
 	return (gere_exp(envp));
 }
 
@@ -110,7 +115,6 @@ int	main(int ac, char **av, char **envp)
 			free(line);
 		}
 		free(trimmd);
-		//system("leaks minishell");
 	}
 	return (0);
 }

@@ -50,11 +50,11 @@ void	remplir_imp(t_imp **imp, t_imp *tmp1)
 	while (t->next)
 		t = t->next;
 	new = pmalloc(sizeof(t_imp));
-	new->key = ft_strdup(tmp1->key);
+	new->key = ft_strdup_wrap(tmp1->key);
 	if (tmp1->value)
-		new->value = ft_strdup(tmp1->value);
+		new->value = ft_strdup_wrap(tmp1->value);
 	else
-		new->value = ft_strdup("");
+		new->value = ft_strdup_wrap("");
 	if (tmp1->egale == 1)
 		new->egale = 1;
 	else
@@ -69,11 +69,11 @@ void	var_exist(t_imp **tmp, t_imp *tmp1)
 	char	*imp1;
 
 	imp = (*tmp)->key;
-	(*tmp)->key = ft_strdup(tmp1->key);
+	(*tmp)->key = ft_strdup_wrap(tmp1->key);
 	free(imp);
 	imp = NULL;
 	imp1 = (*tmp)->value;
-	(*tmp)->value = ft_strdup(tmp1->value);
+	(*tmp)->value = ft_strdup_wrap(tmp1->value);
 	free(imp1);
 	imp1 = NULL;
 	(*tmp)->egale = 1;
@@ -86,8 +86,8 @@ void	imp_env(t_imp **tmp, char **envp, int i)
 	if (ft_strchr(envp[i], '='))
 	{
 		len = ft_strchr(envp[i], '=') - envp[i];
-		(*tmp)->key = ft_substr(envp[i], 0, len);
-		(*tmp)->value = ft_substr(envp[i], len + 1, ft_strlen(envp[i]));
+		(*tmp)->key = ft_substr_wrap(envp[i], 0, len);
+		(*tmp)->value = ft_substr_wrap(envp[i], len + 1, ft_strlen(envp[i]));
 		(*tmp)->egale = 1;
 	}
 	else

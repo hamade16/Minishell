@@ -22,18 +22,18 @@ void	macro_init_options(t_imp *tmp, int i)
 	if (opt)
 	{
 		len = opt - g_global->lst->options[i];
-		tmp->key = ft_substr(g_global->lst->options[i], 0, len);
+		tmp->key = ft_substr_wrap(g_global->lst->options[i], 0, len);
 		if (opt[1] == '"' || opt[1] == '\'')
-			tmp->value = ft_substr(g_global->lst->options[i],
+			tmp->value = ft_substr_wrap(g_global->lst->options[i],
 					len + 1 + 1, ft_strlen(opt) - 1 - 2);
 		else
-			tmp->value = ft_substr(g_global->lst->options[i],
+			tmp->value = ft_substr_wrap(g_global->lst->options[i],
 					len + 1, ft_strlen(g_global->lst->options[i]));
 		tmp->egale = 1;
 	}
 	else
 	{
-		tmp->key = ft_strdup(g_global->lst->options[i]);
+		tmp->key = ft_strdup_wrap(g_global->lst->options[i]);
 		tmp->value = NULL;
 		tmp->egale = 0;
 	}

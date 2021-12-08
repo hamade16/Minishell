@@ -12,10 +12,21 @@
 
 #include "../minishell.h"
 
-void	old_pwd(t_imp **imp)
+void	old_pwd_helper(t_imp **tmp, char *str)
+{
+	char	*fre;
+
+	fre = (*tmp)->value;
+	if (str)
+		(*tmp)->value = ft_strdup_wrap(str);
+	else
+		(*tmp)->value = ft_strdup_wrap("");
+	free(fre);
+}
+
+void	old_pwd(t_imp **imp, char *str)
 {
 	t_imp	*tmp;
-	char	*str;
 	char	buff[100];
 
 	tmp = *imp;
@@ -24,13 +35,15 @@ void	old_pwd(t_imp **imp)
 	if (tmp != NULL)
 	{
 		str = tmp->value;
-		tmp->value = ft_strdup(getcwd(buff, 100));
+		tmp->value = ft_strdup_wrap(getcwd(buff, 100));
 	}
 	tmp = *imp;
 	while (tmp && ft_strcmp(tmp->key, "OLDPWD"))
 		tmp = tmp->next;
 	if (tmp != NULL)
-		tmp->value = str;
+		old_pwd_helper(&tmp, str);
+	if (str)
+		free(str);
 }
 
 int	cd_no_opt(t_imp **imp)
@@ -53,7 +66,7 @@ int	cd_no_opt(t_imp **imp)
 			ft_error(tmp->value, ": No such file or directory", "1");
 			return (0);
 		}
-		old_pwd(imp);
+		old_pwd(imp, NULL);
 		return (0);
 	}
 	return (1);
@@ -76,29 +89,8 @@ int	cd_macro(t_imp **imp)
 
 int	ft_cd(t_imp **imp)
 {
-	t_imp	*tmp;
-	char	*str;
-	char	buff[100];
-
-	tmp = *imp;
-	str = ft_strdup("");
 	if (cd_macro(imp) == 0)
 		return (0);
-	tmp = *imp;
-	while (tmp && ft_strcmp(tmp->key, "PWD"))
-		tmp = tmp->next;
-	if (tmp != NULL)
-	{
-		str = tmp->value;
-		tmp->value = ft_strdup(getcwd(buff, 100));
-	}
-	tmp = *imp;
-	while (tmp && ft_strcmp(tmp->key, "OLDPWD"))
-		tmp = tmp->next;
-	if (tmp != NULL)
-	{
-		tmp->value = str;
-		free(str);
-	}
+	old_pwd(imp, NULL);
 	return (0);
 }

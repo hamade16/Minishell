@@ -49,6 +49,8 @@ void	clear_node(t_imp **imp, int i)
 	if (tmp != NULL)
 	{
 		prev->next = tmp->next;
+		free(tmp->value);
+		free(tmp->key);
 		free(tmp);
 	}
 }
@@ -68,6 +70,8 @@ t_imp	**ft_unset(t_imp **imp)
 		{
 			tmp = *imp;
 			(*imp) = (*imp)->next;
+			free(tmp->value);
+			free(tmp->key);
 			free(tmp);
 		}
 		else

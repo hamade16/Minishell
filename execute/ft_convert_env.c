@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	free_list(t_imp *init)
+t_imp	**free_list_return(t_imp *init, t_imp **imp)
 {
 	t_imp	*tmp;
 
@@ -27,6 +27,7 @@ void	free_list(t_imp *init)
 		free(tmp);
 		tmp = NULL;
 	}
+	return (imp);
 }
 
 static size_t	ft_get_env_size(t_imp *env_lst)

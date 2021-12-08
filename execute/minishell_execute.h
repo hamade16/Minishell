@@ -55,7 +55,7 @@ void				macro_print(char *str1, char *str2, int cmpt);
 void				remplir_imp(t_imp **imp, t_imp *tmp1);
 void				var_exist(t_imp **tmp, t_imp *tmp1);
 void				imp_env(t_imp **tmp, char **envp, int i);
-void				free_list(t_imp *init);
+t_imp				**free_list_return(t_imp *init, t_imp **imp);
 void				free_double(char **env_var);
 
 #endif
