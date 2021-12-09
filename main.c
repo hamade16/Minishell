@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
+
 void	handlsignal(int sig)
 {
 	int	stdout_copy;
@@ -32,7 +32,7 @@ void	handlsignal(int sig)
 			g_global->error = "1";
 		}
 	}
-}*/
+}
 
 void	free_global_mini(void)
 {
@@ -66,6 +66,11 @@ void	free_global(void)
 				free(g_global->lst->options[i]);
 				i++;
 			}
+			if (g_global->pathname)
+			{
+				free(g_global->pathname);
+				g_global->pathname = NULL;
+			}
 			free(g_global->lst->options);
 		}
 		free_global_mini();
@@ -80,13 +85,14 @@ t_imp	*init_main(int ac, char **av, char **envp)
 	av = NULL;
 	g_global = pmalloc(sizeof(t_global));
 	g_global->lst = NULL;
+	g_global->pathname = NULL;
 	g_global->error = "0";
 	g_global->child_ex = 0;
 	g_global->her_ex = 0;
 	g_global->sig_ex = 0;
 	g_global->sig_exdeja = 0;
-	//signal(SIGINT, handlsignal);
-	//signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, handlsignal);
+	signal(SIGQUIT, SIG_IGN);
 	return (gere_exp(envp));
 }
 
@@ -111,10 +117,12 @@ int	main(int ac, char **av, char **envp)
 			add_history(line);
 			handle_line(line, imp);
 			execute(&imp);
+			// print_cmd(g_global->lst);
 			free_global();
 			free(line);
 		}
 		free(trimmd);
+		// system("leaks minishell");
 	}
 	return (0);
 }

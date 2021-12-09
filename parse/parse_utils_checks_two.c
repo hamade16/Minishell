@@ -33,6 +33,38 @@ int	check_redirections_macro(char *s, int i)
 	return (1);
 }
 
+void	init_check_redirection(size_t *i, int *quote, int *right, int *left)
+{
+	*i = -1;
+	*quote = 0;
+	*right = 0;
+	*left = 0;
+}
+
+int	check_redir_helper(char *s, size_t i, int *right, int *left)
+{
+	if (s[i] == '>')
+	{
+		if (s[i - 1] == ' ' && (*left > 0 || *right > 0))
+			(*right) += 2;
+		(*right)++;
+	}
+	else if (s[i] == '<')
+	{
+		if (s[i - 1] == ' ' && (*left > 0 || *right > 0))
+			(*left) += 2;
+		(*left)++;
+	}
+	else if (s[i] != ' ')
+	{
+		*right = 0;
+		*left = 0;
+	}
+	if (*right > 2 || *left > 2 || (*left > 0 && *right > 0))
+		return (0);
+	return (1);
+}
+
 /*
  * check some errors
  * <>, ><, <<>, >><, <<<, >>>
@@ -43,19 +75,17 @@ int	check_redirections(char *s)
 {
 	size_t	i;
 	int		quote;
+	int		right;
+	int		left;
 
-	i = -1;
-	quote = 0;
+	init_check_redirection(&i, &quote, &right, &left);
 	while (s[++i])
 	{
 		quote = quote_macro(s[i], quote);
 		if (quote == 0)
 		{
-			if (s[i] == '>' || s[i] == '<')
-			{
-				if (check_redirections_macro(s, i) == 0)
-					return (0);
-			}
+			if (check_redir_helper(s, i, &right, &left) == 0)
+				return (0);
 		}
 	}
 	return (1);

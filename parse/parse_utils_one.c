@@ -74,8 +74,6 @@ char	**ft_split_wq(char *s, char c, size_t i, size_t j)
 
 	len = count_splitted_wq(s, c, -1);
 	result = (char **)pmalloc(sizeof(char *) * (len + 1));
-	if (!result)
-		return (NULL);
 	while (s[i] && s[i] == c)
 		i++;
 	while (s[i] && j < len)

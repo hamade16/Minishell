@@ -81,6 +81,8 @@ char		*ft_strdup_wrap(const char *s);
 
 int			handlsignal_helper(void);
 
+// #######
 void		print_cmd(t_cmd *c);
+// #######
 
 #endif

@@ -40,17 +40,6 @@ void	ft_append(char ***opt, char *newopt)
 	}
 }
 
-int	ft_is_builtin(char *cmd)
-{
-	if (!ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "echo")
-		|| !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd, "cd")
-		|| !ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "pwd")
-		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"))
-		return (1);
-	else
-		return (0);
-}
-
 void	handle_line(char *line, t_imp *env)
 {
 	if (line)

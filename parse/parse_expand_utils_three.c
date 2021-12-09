@@ -22,63 +22,92 @@ char	*ft_expand_norm(char *str, t_imp *env)
 	return (str);
 }
 
-void	ft_expand_data(t_cmd **cmd, t_imp *env)
+int	ft_count_words(char *str)
 {
-	int			i;
-	t_mini_cmd	*mini;
+	int	i;
+	int	len;
 
-	if ((*cmd)->cmd)
+	i = 0;
+	len = 1;
+	while (str[i] == ' ')
+		i++;
+	while (str[i])
 	{
-		(*cmd)->cmd = ft_expand_norm((*cmd)->cmd, env);
-	}
-	if ((*cmd)->options)
-	{
-		i = 0;
-		while ((*cmd)->options[i])
+		if (str[i] == ' ')
 		{
-			(*cmd)->options[i] = ft_expand_norm((*cmd)->options[i], env);
+			while (str[i] == ' ')
+				i++;
+			len++;
+		}
+		i++;
+	}
+	return (len);
+}
+
+size_t	get_opt_size(void)
+{
+	size_t	i;
+
+	i = 0;
+	if (g_global->lst->options)
+	{
+		while (g_global->lst->options[i])
+			i++;
+	}
+	return (i);
+}
+
+char	**ft_expand_cmd_new(char **parts, char *new, size_t i, size_t j)
+{
+	char	**new_opt;
+
+	new_opt = pmalloc(sizeof(char *) * (ft_count_words(new) + get_opt_size()));
+	while (parts[++i])
+		new_opt[i] = ft_strdup_wrap(parts[i]);
+	if (g_global->lst->options)
+	{
+		while (g_global->lst->options[j])
+		{
+			new_opt[i] = ft_strdup_wrap(g_global->lst->options[j]);
+			i++;
+			j++;
+		}
+		j = 0;
+		while (g_global->lst->options[j])
+		{
+			free(g_global->lst->options[j]);
+			j++;
+		}
+		free(g_global->lst->options);
+	}
+	new_opt[i] = NULL;
+	return (new_opt);
+}
+
+char	*ft_expand_cmd(char *str, t_imp *env)
+{
+	char	*new;
+	char	*result;
+	char	**parts;
+	size_t	i;
+
+	new = ft_expand_norm(str, env);
+	if (ft_count_words(new) > 0)
+	{
+		parts = ft_split_wq(new, ' ', 0, 0);
+		result = ft_strdup_wrap(parts[0]);
+		if (parts[1] != NULL)
+			g_global->lst->options = ft_expand_cmd_new(parts, new, -1, 1);
+		i = 0;
+		while (parts[i])
+		{
+			free(parts[i]);
 			i++;
 		}
+		free(parts);
+		free(new);
 	}
-	mini = (*cmd)->mini_cmd;
-	while (mini)
-	{
-		mini->filename = ft_expand_norm(mini->filename, env);
-		if (ft_strlen(mini->filename) <= 0)
-			mini->ambig = 1;
-		mini = mini->next_mini;
-	}
-}
-
-size_t	expand_it_one_norm(char *key_var, char *key_lst, char *val_lst)
-{
-	if (ft_strcmp(key_var, key_lst) == 0)
-		return (ft_strlen(val_lst));
-	return (0);
-}
-
-void	expand_it_count(char *s, size_t *i, size_t *size, t_imp *head)
-{
-	size_t	var_size;
-	char	*var_key;
-
-	(*i) += 2;
-	var_size = 2;
-	if (s[(*i) - 1] != '?')
-	{
-		while (ft_isalnum(s[*i]) || s[*i] == '_')
-		{
-			(*i)++;
-			var_size++;
-		}
-	}
-	var_key = ft_substr_wrap(s, *i - var_size + 1, var_size - 1);
-	while (head)
-	{
-		(*size) += expand_it_one_norm(var_key, head->key, head->value);
-		head = head->next;
-	}
-	if (ft_strcmp(var_key, "?") == 0)
-		(*size) += ft_strlen(g_global->error);
-	free(var_key);
+	else
+		result = new;
+	return (result);
 }

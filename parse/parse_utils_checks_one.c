@@ -23,7 +23,11 @@ int	check_forbidden(char *s)
 	{
 		quote = quote_macro(s[i], quote);
 		if ((s[i] == '|' || s[i] == ';' || s[i] == '\\') && quote == 0)
+		{
+			g_global->error = "259";
+			ft_putstr_fd("forbidden character\n", 0);
 			return (0);
+		}
 	}
 	return (1);
 }
