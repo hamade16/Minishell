@@ -65,6 +65,9 @@ void		expand_it_count(char *s, size_t *i, size_t *size, t_imp *e);
 void		expand_cmp_iter_macro(char *s, size_t *i, size_t *size);
 t_norm		expand_it_repl(char *s, t_norm norm, char **r, t_imp *e);
 void		expand_repl_iter_macro(char *s, char **r, size_t *i, size_t *j);
+size_t		expand_it_one_norm(char *var_key, char *lst_key, char *lst_val);
+char		*ft_expand_cmd(char *cmd, t_imp *env);
+char		*ft_expand_norm(char *file, t_imp *env);
 void		ft_extract_it(t_cmd **head, char *line, int redir);
 
 int			check_forbidden(char *s);
