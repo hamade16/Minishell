@@ -73,7 +73,7 @@ char	*research_path(t_imp **imp)
 	i = 0;
 	g_global->pathname = NULL;
 	if (access(g_global->lst->cmd, F_OK) == 0 && g_global->lst->cmd[0] == '/')
-		return (g_global->lst->cmd);
+		return (ft_strdup_wrap(g_global->lst->cmd));
 	if (!path_env(imp))
 		return ("uns_path");
 	path = ft_split(path_env(imp), ':');
